@@ -20,7 +20,7 @@ model User {
   password                String
   caregiver               Caregiver?
   adultHomeRepresentative AdultHomeRepresentative?
-  roles                   UserRole[]
+  roles                   Role[]
 }
 
 model Caregiver {
@@ -66,16 +66,7 @@ model AdultHome {
 }
 
 model Role {
-  id    String     @id @default(cuid())
-  name  String     @unique
-  users UserRole[]
-}
-
-model UserRole {
-  userId String
-  roleId String
-  user   User   @relation(fields: [userId], references: [id])
-  role   Role   @relation(fields: [roleId], references: [id])
-
-  @@id([userId, roleId])
+  id    String @id @default(cuid())
+  name  String @unique
+  users User[]
 }
