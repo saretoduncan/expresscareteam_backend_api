@@ -29,23 +29,23 @@ async function main() {
     },
   });
   console.log("caregiverRole created", caregiverRole);
-  const password = await bcrypt.hash("pass@1234", 10);
-//   const adminRole = await prisma.role.up
+  const password = await bcrypt.hash(process.env.ADMIN_PASSWORD!!, 10);
+  //   const adminRole = await prisma.role.up
   const adminUser = await prisma.user.upsert({
     where: { username: "ADMIN" },
     update: {},
     create: {
       username: "ADMIN",
       password: password,
-      roles:{
-        connect:{
-            id:admin.id
-        }
-      }
+      roles: {
+        connect: {
+          id: admin.id,
+        },
+      },
     },
-    include:{
-      roles:true
-    }
+    include: {
+      roles: true,
+    },
   });
   console.log("adminUser created", adminUser);
 }
