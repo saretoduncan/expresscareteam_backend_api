@@ -1,9 +1,11 @@
 import { Exclude, Expose, Type } from "class-transformer";
 import {
+  IsDateString,
   IsEmail,
   IsEnum,
   IsNotEmpty,
   IsString,
+  Length,
   Matches,
   MinLength,
   Validate,
@@ -135,4 +137,53 @@ export class UserResponseDto {
   @Expose()
   @Type(() => AdultHomeRepresentativeResponseDto)
   adultHomeRepresentative: AdultHomeRepresentativeResponseDto | null;
+}
+
+export class CreateCaregiverDto {
+  @IsNotEmpty()
+  @IsString()
+  firstName: string;
+
+  @IsNotEmpty()
+  @IsString()
+  lastName: string;
+
+  @IsNotEmpty()
+  @IsEmail()
+  email: string;
+
+  @IsNotEmpty()
+  @IsDateString()
+  dateOfBirth: Date;
+
+  @IsNotEmpty()
+  @IsString()
+  gender: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @Length(10, 15, {
+    message: "Phone number must be between 10 and 15 characters",
+  })
+  phoneNumber: string;
+
+  @IsNotEmpty()
+  @IsString()
+  city: string;
+
+  @IsNotEmpty()
+  @IsString()
+  state: string;
+
+  @IsNotEmpty()
+  @IsString()
+  street: string;
+
+  @IsNotEmpty()
+  @IsString()
+  zipcode: string;
+
+  @IsNotEmpty()
+  @IsString()
+  userId: string;
 }

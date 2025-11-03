@@ -1,5 +1,9 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
-import { CreateUserDto, UserResponseDto } from "src/dtos/users.dtos";
+import {
+  CreateCaregiverDto,
+  CreateUserDto,
+  UserResponseDto,
+} from "src/dtos/users.dtos";
 import { PrismaService } from "src/prisma/prisma.service";
 import { RolesService } from "src/roles/roles.service";
 import * as bcrypt from "bcrypt";
@@ -215,4 +219,91 @@ export class UsersService {
       throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
+  //add caregiver
+  async addCaregiver(caregiver: CreateCaregiverDto): Promise<UserResponseDto> {
+    try {
+      const user = await this.getUserById(caregiver.userId);
+      const updatedUser = await this.prismaService.user.update({
+        where: {
+          id: user.id,
+        },
+        data: {
+          caregiver: {
+            create: {
+              firstName: caregiver.firstName,
+              lastName: caregiver.lastName,
+              email: caregiver.email,
+              dateOfBirth: caregiver.dateOfBirth,
+              gender: caregiver.gender,
+              phoneNumber: caregiver.phoneNumber,
+              city: caregiver.city,
+              state: caregiver.state,
+              street: caregiver.street,
+              zipcode: caregiver.zipcode,
+            },
+          },
+        },
+        include: {
+          caregiver: true,
+          adultHomeRepresentative: true,
+          roles: true,
+        },
+      });
+      return updatedUser;
+    } catch (e) {
+      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+  //get all caregiver
+  async getAllCaregivers(): Promise<UserResponseDto[]> {
+    try {
+      const caregivers = await this.prismaService.user.findMany({
+        where: {
+          roles: {
+            some: {
+              name: "CAREGIVER",
+            },
+          },
+        },
+        include: {
+          caregiver: true,
+          adultHomeRepresentative: true,
+          roles: true,
+        },
+      });
+      return caregivers;
+    } catch (e) {
+      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+  //update caregiver
+  async updateCaregiver(caregiver: CreateCaregiverDto) {
+    try {
+      const user = await this.getUserById(caregiver.userId);
+      const updateCaregiver = await this.prismaService.user.update({
+        where: {
+          id: user.id,
+        },
+        data: {
+          caregiver: {
+            update: {
+              firstName: caregiver.firstName,
+              lastName: caregiver.lastName,
+              email: caregiver.email,
+              dateOfBirth: caregiver.dateOfBirth,
+              gender: caregiver.gender,
+              phoneNumber: caregiver.phoneNumber,
+              city: caregiver.city,
+              state: caregiver.state,
+              street: caregiver.street,
+              zipcode: caregiver.zipcode,
+            },
+          },
+        },
+      });
+    } catch (e) {
+      throw new HttpException(e, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+  //add homeRep
 }
