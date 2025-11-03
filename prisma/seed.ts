@@ -1,31 +1,31 @@
 import { PrismaClient } from "../generated/prisma/client";
-import { Role } from "../src/common/enums";
+import { RoleEnum } from "../src/common/enums";
 import * as bcrypt from "bcrypt";
 const prisma = new PrismaClient();
 
 async function main() {
   const admin = await prisma.role.upsert({
-    where: { name: Role.ADMIN },
+    where: { name: RoleEnum.ADMIN },
     update: {},
     create: {
-      name: Role.ADMIN,
+      name: RoleEnum.ADMIN,
     },
   });
   console.log("admin created", admin);
   const homeRepRole = await prisma.role.upsert({
-    where: { name: Role.HOMEREPRESENTATIVE },
+    where: { name: RoleEnum.HOMEREPRESENTATIVE },
     update: {},
     create: {
-      name: Role.HOMEREPRESENTATIVE,
+      name: RoleEnum.HOMEREPRESENTATIVE,
     },
   });
   console.log("homeRepRole created", homeRepRole);
 
   const caregiverRole = await prisma.role.upsert({
-    where: { name: Role.CAREGIVER },
+    where: { name: RoleEnum.CAREGIVER },
     update: {},
     create: {
-      name: Role.CAREGIVER,
+      name: RoleEnum.CAREGIVER,
     },
   });
   console.log("caregiverRole created", caregiverRole);
