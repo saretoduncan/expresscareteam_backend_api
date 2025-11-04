@@ -7,6 +7,7 @@ import {
 import { PrismaService } from "src/prisma/prisma.service";
 import { RolesService } from "src/roles/roles.service";
 import * as bcrypt from "bcrypt";
+import { RoleEnum } from "src/common/enums";
 @Injectable()
 export class UsersService {
   constructor(
@@ -56,7 +57,11 @@ export class UsersService {
         include: {
           roles: true,
           caregiver: true,
-          adultHomeRepresentative: true,
+          adultHomeRepresentative: {
+            include: {
+              adultHome: true,
+            },
+          },
         },
       });
       if (!user) {
@@ -77,7 +82,11 @@ export class UsersService {
         include: {
           roles: true,
           caregiver: true,
-          adultHomeRepresentative: true,
+          adultHomeRepresentative: {
+            include: {
+              adultHome: true,
+            },
+          },
         },
       });
       if (!user) {
@@ -94,7 +103,11 @@ export class UsersService {
       include: {
         roles: true,
         caregiver: true,
-        adultHomeRepresentative: true,
+        adultHomeRepresentative: {
+          include: {
+            adultHome: true,
+          },
+        },
       },
     });
     if (users.length === 0) {
@@ -261,7 +274,7 @@ export class UsersService {
         where: {
           roles: {
             some: {
-              name: "CAREGIVER",
+              name: RoleEnum.CAREGIVER,
             },
           },
         },
@@ -305,5 +318,30 @@ export class UsersService {
       throw new HttpException(e, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
-  //add homeRep
+  //get all homeRep
+  async getAllHomeRep(): Promise<UserResponseDto[]> {
+    try {
+      const reps = await this.prismaService.user.findMany({
+        where: {
+          roles: {
+            some: {
+              name: RoleEnum.HOMEREPRESENTATIVE,
+            },
+          },
+        },
+        include: {
+          caregiver: true,
+          adultHomeRepresentative: {
+            include: {
+              adultHome: true,
+            },
+          },
+          roles: true,
+        },
+      });
+      return reps;
+    } catch (e) {
+      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
 }

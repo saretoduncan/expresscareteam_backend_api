@@ -3,6 +3,7 @@ import { ConfigModule } from "@nestjs/config";
 import { PrismaService } from "./prisma/prisma.service";
 import { UsersService } from "./users/users.service";
 import { RolesService } from "./roles/roles.service";
+import { AdultHomeService } from './adult-home/adult-home.service';
 
 @Global()
 @Module({
@@ -12,7 +13,7 @@ import { RolesService } from "./roles/roles.service";
       envFilePath: ".env",
     }),
   ],
-  providers: [PrismaService, UsersService, RolesService],
+  providers: [PrismaService, UsersService, RolesService, AdultHomeService],
   exports: [PrismaService],
 })
 export class AppModule {}
