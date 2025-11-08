@@ -4,14 +4,10 @@ import {
   CreateAdultHomeDto,
 } from "src/dtos/adultHome.dtos";
 import { PrismaService } from "src/prisma/prisma.service";
-import { UsersService } from "src/users/users.service";
 
 @Injectable()
 export class AdultHomeService {
-  constructor(
-    private readonly prismaService: PrismaService,
-    private readonly userService: UsersService
-  ) {}
+  constructor(private readonly prismaService: PrismaService) {}
   //create home
   async createAdultHome(
     createAdultHomeDto: CreateAdultHomeDto

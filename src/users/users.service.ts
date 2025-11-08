@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import {
+  CreateAdultHomeRepresentativeRequestDto,
   CreateCaregiverDto,
   CreateUserDto,
   UserResponseDto,
@@ -8,11 +9,13 @@ import { PrismaService } from "src/prisma/prisma.service";
 import { RolesService } from "src/roles/roles.service";
 import * as bcrypt from "bcrypt";
 import { RoleEnum } from "src/common/enums";
+import { AdultHomeService } from "src/adult-home/adult-home.service";
 @Injectable()
 export class UsersService {
   constructor(
     private readonly prismaService: PrismaService,
-    private readonly rolesServices: RolesService
+    private readonly rolesServices: RolesService,
+    private readonly adultHomeService: AdultHomeService
   ) {}
 
   //create user
@@ -236,6 +239,7 @@ export class UsersService {
   async addCaregiver(caregiver: CreateCaregiverDto): Promise<UserResponseDto> {
     try {
       const user = await this.getUserById(caregiver.userId);
+      const caregiverRole = await this.getUserByUsername(RoleEnum.CAREGIVER);
       const updatedUser = await this.prismaService.user.update({
         where: {
           id: user.id,
@@ -253,6 +257,11 @@ export class UsersService {
               state: caregiver.state,
               street: caregiver.street,
               zipcode: caregiver.zipcode,
+            },
+          },
+          roles: {
+            connect: {
+              id: caregiverRole.id,
             },
           },
         },
@@ -316,6 +325,51 @@ export class UsersService {
       });
     } catch (e) {
       throw new HttpException(e, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+  //createHomeRep
+  async createHomeRep(
+    createHomeRepDto: CreateAdultHomeRepresentativeRequestDto
+  ): Promise<UserResponseDto> {
+    try {
+      const user = await this.getUserById(createHomeRepDto.userId);
+      const getHome = await this.adultHomeService.getAdultHomeById(
+        createHomeRepDto.adultHomeId
+      );
+      const homeRepRole = await this.rolesServices.getRoleByName(
+        RoleEnum.HOMEREPRESENTATIVE
+      );
+
+      const updateUser = await this.prismaService.user.update({
+        where: {
+          id: user.id,
+        },
+        include: {
+          adultHomeRepresentative: true,
+          roles: true,
+          caregiver: true,
+        },
+        data: {
+          adultHomeRepresentative: {
+            create: {
+              firstName: createHomeRepDto.firstName,
+              lastName: createHomeRepDto.lastName,
+              email: createHomeRepDto.email,
+              phoneNumber: createHomeRepDto.phoneNumber,
+              adultHomeId: getHome.id,
+              jobTitle: createHomeRepDto.jobTitle,
+            },
+          },
+          roles: {
+            connect: {
+              id: homeRepRole.id,
+            },
+          },
+        },
+      });
+      return updateUser;
+    } catch (e) {
+      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
   //get all homeRep
