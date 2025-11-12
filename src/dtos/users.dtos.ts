@@ -40,15 +40,6 @@ export class CreateUserDto {
   role: string;
 }
 
-export class LoginUserDto {
-  @IsString()
-  @IsNotEmpty()
-  username: string;
-  @IsNotEmpty()
-  @IsString()
-  password: string;
-}
-
 @Expose()
 export class CaregiverResponseDto {
   @Expose()
@@ -122,9 +113,6 @@ export class UserResponseDto {
 
   @Expose()
   username: string;
-
-  @Exclude() // never expose password
-  password: string;
 
   @Expose()
   @Type(() => RolesResponseDto)

@@ -46,6 +46,9 @@ export class UsersService {
           caregiver: true,
           adultHomeRepresentative: true,
         },
+        omit: {
+          password: true,
+        },
       });
       return newUser;
     } catch (e) {
@@ -65,6 +68,9 @@ export class UsersService {
               adultHome: true,
             },
           },
+        },
+        omit: {
+          password: true,
         },
       });
       if (!user) {
@@ -91,6 +97,9 @@ export class UsersService {
             },
           },
         },
+        omit: {
+          password: true,
+        },
       });
       if (!user) {
         throw new HttpException("User not found", HttpStatus.NOT_FOUND);
@@ -112,6 +121,9 @@ export class UsersService {
           },
         },
       },
+      omit: {
+        password: true,
+      },
     });
     if (users.length === 0) {
       throw new HttpException("No users found", HttpStatus.NOT_FOUND);
@@ -123,7 +135,7 @@ export class UsersService {
     try {
       const user = await this.getUserById(id);
       const hashedPassword = await bcrypt.hash(password, 10);
-      const updatedUser = await this.prismaService.user.update({
+      await this.prismaService.user.update({
         where: {
           id: user.id,
         },
@@ -163,6 +175,9 @@ export class UsersService {
           caregiver: true,
           adultHomeRepresentative: true,
         },
+        omit: {
+          password: true,
+        },
       });
       return updateUser;
     } catch (e) {
@@ -198,6 +213,9 @@ export class UsersService {
           roles: true,
           caregiver: true,
           adultHomeRepresentative: true,
+        },
+        omit: {
+          password: true,
         },
       });
       return updateUser;
@@ -239,7 +257,7 @@ export class UsersService {
   async addCaregiver(caregiver: CreateCaregiverDto): Promise<UserResponseDto> {
     try {
       const user = await this.getUserById(caregiver.userId);
-      const caregiverRole = await this.getUserByUsername(RoleEnum.CAREGIVER);
+
       const updatedUser = await this.prismaService.user.update({
         where: {
           id: user.id,
@@ -250,7 +268,7 @@ export class UsersService {
               firstName: caregiver.firstName,
               lastName: caregiver.lastName,
               email: caregiver.email,
-              dateOfBirth: caregiver.dateOfBirth,
+              dateOfBirth: new Date(caregiver.dateOfBirth),
               gender: caregiver.gender,
               phoneNumber: caregiver.phoneNumber,
               city: caregiver.city,
@@ -259,16 +277,14 @@ export class UsersService {
               zipcode: caregiver.zipcode,
             },
           },
-          roles: {
-            connect: {
-              id: caregiverRole.id,
-            },
-          },
         },
         include: {
           caregiver: true,
           adultHomeRepresentative: true,
           roles: true,
+        },
+        omit: {
+          password: true,
         },
       });
       return updatedUser;
@@ -291,6 +307,9 @@ export class UsersService {
           caregiver: true,
           adultHomeRepresentative: true,
           roles: true,
+        },
+        omit: {
+          password: true,
         },
       });
       return caregivers;
@@ -324,7 +343,7 @@ export class UsersService {
         },
       });
     } catch (e) {
-      throw new HttpException(e, HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
   //createHomeRep
@@ -349,6 +368,7 @@ export class UsersService {
           roles: true,
           caregiver: true,
         },
+        omit: { password: true },
         data: {
           adultHomeRepresentative: {
             create: {
@@ -358,11 +378,6 @@ export class UsersService {
               phoneNumber: createHomeRepDto.phoneNumber,
               adultHomeId: getHome.id,
               jobTitle: createHomeRepDto.jobTitle,
-            },
-          },
-          roles: {
-            connect: {
-              id: homeRepRole.id,
             },
           },
         },
@@ -390,7 +405,11 @@ export class UsersService {
               adultHome: true,
             },
           },
+
           roles: true,
+        },
+        omit: {
+          password: true,
         },
       });
       return reps;
