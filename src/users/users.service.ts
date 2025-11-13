@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import {
+  CreateAdultHomeRepresentativeRequestDto,
   CreateCaregiverDto,
   CreateUserDto,
   UserResponseDto,
@@ -7,11 +8,14 @@ import {
 import { PrismaService } from "src/prisma/prisma.service";
 import { RolesService } from "src/roles/roles.service";
 import * as bcrypt from "bcrypt";
+import { RoleEnum } from "src/common/enums";
+import { AdultHomeService } from "src/adult-home/adult-home.service";
 @Injectable()
 export class UsersService {
   constructor(
     private readonly prismaService: PrismaService,
-    private readonly rolesServices: RolesService
+    private readonly rolesServices: RolesService,
+    private readonly adultHomeService: AdultHomeService
   ) {}
 
   //create user
@@ -42,6 +46,9 @@ export class UsersService {
           caregiver: true,
           adultHomeRepresentative: true,
         },
+        omit: {
+          password: true,
+        },
       });
       return newUser;
     } catch (e) {
@@ -56,7 +63,14 @@ export class UsersService {
         include: {
           roles: true,
           caregiver: true,
-          adultHomeRepresentative: true,
+          adultHomeRepresentative: {
+            include: {
+              adultHome: true,
+            },
+          },
+        },
+        omit: {
+          password: true,
         },
       });
       if (!user) {
@@ -77,7 +91,14 @@ export class UsersService {
         include: {
           roles: true,
           caregiver: true,
-          adultHomeRepresentative: true,
+          adultHomeRepresentative: {
+            include: {
+              adultHome: true,
+            },
+          },
+        },
+        omit: {
+          password: true,
         },
       });
       if (!user) {
@@ -94,7 +115,14 @@ export class UsersService {
       include: {
         roles: true,
         caregiver: true,
-        adultHomeRepresentative: true,
+        adultHomeRepresentative: {
+          include: {
+            adultHome: true,
+          },
+        },
+      },
+      omit: {
+        password: true,
       },
     });
     if (users.length === 0) {
@@ -107,7 +135,7 @@ export class UsersService {
     try {
       const user = await this.getUserById(id);
       const hashedPassword = await bcrypt.hash(password, 10);
-      const updatedUser = await this.prismaService.user.update({
+      await this.prismaService.user.update({
         where: {
           id: user.id,
         },
@@ -147,6 +175,9 @@ export class UsersService {
           caregiver: true,
           adultHomeRepresentative: true,
         },
+        omit: {
+          password: true,
+        },
       });
       return updateUser;
     } catch (e) {
@@ -182,6 +213,9 @@ export class UsersService {
           roles: true,
           caregiver: true,
           adultHomeRepresentative: true,
+        },
+        omit: {
+          password: true,
         },
       });
       return updateUser;
@@ -223,6 +257,7 @@ export class UsersService {
   async addCaregiver(caregiver: CreateCaregiverDto): Promise<UserResponseDto> {
     try {
       const user = await this.getUserById(caregiver.userId);
+
       const updatedUser = await this.prismaService.user.update({
         where: {
           id: user.id,
@@ -233,7 +268,7 @@ export class UsersService {
               firstName: caregiver.firstName,
               lastName: caregiver.lastName,
               email: caregiver.email,
-              dateOfBirth: caregiver.dateOfBirth,
+              dateOfBirth: new Date(caregiver.dateOfBirth),
               gender: caregiver.gender,
               phoneNumber: caregiver.phoneNumber,
               city: caregiver.city,
@@ -248,6 +283,9 @@ export class UsersService {
           adultHomeRepresentative: true,
           roles: true,
         },
+        omit: {
+          password: true,
+        },
       });
       return updatedUser;
     } catch (e) {
@@ -261,7 +299,7 @@ export class UsersService {
         where: {
           roles: {
             some: {
-              name: "CAREGIVER",
+              name: RoleEnum.CAREGIVER,
             },
           },
         },
@@ -269,6 +307,9 @@ export class UsersService {
           caregiver: true,
           adultHomeRepresentative: true,
           roles: true,
+        },
+        omit: {
+          password: true,
         },
       });
       return caregivers;
@@ -302,8 +343,78 @@ export class UsersService {
         },
       });
     } catch (e) {
-      throw new HttpException(e, HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
-  //add homeRep
+  //createHomeRep
+  async createHomeRep(
+    createHomeRepDto: CreateAdultHomeRepresentativeRequestDto
+  ): Promise<UserResponseDto> {
+    try {
+      const user = await this.getUserById(createHomeRepDto.userId);
+      const getHome = await this.adultHomeService.getAdultHomeById(
+        createHomeRepDto.adultHomeId
+      );
+      const homeRepRole = await this.rolesServices.getRoleByName(
+        RoleEnum.HOMEREPRESENTATIVE
+      );
+
+      const updateUser = await this.prismaService.user.update({
+        where: {
+          id: user.id,
+        },
+        include: {
+          adultHomeRepresentative: true,
+          roles: true,
+          caregiver: true,
+        },
+        omit: { password: true },
+        data: {
+          adultHomeRepresentative: {
+            create: {
+              firstName: createHomeRepDto.firstName,
+              lastName: createHomeRepDto.lastName,
+              email: createHomeRepDto.email,
+              phoneNumber: createHomeRepDto.phoneNumber,
+              adultHomeId: getHome.id,
+              jobTitle: createHomeRepDto.jobTitle,
+            },
+          },
+        },
+      });
+      return updateUser;
+    } catch (e) {
+      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+  //get all homeRep
+  async getAllHomeRep(): Promise<UserResponseDto[]> {
+    try {
+      const reps = await this.prismaService.user.findMany({
+        where: {
+          roles: {
+            some: {
+              name: RoleEnum.HOMEREPRESENTATIVE,
+            },
+          },
+        },
+        include: {
+          caregiver: true,
+          adultHomeRepresentative: {
+            include: {
+              adultHome: true,
+            },
+          },
+
+          roles: true,
+        },
+        omit: {
+          password: true,
+        },
+      });
+      return reps;
+    } catch (e) {
+      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
 }
