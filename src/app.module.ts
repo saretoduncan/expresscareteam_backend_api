@@ -11,6 +11,7 @@ import { AuthModule } from "./auth/auth.module";
 import { UsersModule } from "./users/users.module";
 import { RolesModule } from "./roles/roles.module";
 import { AdultHomeModule } from "./adult-home/adult-home.module";
+import { TypeOrmModule } from "@nestjs/typeorm";
 
 @Global()
 @Module({
@@ -18,6 +19,19 @@ import { AdultHomeModule } from "./adult-home/adult-home.module";
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: ".env",
+    }),
+
+    TypeOrmModule.forRootAsync({
+      useFactory: () => ({
+        type: "postgres",
+        url: process.env.DATABASE_URL,
+        ssl:
+          process.env.NODE_ENV === "production"
+            ? { rejectUnauthorized: false }
+            : false,
+        autoLoadEntities: true,
+        synchronize: true,
+      }),
     }),
     AuthModule,
 
@@ -27,8 +41,7 @@ import { AdultHomeModule } from "./adult-home/adult-home.module";
 
     AdultHomeModule,
   ],
-  providers: [PrismaService],
-  exports: [PrismaService],
- 
+  providers: [],
+  exports: [],
 })
 export class AppModule {}

@@ -6,10 +6,13 @@ WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
 
 RUN npm install -g pnpm
-RUN pnpm install --frozen-lockfile
 
+RUN pnpm install --frozen-lockfile
+RUN npm install -g dotenv-cli
 COPY . .
 
+# Set fake env var required for prisma generate
+ENV DATABASE_URL="postgresql://user:pass@localhost:5432/db?schema=public"
 RUN pnpm run build 
 RUN npx prisma generate
 
