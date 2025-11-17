@@ -49,6 +49,7 @@ export class CreateUserDto {
 
 @Expose()
 export class CaregiverResponseDto {
+  
   @ApiProperty({ example: '12345', description: 'Caregiver ID' })
   @Expose()
   id: string;
@@ -151,12 +152,12 @@ export class UserResponseDto {
   @ApiProperty({ type: CaregiverResponseDto, nullable: true, description: 'Caregiver details if applicable' })
   @Expose()
   @Type(() => CaregiverResponseDto)
-  caregiver: CaregiverResponseDto | null;
+  caregiver?: CaregiverResponseDto | null;
 
   @ApiProperty({ type: AdultHomeRepresentativeResponseDto, nullable: true, description: 'Adult home representative details if applicable' })
   @Expose()
   @Type(() => AdultHomeRepresentativeResponseDto)
-  adultHomeRepresentative: AdultHomeRepresentativeResponseDto | null;
+  adultHomeRepresentative?: AdultHomeRepresentativeResponseDto | null;
 }
 
 export class CreateCaregiverDto {

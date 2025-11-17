@@ -19,9 +19,10 @@ export class User {
   @Column({ unique: true })
   username: string;
 
-  @Column()
+  @Column({ select: false })
   password: string;
-  @OneToOne(() => Caregiver, (caregiver) => caregiver.user)
+
+  @OneToOne(() => Caregiver, (caregiver) => caregiver.user, { cascade: true })
   caregiver?: Caregiver;
 
   @OneToOne(() => AdultHomeRepresentative, (homeRep) => homeRep.user, {
