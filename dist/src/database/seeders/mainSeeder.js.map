@@ -1,0 +1,1 @@
+{"version":3,"file":"mainSeeder.js","sourceRoot":"","sources":["../../../../src/database/seeders/mainSeeder.ts"],"names":[],"mappings":";;AACA,qCAAyC;AAEzC,MAAqB,UAAU;IACtB,KAAK,CAAC,GAAG,CAAC,UAAU,EAAE,OAA6B;QACxD,MAAM,IAAI,gBAAiB,EAAE,CAAC,GAAG,CAAC,UAAU,CAAC,CAAC;IAChD,CAAC;CACF;AAJD,6BAIC"}
