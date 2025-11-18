@@ -5,7 +5,7 @@ import {
   CreateUserDto,
   UserResponseDto,
 } from "src/dtos/users.dtos";
-import { PrismaService } from "src/prisma/prisma.service";
+
 import { RolesService } from "src/roles/roles.service";
 import * as bcrypt from "bcrypt";
 import { RoleEnum } from "src/common/enums";
@@ -40,12 +40,15 @@ export class UsersService {
         throw new HttpException("User already exists", HttpStatus.BAD_REQUEST);
       }
       const getRole = await this.rolesServices.getRoleByName(user.role);
+      
       const password = await bcrypt.hash(user.password, 10);
       const newUser = this.userRepo.create({
         username: user.email,
         password: password,
       });
-      newUser.roles.push(getRole);
+     
+      newUser.roles= [getRole];
+      
       const savedUser = await this.userRepo.save(newUser);
       return await this.getUserById(savedUser.id);
     } catch (e) {
@@ -255,14 +258,28 @@ export class UsersService {
   //get all caregiver
   async getAllCaregivers(): Promise<UserResponseDto[]> {
     try {
-      const caregivers = await this.userRepo
-        .createQueryBuilder("user")
-        .leftJoinAndSelect("user.roles", "role")
-        .leftJoinAndSelect("user.caregiver", "caregiver")
-        .leftJoinAndSelect("user.adultHomeRepresentative", "rep")
-        .leftJoinAndSelect("rep.adultHome", "home")
-        .where("role.name = :roleName", { roleName: RoleEnum.CAREGIVER })
-        .getMany();
+      // const caregivers = await this.userRepo
+      //   .createQueryBuilder("user")
+      //   .leftJoinAndSelect("user.roles", "role")
+      //   .leftJoinAndSelect("user.caregiver", "caregiver")
+      //   .leftJoinAndSelect("user.adultHomeRepresentative", "rep")
+      //   .leftJoinAndSelect("rep.adultHome", "home")
+      //   .where("role.name = :roleName", { roleName: RoleEnum.CAREGIVER })
+      //   .getMany();
+
+      const caregivers = await this.userRepo.find({
+        relations: {
+          roles: true,
+          caregiver: true,
+          adultHomeRepresentative: true,
+        },
+        where: {
+          roles: {
+            name: RoleEnum.CAREGIVER,
+          },
+        },
+      });
+
       // The password field has `select: false` in the entity, so it's already excluded.
       // If you needed to manually transform, you could map the results.
       return caregivers.map((user) => {
@@ -329,17 +346,27 @@ export class UsersService {
         where: {
           id: createHomeRepDto.userId,
         },
-        relations:{adultHomeRepresentative:true,roles:true}
-        
-})
+        relations: { adultHomeRepresentative: true, roles: true },
+      });
+      if (!user)
+        throw new HttpException("User not created yet", HttpStatus.NOT_FOUND);
+
       const getHome = await this.adultHomeService.getAdultHomeById(
         createHomeRepDto.adultHomeId
       );
       const homeRepRole = await this.rolesServices.getRoleByName(
         RoleEnum.HOMEREPRESENTATIVE
       );
-    
-      return updateUser;
+      user.adultHomeRepresentative = this.adultHomeRepRepo.create({
+        firstName: createHomeRepDto.firstName,
+        lastName: createHomeRepDto.lastName,
+        email: createHomeRepDto.email,
+        phoneNumber: createHomeRepDto.phoneNumber,
+        jobTitle: createHomeRepDto.jobTitle,
+        adultHomeId: getHome.id,
+      });
+
+      return await this.userRepo.save(user);
     } catch (e) {
       throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -347,29 +374,18 @@ export class UsersService {
   //get all homeRep
   async getAllHomeRep(): Promise<UserResponseDto[]> {
     try {
-      const reps = await this.prismaService.user.findMany({
+      const homeReps = await this.userRepo.find({
         where: {
           roles: {
-            some: {
-              name: RoleEnum.HOMEREPRESENTATIVE,
-            },
+            name: RoleEnum.HOMEREPRESENTATIVE,
           },
         },
-        include: {
-          caregiver: true,
-          adultHomeRepresentative: {
-            include: {
-              adultHome: true,
-            },
-          },
-
+        relations: {
           roles: true,
-        },
-        omit: {
-          password: true,
+          adultHomeRepresentative: true,
         },
       });
-      return reps;
+      return homeReps;
     } catch (e) {
       throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }

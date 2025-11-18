@@ -3,11 +3,32 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { RolesResponseDto } from "src/dtos/roles.dtos";
 import { Roles } from "./roles.entity";
 import { Repository } from "typeorm";
+import { RoleEnum } from "src/common/enums";
 
 @Injectable()
 export class RolesService {
   constructor(@InjectRepository(Roles) private roleRepo: Repository<Roles>) {}
   //create role
+  onModuleInit() {
+    const createSeedRoles = async () => {
+      const roles = [
+        { name: RoleEnum.ADMIN },
+        { name: RoleEnum.CAREGIVER },
+        { name: RoleEnum.HOMEREPRESENTATIVE },
+      ];
+      for (const role of roles) {
+        const exists = await this.roleRepo.findOne({
+          where: {
+            name: role.name,
+          },
+        });
+        if (!exists) {
+          await this.roleRepo.save(role);
+        }
+      }
+    };
+    createSeedRoles();
+  }
   async createRole(role: string): Promise<RolesResponseDto> {
     const existingRole = await this.roleRepo.findOne({
       where: {

@@ -1,57 +1,58 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
 import {
-  AdultHomeResponseDto,
+
   CreateAdultHomeDto,
 } from "src/dtos/adultHome.dtos";
-import { PrismaService } from "src/prisma/prisma.service";
+
+import { AdultHome } from "./adult-home.entity";
+import { Repository } from "typeorm";
 
 @Injectable()
 export class AdultHomeService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    @InjectRepository(AdultHome) private adultHomeRepo: Repository<AdultHome>
+  ) {}
   //create home
   async createAdultHome(
     createAdultHomeDto: CreateAdultHomeDto
-  ): Promise<AdultHomeResponseDto> {
+  ): Promise<AdultHome> {
     try {
-      const home = await this.prismaService.adultHome.findUnique({
+      const home = await this.adultHomeRepo.findOne({
         where: {
           email: createAdultHomeDto.email,
         },
-        include: {
+        relations: {
           reps: true,
         },
       });
       if (home) {
-        throw new Error("Home already exists");
+        throw new Error("Home using provided email already exists");
       }
-      const newHome = await this.prismaService.adultHome.create({
-        data: {
-          email: createAdultHomeDto.email,
-          name: createAdultHomeDto.name,
-          phone: createAdultHomeDto.phone,
-          city: createAdultHomeDto.city,
-          state: createAdultHomeDto.state,
-          street: createAdultHomeDto.street,
-          zipcode: createAdultHomeDto.zipcode,
-          website: createAdultHomeDto.website,
-        },
-        include: {
-          reps: true,
-        },
+      const newHome =  this.adultHomeRepo.create({
+        name: createAdultHomeDto.name,
+        city: createAdultHomeDto.city,
+        email: createAdultHomeDto.email,
+        phone: createAdultHomeDto.phone,
+        state: createAdultHomeDto.state,
+        street: createAdultHomeDto.street,
+        website: createAdultHomeDto.website,
+        zipcode: createAdultHomeDto.zipcode,
       });
+      await this.adultHomeRepo.save(newHome);
       return newHome;
     } catch (e) {
       throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
   //get home by id
-  async getAdultHomeById(id: string): Promise<AdultHomeResponseDto> {
+  async getAdultHomeById(id: string): Promise<AdultHome> {
     try {
-      const home = await this.prismaService.adultHome.findUnique({
+      const home = await this.adultHomeRepo.findOne({
         where: {
-          id,
+          id: id,
         },
-        include: {
+        relations: {
           reps: true,
         },
       });
@@ -64,13 +65,9 @@ export class AdultHomeService {
     }
   }
   //get all homes
-  async getAllAdultHomes(): Promise<AdultHomeResponseDto[]> {
+  async getAllAdultHomes(): Promise<AdultHome[]> {
     try {
-      const homes = await this.prismaService.adultHome.findMany({
-        include: {
-          reps: true,
-        },
-      });
+      const homes = await this.adultHomeRepo.find();
       if (!homes) {
         throw new HttpException("No homes found", HttpStatus.NOT_FOUND);
       }
@@ -83,29 +80,20 @@ export class AdultHomeService {
   async updateHome(
     id: string,
     createAdultHomeDto: CreateAdultHomeDto
-  ): Promise<AdultHomeResponseDto> {
+  ): Promise<AdultHome> {
     //try catch
     try {
       const home = await this.getAdultHomeById(id);
-      const updatedHome = await this.prismaService.adultHome.update({
-        where: {
-          id: home.id,
-        },
-        data: {
-          name: createAdultHomeDto.name,
-          email: createAdultHomeDto.email,
-          phone: createAdultHomeDto.phone,
-          city: createAdultHomeDto.city,
-          state: createAdultHomeDto.state,
-          zipcode: createAdultHomeDto.zipcode,
-          street: createAdultHomeDto.street,
-          website: createAdultHomeDto.website,
-        },
-        include: {
-          reps: true,
-        },
-      });
-      return updatedHome;
+      home.name = createAdultHomeDto.name;
+      home.city = createAdultHomeDto.city;
+      home.email = createAdultHomeDto.email;
+      home.phone = createAdultHomeDto.phone;
+      home.state = createAdultHomeDto.state;
+      home.street = createAdultHomeDto.street;
+      home.website = createAdultHomeDto.website;
+      home.zipcode = createAdultHomeDto.zipcode;
+
+      return this.adultHomeRepo.save(home);
     } catch (e) {
       throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }

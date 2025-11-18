@@ -1,4 +1,4 @@
-import { PrimaryGeneratedColumn, Column, Entity, OneToOne, JoinColumn, ManyToMany } from "typeorm";
+import { PrimaryGeneratedColumn, Column, Entity, OneToOne, JoinColumn, ManyToMany, ManyToOne } from "typeorm";
 import { User } from "./users.entity";
 import { AdultHome } from "src/adult-home/adult-home.entity";
 @Entity("adult_home_representatives")
@@ -30,7 +30,7 @@ export class AdultHomeRepresentative {
   @OneToOne(()=>User, user=>user.adultHomeRepresentative)
   @JoinColumn({name:'userId'})
   user:User;
-  @ManyToMany(()=>AdultHome)
+  @ManyToOne(()=>AdultHome,home=>home.reps)
   @JoinColumn({name:'adultHomeId'})
   adultHome:AdultHome
 }
