@@ -1,0 +1,5 @@
+export declare enum RoleEnum {
+    ADMIN = "ADMIN",
+    HOMEREPRESENTATIVE = "HOMEREPRESENTATIVE",
+    CAREGIVER = "CAREGIVER"
+}
