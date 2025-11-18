@@ -1,13 +1,36 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
 import { RolesResponseDto } from "src/dtos/roles.dtos";
-import { PrismaService } from "src/prisma/prisma.service";
+import { Roles } from "./roles.entity";
+import { Repository } from "typeorm";
+import { RoleEnum } from "src/common/enums";
 
 @Injectable()
 export class RolesService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(@InjectRepository(Roles) private roleRepo: Repository<Roles>) {}
   //create role
+  onModuleInit() {
+    const createSeedRoles = async () => {
+      const roles = [
+        { name: RoleEnum.ADMIN },
+        { name: RoleEnum.CAREGIVER },
+        { name: RoleEnum.HOMEREPRESENTATIVE },
+      ];
+      for (const role of roles) {
+        const exists = await this.roleRepo.findOne({
+          where: {
+            name: role.name,
+          },
+        });
+        if (!exists) {
+          await this.roleRepo.save(role);
+        }
+      }
+    };
+    createSeedRoles();
+  }
   async createRole(role: string): Promise<RolesResponseDto> {
-    const existingRole = await this.prismaService.role.findUnique({
+    const existingRole = await this.roleRepo.findOne({
       where: {
         name: role,
       },
@@ -16,20 +39,19 @@ export class RolesService {
       throw new HttpException("Role already exists", HttpStatus.BAD_REQUEST);
     }
     try {
-      const newRole = await this.prismaService.role.create({
-        data: {
-          name: role,
-        },
+      const newRole = this.roleRepo.create({
+        name: role,
       });
-      return newRole;
+
+      return await this.roleRepo.save(newRole);
     } catch (e) {
       throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
   //update roles by name
-  async getRoleByName(role: string): Promise<RolesResponseDto> {
+  async getRoleByName(role: string): Promise<Roles> {
     try {
-      const getrole = await this.prismaService.role.findUnique({
+      const getrole = await this.roleRepo.findOne({
         where: {
           name: role,
         },
@@ -43,9 +65,9 @@ export class RolesService {
     }
   }
   //get role by id
-  async getRoleById(id: string): Promise<RolesResponseDto> {
+  async getRoleById(id: string): Promise<Roles> {
     try {
-      const role = await this.prismaService.role.findUnique({
+      const role = await this.roleRepo.findOne({
         where: {
           id: id,
         },
@@ -61,7 +83,7 @@ export class RolesService {
   //get all roles
   async getAllRoles(): Promise<RolesResponseDto[]> {
     try {
-      const roles = await this.prismaService.role.findMany();
+      const roles = await this.roleRepo.find();
       if (roles.length === 0) {
         throw new HttpException("No roles found", HttpStatus.NOT_FOUND);
       } else {
@@ -74,15 +96,10 @@ export class RolesService {
   //update role name
   async updateRole(id: string, role: string): Promise<RolesResponseDto> {
     try {
-      await this.getRoleById(id);
-      const updateRole = this.prismaService.role.update({
-        where: {
-          id: id,
-        },
-        data: {
-          name: role,
-        },
-      });
+      const getRole = await this.getRoleById(id);
+      getRole.name = role;
+
+      const updateRole = await this.roleRepo.save(getRole);
       return updateRole;
     } catch (e) {
       throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -91,30 +108,16 @@ export class RolesService {
   //delete role
   async deleteRole(id: string) {
     try {
-      const role = await this.prismaService.role.findUnique({
+      const role = await this.roleRepo.findOne({
         where: {
           id: id,
-        },
-        include: {
-          users: true,
         },
       });
       if (!role) {
         throw new HttpException("Role not found", HttpStatus.NOT_FOUND);
       }
-      await this.prismaService.role.update({
-        where: { id },
-        data: {
-          users: {
-            set: [],
-          },
-        },
-      });
-      await this.prismaService.role.delete({
-        where: {
-          id: id,
-        },
-      });
+
+      await this.roleRepo.delete(id);
       return;
     } catch (e) {
       throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);

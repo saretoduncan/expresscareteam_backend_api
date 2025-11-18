@@ -8,10 +8,12 @@ import {
   RegisterProviderDto,
 } from "src/dtos/auth.dtos";
 import { UserResponseDto } from "src/dtos/users.dtos";
-import { PrismaService } from "src/prisma/prisma.service";
 import { UsersService } from "src/users/users.service";
 import * as bcrypt from "bcrypt";
 import { Response } from "express";
+import { InjectRepository } from "@nestjs/typeorm";
+import { User } from "src/users/users.entity";
+import { Repository } from "typeorm";
 
 @Injectable()
 export class AuthService {
@@ -19,7 +21,7 @@ export class AuthService {
     private readonly userService: UsersService,
     private readonly adultHomeService: AdultHomeService,
     private readonly jwtService: JwtService,
-    private readonly prismaService: PrismaService
+    @InjectRepository(User) private readonly userRepo:Repository<User>
   ) {}
   //sigh jwt token
   private async signJwtToken(
@@ -181,22 +183,26 @@ export class AuthService {
   }
   async validateUser(username: string, password: string): Promise<any> {
     try {
+      
       username = username.trim();
       if (!username)
         throw new HttpException(
           "USERNAME field cannot be left empty",
           HttpStatus.BAD_REQUEST
         );
-      const user = await this.prismaService.user.findUnique({
-        where: {
-          username,
+      const user = await this.userRepo.findOne({
+        where:{
+          username:username
+        
         },
-        include: {
-          roles: true,
-          caregiver: true,
-          adultHomeRepresentative: true,
-        },
-      });
+       
+        relations:{
+          roles:true,
+          caregiver:true,
+          adultHomeRepresentative:true
+        }
+      })
+      console.log(user)
       if (!user) {
         throw new HttpException(
           "User is not registered with us",
@@ -208,7 +214,9 @@ export class AuthService {
         return null;
       }
       const { password: Pass, ...restUser } = user;
+  
       return restUser;
+      
     } catch (e) {
       throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
