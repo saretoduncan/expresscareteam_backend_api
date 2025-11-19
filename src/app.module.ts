@@ -6,6 +6,7 @@ import { UsersModule } from "./users/users.module";
 import { RolesModule } from "./roles/roles.module";
 import { AdultHomeModule } from "./adult-home/adult-home.module";
 import { TypeOrmModule } from "@nestjs/typeorm";
+import { EmailModule } from './email/email.module';
 
 @Global()
 @Module({
@@ -34,6 +35,8 @@ import { TypeOrmModule } from "@nestjs/typeorm";
     RolesModule,
 
     AdultHomeModule,
+
+    EmailModule,
   ],
   providers: [],
   exports: [],

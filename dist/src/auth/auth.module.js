@@ -16,14 +16,26 @@ const auth_controller_1 = require("./auth.controller");
 const typeorm_1 = require("@nestjs/typeorm");
 const users_entity_1 = require("../users/users.entity");
 const refreshJwt_strategy_1 = require("../strategy/refreshJwt.strategy");
+const accessJwt_strategy_1 = require("../strategy/accessJwt.strategy");
 let AuthModule = class AuthModule {
 };
 exports.AuthModule = AuthModule;
 exports.AuthModule = AuthModule = __decorate([
+    (0, common_1.Global)(),
     (0, common_1.Module)({
-        imports: [passport_1.PassportModule, jwt_1.JwtModule.register({}), typeorm_1.TypeOrmModule.forFeature([users_entity_1.User])],
-        providers: [auth_service_1.AuthService, local_strategy_1.LocalStrategy, refreshJwt_strategy_1.RefreshJwtStrategy],
-        controllers: [auth_controller_1.AuthController]
+        imports: [
+            passport_1.PassportModule,
+            jwt_1.JwtModule.register({}),
+            typeorm_1.TypeOrmModule.forFeature([users_entity_1.User]),
+        ],
+        providers: [
+            auth_service_1.AuthService,
+            local_strategy_1.LocalStrategy,
+            refreshJwt_strategy_1.RefreshJwtStrategy,
+            accessJwt_strategy_1.AccessJwtStrategy,
+        ],
+        controllers: [auth_controller_1.AuthController],
+        exports: [accessJwt_strategy_1.AccessJwtStrategy],
     })
 ], AuthModule);
 //# sourceMappingURL=auth.module.js.map
