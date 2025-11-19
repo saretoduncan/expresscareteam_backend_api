@@ -17,6 +17,7 @@
   "license": "ISC",
   "packageManager": "pnpm@10.20.0",
   "dependencies": {
+    "@nestjs-modules/mailer": "^2.0.2",
     "@nestjs/common": "^11.1.8",
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.1.8",
@@ -31,7 +32,9 @@
     "cookie-parser": "^1.4.7",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
+    "nodemailer": "^7.0.10",
     "passport": "^0.7.0",
+    "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
     "pg": "^8.16.3",
     "reflect-metadata": "~0.2.2",
@@ -45,6 +48,7 @@
     "@types/cookie-parser": "^1.4.10",
     "@types/express": "^5.0.5",
     "@types/node": "^24.9.2",
+    "@types/passport-jwt": "^4.0.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
   }

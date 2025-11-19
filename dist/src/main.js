@@ -9,18 +9,22 @@ const swagger_1 = require("@nestjs/swagger");
 dotenv.config();
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
+    app.enableCors({
+        credentials: true,
+    });
     app.use(cookieParser());
     app.setGlobalPrefix("api");
     app.useGlobalPipes(new common_1.ValidationPipe({
         transform: true,
     }));
-    const config = new swagger_1.DocumentBuilder().setTitle('Express Care Team API')
+    const config = new swagger_1.DocumentBuilder()
+        .setTitle("Express Care Team API")
         .setDescription("Express care team API Documentation")
         .setVersion("1.0")
         .addBearerAuth()
         .build();
     const documentFactory = () => swagger_1.SwaggerModule.createDocument(app, config);
-    swagger_1.SwaggerModule.setup('api-docs', app, documentFactory);
+    swagger_1.SwaggerModule.setup("api-docs", app, documentFactory);
     await app.listen(process.env.PORT || 3000);
 }
 bootstrap();

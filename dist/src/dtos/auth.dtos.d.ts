@@ -35,3 +35,13 @@ export declare class LoginUserDto {
 export declare class AuthUserResponseDto extends UserResponseDto {
     accessToken: string;
 }
+export declare class JwtPayloadDto {
+    username: string;
+    sub: string;
+    roles: string[];
+    iat: number;
+    exp: number;
+}
+export declare class RefreshAccessTokenResponseDto {
+    accessToken: string;
+}

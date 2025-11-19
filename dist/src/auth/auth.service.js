@@ -43,7 +43,7 @@ let AuthService = class AuthService {
         res.cookie(process.env.REFRESH_TOKEN_KEY, token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
-            sameSite: "none",
+            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
             maxAge: Number(process.env.REFRESH_TOKEN_EXPIRY_TIME),
             path: "/",
         });
@@ -132,13 +132,13 @@ let AuthService = class AuthService {
                 throw new common_1.HttpException("USERNAME field cannot be left empty", common_1.HttpStatus.BAD_REQUEST);
             const user = await this.userRepo.findOne({
                 where: {
-                    username: username
+                    username: username,
                 },
                 relations: {
                     roles: true,
                     caregiver: true,
-                    adultHomeRepresentative: true
-                }
+                    adultHomeRepresentative: true,
+                },
             });
             console.log(user);
             if (!user) {
@@ -150,6 +150,17 @@ let AuthService = class AuthService {
             }
             const { password: Pass, ...restUser } = user;
             return restUser;
+        }
+        catch (e) {
+            throw new common_1.HttpException(e.message, common_1.HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    async refreshToken(username, id, roles) {
+        try {
+            const accessToken = await this.signJwtToken(username, id, roles, process.env.ACCESS_TOKEN_SECRET, process.env.ACCESS_TOKEN_EXPIRY_TIME);
+            return {
+                accessToken: accessToken,
+            };
         }
         catch (e) {
             throw new common_1.HttpException(e.message, common_1.HttpStatus.INTERNAL_SERVER_ERROR);

@@ -4,6 +4,7 @@ import { AdultHomeService } from "src/adult-home/adult-home.service";
 import { RoleEnum } from "src/common/enums";
 import {
   AuthUserResponseDto,
+  RefreshAccessTokenResponseDto,
   RegisterCaregiverDto,
   RegisterProviderDto,
 } from "src/dtos/auth.dtos";
@@ -21,7 +22,7 @@ export class AuthService {
     private readonly userService: UsersService,
     private readonly adultHomeService: AdultHomeService,
     private readonly jwtService: JwtService,
-    @InjectRepository(User) private readonly userRepo:Repository<User>
+    @InjectRepository(User) private readonly userRepo: Repository<User>
   ) {}
   //sigh jwt token
   private async signJwtToken(
@@ -31,12 +32,12 @@ export class AuthService {
     secret: string,
     expireTime: string
   ) {
- 
     return await this.jwtService.signAsync(
       { username: username, sub: id, roles: roles },
       { expiresIn: Number(expireTime), secret: secret }
     );
   }
+  //sign refresh token
   private async signRefresherToken(
     username: string,
     id: string,
@@ -50,11 +51,12 @@ export class AuthService {
       process.env.REFRESH_TOKEN_EXPIRY_TIME!!
     );
   }
+  //set cookie
   private setCookie(res: Response, token: string) {
     res.cookie(process.env.REFRESH_TOKEN_KEY!!, token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "none",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       maxAge: Number(process.env.REFRESH_TOKEN_EXPIRY_TIME!!),
       path: "/",
     });
@@ -107,7 +109,6 @@ export class AuthService {
     res: Response
   ): Promise<AuthUserResponseDto> {
     try {
-     
       const [newUser, newHome] = await Promise.all([
         this.userService.createUser({
           email: registerProviderDto.email,
@@ -183,7 +184,6 @@ export class AuthService {
   }
   async validateUser(username: string, password: string): Promise<any> {
     try {
-      
       username = username.trim();
       if (!username)
         throw new HttpException(
@@ -191,18 +191,17 @@ export class AuthService {
           HttpStatus.BAD_REQUEST
         );
       const user = await this.userRepo.findOne({
-        where:{
-          username:username
-        
+        where: {
+          username: username,
         },
-       
-        relations:{
-          roles:true,
-          caregiver:true,
-          adultHomeRepresentative:true
-        }
-      })
-      console.log(user)
+
+        relations: {
+          roles: true,
+          caregiver: true,
+          adultHomeRepresentative: true,
+        },
+      });
+      console.log(user);
       if (!user) {
         throw new HttpException(
           "User is not registered with us",
@@ -214,14 +213,33 @@ export class AuthService {
         return null;
       }
       const { password: Pass, ...restUser } = user;
-  
+
       return restUser;
-      
     } catch (e) {
       throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
-
+  //refresh access token
+  async refreshToken(
+    username: string,
+    id: string,
+    roles: string[]
+  ): Promise<RefreshAccessTokenResponseDto> {
+    try {
+      const accessToken = await this.signJwtToken(
+        username,
+        id,
+        roles,
+        process.env.ACCESS_TOKEN_SECRET!!,
+        process.env.ACCESS_TOKEN_EXPIRY_TIME!!
+      );
+      return {
+        accessToken: accessToken,
+      };
+    } catch (e) {
+      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
   //update password
   async updatePassword(password: string, userId: string) {
     try {
