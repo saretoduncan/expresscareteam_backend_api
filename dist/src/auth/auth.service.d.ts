@@ -25,7 +25,7 @@ export declare class AuthService {
     validateUser(username: string, password: string): Promise<any>;
     refreshToken(username: string, id: string, roles: string[]): Promise<RefreshAccessTokenResponseDto>;
     sendUpdatePassOtp(email: string): Promise<void>;
-    verifyResetOtp(email: string, otpCode: string): Promise<void>;
+    verifyResetOtp(email: string, otpCode: string): Promise<RefreshAccessTokenResponseDto>;
     updatePassword(password: string, id: string): Promise<void>;
     logout(res: Response): Promise<void>;
 }

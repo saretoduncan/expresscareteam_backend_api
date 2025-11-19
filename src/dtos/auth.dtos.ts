@@ -11,7 +11,7 @@ import {
   MinLength,
   ValidatorConstraint,
 } from "class-validator";
-import { RoleEnum } from "src/common/enums";
+
 import { UserResponseDto } from "./users.dtos";
 import { Expose } from "class-transformer";
 import { ApiProperty } from "@nestjs/swagger";
@@ -337,19 +337,22 @@ export class VerifyResetPasswordOtp {
   @IsNotEmpty()
   email: string;
 
-  @ApiProperty({
-    description:
-      "New password for the account. Must be at least 6 characters, including uppercase and lowercase letters.",
-    example: "NewPassword123",
-  })
+ 
   @ApiProperty({
     description: "OTP code sent to the user's email for verification",
     example: "123456",
   })
+  @IsNotEmpty()
+  @IsString()
   otp: string;
 }
 
 export class UpdatePasswordRequestDto {
+  @ApiProperty({
+    description:
+      "Password for the account. Must be at least 6 characters, including uppercase and lowercase letters.",
+    example: "Password123",
+  })
   @IsString()
   @MinLength(6, { message: "Password must be at least 6 characters long" })
   @Matches(/^(?=.*[a-z])(?=.*[A-Z]).{6,}$/, {

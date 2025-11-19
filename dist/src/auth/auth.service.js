@@ -146,7 +146,6 @@ let AuthService = class AuthService {
                     adultHomeRepresentative: true,
                 },
             });
-            console.log(user);
             if (!user) {
                 throw new common_1.HttpException("User is not registered with us", common_1.HttpStatus.UNAUTHORIZED);
             }
@@ -177,7 +176,7 @@ let AuthService = class AuthService {
             const user = await this.userService.getUserByUsername(email);
             const otpCode = Math.floor(100000 + Math.random() * 900000);
             await this.redisService.set(user.username, otpCode.toString(), 60 * 10);
-            this.emailService
+            await this.emailService
                 .sendPasswordResetCodeMail(email, user.adultHomeRepresentative?.firstName ??
                 user.caregiver?.firstName ??
                 "", otpCode.toString())
@@ -197,21 +196,27 @@ let AuthService = class AuthService {
             where: {
                 username: email,
             },
+            relations: {
+                roles: true,
+            },
         });
         if (!user) {
             throw new common_1.UnauthorizedException("The Otp is Invalid");
         }
         const accessToken = await this.signJwtToken(user.username, user.id, user.roles.map((r) => r.name), process.env.RESET_PASSWORD_TOKEN_SECRET, process.env.ACCESS_TOKEN_EXPIRY_TIME);
+        await this.redisService.del(email);
+        return { accessToken: accessToken };
     }
     async updatePassword(password, id) {
         try {
             const user = await this.userRepo.findOne({
                 where: {
-                    id,
+                    id: id,
                 },
             });
             if (!user)
                 throw new common_1.UnauthorizedException("The OTP is invalid");
+            console.log(user);
             await this.userService.updatePassword(user.id, password);
             return;
         }

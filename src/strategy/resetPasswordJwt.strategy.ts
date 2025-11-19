@@ -16,9 +16,15 @@ export class ResetPasswordJwtStrategy extends PassportStrategy(
     });
   }
   validate(payload: JwtPayloadDto) {
-    if (!payload.sub || !payload.username || !payload.roles) {
-      throw new UnauthorizedException("invalid access token");
+    
+    try {
+     
+      if (!payload.sub || !payload.username || !payload.roles) {
+        throw new UnauthorizedException("invalid access token");
+      }
+      return payload;
+    } catch (e) {
+      throw new UnauthorizedException(e.message);
     }
-    return payload;
   }
 }

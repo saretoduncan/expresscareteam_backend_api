@@ -5,6 +5,9 @@ import { Response } from "express";
 interface RequestWithUser extends Request {
     user: UserResponseDto;
 }
+interface RequestWithJwtPayload extends Request {
+    user: JwtPayloadDto;
+}
 export declare class AuthController {
     private readonly authService;
     constructor(authService: AuthService);
@@ -13,8 +16,8 @@ export declare class AuthController {
     registerProvider(req: RegisterProviderDto, res: Response): Promise<AuthUserResponseDto>;
     refreshToken(req: RequestWithUser, res: Response): Promise<RefreshAccessTokenResponseDto>;
     requestResetPasswordOtp(req: ResetPasswordRequestDto): Promise<void>;
-    verifyResetPassword(req: VerifyResetPasswordOtp): Promise<void>;
-    resetPassword(req: JwtPayloadDto, body: UpdatePasswordRequestDto): Promise<void>;
+    verifyResetPassword(req: VerifyResetPasswordOtp): Promise<RefreshAccessTokenResponseDto>;
+    resetPassword(req: RequestWithJwtPayload, body: UpdatePasswordRequestDto): Promise<void>;
     logout(res: Response): Promise<void>;
 }
 export {};

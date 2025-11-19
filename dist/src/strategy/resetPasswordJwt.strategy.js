@@ -22,10 +22,15 @@ let ResetPasswordJwtStrategy = class ResetPasswordJwtStrategy extends (0, passpo
         });
     }
     validate(payload) {
-        if (!payload.sub || !payload.username || !payload.roles) {
-            throw new common_1.UnauthorizedException("invalid access token");
+        try {
+            if (!payload.sub || !payload.username || !payload.roles) {
+                throw new common_1.UnauthorizedException("invalid access token");
+            }
+            return payload;
         }
-        return payload;
+        catch (e) {
+            throw new common_1.UnauthorizedException(e.message);
+        }
     }
 };
 exports.ResetPasswordJwtStrategy = ResetPasswordJwtStrategy;

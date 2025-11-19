@@ -125,9 +125,7 @@ export class UsersService {
           caregiver: true,
           adultHomeRepresentative: true,
         },
-        select: {
-          password: true,
-        },
+       
       });
       if (!user)
         throw new HttpException("User not found", HttpStatus.NOT_FOUND);

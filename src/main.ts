@@ -25,7 +25,12 @@ async function bootstrap() {
     .setTitle("Express Care Team API")
     .setDescription("Express care team API Documentation")
     .setVersion("1.0")
-    .addBearerAuth()
+    .addBearerAuth({
+      type: "http",
+      scheme: "bearer",
+      bearerFormat: "JWT",
+      in: "header",
+    })
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup("api-docs", app, documentFactory);

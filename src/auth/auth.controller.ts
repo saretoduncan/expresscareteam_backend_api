@@ -24,11 +24,40 @@ import {
   VerifyResetPasswordOtp,
 } from "src/dtos/auth.dtos";
 import { Response } from "express";
-import { ApiBody, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from "@nestjs/swagger";
 import { RefreshJwtGuard, ResetPasswordGuard } from "src/guards/index.guards";
+
+/**
+ * Interface extending the standard Request object to include the authenticated user.
+ */
 interface RequestWithUser extends Request {
+  /**
+   * The authenticated user information attached to the request.
+   */
   user: UserResponseDto;
 }
+
+/**
+ * Interface extending the standard Request object to include the JWT payload.
+ */
+interface RequestWithJwtPayload extends Request {
+  /**
+   * The JWT payload extracted from the token, containing user identification data.
+   */
+  user: JwtPayloadDto;
+}
+
+/**
+ * Controller responsible for handling authentication-related endpoints.
+ * Provides methods for user login, registration, token refresh, password reset,
+ * and logout functionalities.
+ */
 @ApiTags("auth")
 @Controller("auth")
 export class AuthController {
@@ -59,7 +88,16 @@ export class AuthController {
     const loggedInUser = await this.authService.loginUser(user, res);
     return loggedInUser;
   }
-  //register caregiver
+
+  /**
+   * Register a new caregiver account.
+   * Creates a new caregiver user account with the provided details.
+   * Returns the authenticated user info and JWT.
+   *
+   * @param req The registration details for the caregiver.
+   * @param res The response object with passthrough enabled.
+   * @returns The newly registered caregiver user information.
+   */
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
     summary: "Register a new caregiver account",
@@ -82,7 +120,15 @@ export class AuthController {
     return user;
   }
 
-  //register provider
+  /**
+   * Register a new provider account.
+   * Creates a new provider user account with the provided details.
+   * Returns the authenticated user info and JWT.
+   *
+   * @param req The registration details for the provider.
+   * @param res The response object with passthrough enabled.
+   * @returns The newly registered provider user information.
+   */
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
     summary: "Register a new provider account",
@@ -115,6 +161,21 @@ export class AuthController {
     description: "Access token refreshed successfully",
     type: RefreshAccessTokenResponseDto,
   })
+
+  /**
+   * Refresh the access token using a valid refresh token.
+   * Requires the RefreshJwtGuard to validate the refresh token.
+   */
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: "Refresh Access Token",
+    description: "Create a new access token using the refresh token",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "Access token refreshed successfully",
+    type: RefreshAccessTokenResponseDto,
+  })
   @UseGuards(RefreshJwtGuard)
   @Post("refreshAccessToken")
   async refreshToken(
@@ -128,19 +189,25 @@ export class AuthController {
     );
     return token;
   }
-  //send reset password email
 
+  /**
+   * Request a password reset OTP to be sent to the user's email.
+   */
   @HttpCode(HttpStatus.OK)
   @ApiBody({ type: ResetPasswordRequestDto })
   @ApiResponse({
     status: 200,
-    description: "Otp email successfully sent",
+    description: "OTP email successfully sent",
   })
-  @Post("/requestResetOTP")
+  @Post("/requestResetOtp")
   async requestResetPasswordOtp(@Body() req: ResetPasswordRequestDto) {
     return await this.authService.sendUpdatePassOtp(req.email);
   }
-  //verify reset password
+ 
+  
+  /**
+   * Verify the OTP sent to the user's email for password reset.
+   */
   @HttpCode(HttpStatus.OK)
   @ApiBody({ type: VerifyResetPasswordOtp })
   @ApiResponse({
@@ -152,24 +219,35 @@ export class AuthController {
   async verifyResetPassword(@Body() req: VerifyResetPasswordOtp) {
     return await this.authService.verifyResetOtp(req.email, req.otp);
   }
-  //reset password
+ 
 
+  /**
+   * Reset the user's password.
+   * Requires a valid JWT from the ResetPasswordGuard.
+   */
   @HttpCode(HttpStatus.OK)
   @ApiBody({ type: UpdatePasswordRequestDto })
   @ApiResponse({
     status: 200,
-    description: "password updated successfully",
+    description: "Password updated successfully",
   })
+  @ApiBearerAuth()
   @UseGuards(ResetPasswordGuard)
   @Patch("/resetPassword")
   async resetPassword(
-    @Request() req: JwtPayloadDto,
+    @Request() req: RequestWithJwtPayload,
     @Body() body: UpdatePasswordRequestDto
   ) {
-    return await this.authService.updatePassword(body.password, req.sub);
+    console.log(req.user.sub);
+    return await this.authService.updatePassword(body.password, req.user.sub);
   }
 
-  //logout user
+  /**
+   * Logout the currently authenticated user.
+   * Clears authentication cookies and invalidates session.
+   *
+   * @param res The response object with passthrough enabled.
+   */
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: "Logout user",

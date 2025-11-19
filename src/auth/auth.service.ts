@@ -210,7 +210,7 @@ export class AuthService {
           adultHomeRepresentative: true,
         },
       });
-      console.log(user);
+     
       if (!user) {
         throw new HttpException(
           "User is not registered with us",
@@ -257,7 +257,7 @@ export class AuthService {
       await this.redisService.set(user.username, otpCode.toString(), 60 * 10);
       // let name:string
 
-      this.emailService
+      await this.emailService
         .sendPasswordResetCodeMail(
           email,
           user.adultHomeRepresentative?.firstName ??
@@ -270,7 +270,10 @@ export class AuthService {
       throw new HttpException(e.message, e.statusCode);
     }
   }
-  async verifyResetOtp(email: string, otpCode: string) {
+  async verifyResetOtp(
+    email: string,
+    otpCode: string
+  ): Promise<RefreshAccessTokenResponseDto> {
     const getOtp = await this.redisService.get(email);
     if (!getOtp) throw new UnauthorizedException("The OTP is invalid");
     if (getOtp !== otpCode)
@@ -279,10 +282,14 @@ export class AuthService {
       where: {
         username: email,
       },
+      relations: {
+        roles: true,
+      },
     });
     if (!user) {
       throw new UnauthorizedException("The Otp is Invalid");
     }
+
     const accessToken = await this.signJwtToken(
       user.username,
       user.id,
@@ -290,16 +297,19 @@ export class AuthService {
       process.env.RESET_PASSWORD_TOKEN_SECRET!!,
       process.env.ACCESS_TOKEN_EXPIRY_TIME!!
     );
+    await this.redisService.del(email);
+    return { accessToken: accessToken };
   }
   //update password
   async updatePassword(password: string, id: string) {
     try {
       const user = await this.userRepo.findOne({
         where: {
-          id,
+          id: id,
         },
       });
       if (!user) throw new UnauthorizedException("The OTP is invalid");
+      console.log(user)
       await this.userService.updatePassword(user.id, password);
       return;
     } catch (e) {

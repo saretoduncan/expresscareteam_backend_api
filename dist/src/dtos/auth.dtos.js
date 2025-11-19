@@ -415,13 +415,11 @@ __decorate([
 ], VerifyResetPasswordOtp.prototype, "email", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({
-        description: "New password for the account. Must be at least 6 characters, including uppercase and lowercase letters.",
-        example: "NewPassword123",
-    }),
-    (0, swagger_1.ApiProperty)({
         description: "OTP code sent to the user's email for verification",
         example: "123456",
     }),
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], VerifyResetPasswordOtp.prototype, "otp", void 0);
 class UpdatePasswordRequestDto {
@@ -430,6 +428,10 @@ class UpdatePasswordRequestDto {
 }
 exports.UpdatePasswordRequestDto = UpdatePasswordRequestDto;
 __decorate([
+    (0, swagger_1.ApiProperty)({
+        description: "Password for the account. Must be at least 6 characters, including uppercase and lowercase letters.",
+        example: "Password123",
+    }),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.MinLength)(6, { message: "Password must be at least 6 characters long" }),
     (0, class_validator_1.Matches)(/^(?=.*[a-z])(?=.*[A-Z]).{6,}$/, {
