@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.RefreshAccessTokenResponseDto = exports.AuthUserResponseDto = exports.LoginUserDto = exports.RegisterProviderDto = exports.RegisterCaregiverDto = void 0;
+exports.RefreshAccessTokenResponseDto = exports.JwtPayloadDto = exports.AuthUserResponseDto = exports.LoginUserDto = exports.RegisterProviderDto = exports.RegisterCaregiverDto = void 0;
 const class_validator_1 = require("class-validator");
 const users_dtos_1 = require("./users.dtos");
 const class_transformer_1 = require("class-transformer");
@@ -311,6 +311,51 @@ __decorate([
     (0, class_transformer_1.Expose)(),
     __metadata("design:type", String)
 ], AuthUserResponseDto.prototype, "accessToken", void 0);
+class JwtPayloadDto {
+    username;
+    sub;
+    roles;
+    iat;
+    exp;
+}
+exports.JwtPayloadDto = JwtPayloadDto;
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        description: "Username or email of the authenticated user",
+        example: "cynthia.wanjiku@example.com",
+    }),
+    __metadata("design:type", String)
+], JwtPayloadDto.prototype, "username", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        description: "User unique identifier (JWT subject)",
+        example: "3d5f28b4-3b36-4bb2-9372-1187f0ad9abd",
+    }),
+    __metadata("design:type", String)
+], JwtPayloadDto.prototype, "sub", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        description: "List of roles assigned to the user",
+        example: ["HOMEREPRESENTATIVE"],
+        isArray: true,
+        type: String,
+    }),
+    __metadata("design:type", Array)
+], JwtPayloadDto.prototype, "roles", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        description: "Issued at timestamp",
+        example: 1763452612,
+    }),
+    __metadata("design:type", Number)
+], JwtPayloadDto.prototype, "iat", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        description: "Expiry timestamp",
+        example: 4355452612,
+    }),
+    __metadata("design:type", Number)
+], JwtPayloadDto.prototype, "exp", void 0);
 class RefreshAccessTokenResponseDto {
     accessToken;
 }

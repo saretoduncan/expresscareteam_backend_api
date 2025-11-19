@@ -18,6 +18,7 @@ const auth_service_1 = require("./auth.service");
 const passport_1 = require("@nestjs/passport");
 const auth_dtos_1 = require("../dtos/auth.dtos");
 const swagger_1 = require("@nestjs/swagger");
+const index_guards_1 = require("../guards/index.guards");
 let AuthController = class AuthController {
     authService;
     constructor(authService) {
@@ -118,6 +119,7 @@ __decorate([
         description: "Access token refreshed successfully",
         type: auth_dtos_1.RefreshAccessTokenResponseDto,
     }),
+    (0, common_1.UseGuards)(index_guards_1.RefreshJwtGuard),
     (0, common_1.Post)("refreshAccessToken"),
     __param(0, (0, common_1.Request)()),
     __param(1, (0, common_1.Res)({ passthrough: true })),

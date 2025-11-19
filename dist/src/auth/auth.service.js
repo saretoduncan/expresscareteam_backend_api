@@ -43,7 +43,7 @@ let AuthService = class AuthService {
         res.cookie(process.env.REFRESH_TOKEN_KEY, token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
-            sameSite: "none",
+            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
             maxAge: Number(process.env.REFRESH_TOKEN_EXPIRY_TIME),
             path: "/",
         });

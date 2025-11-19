@@ -20,7 +20,8 @@ import {
 } from "src/dtos/auth.dtos";
 import { Response } from "express";
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
-interface RequstWithUser extends Request {
+import { RefreshJwtGuard } from "src/guards/index.guards";
+interface RequestWithUser extends Request {
   user: UserResponseDto;
 }
 @ApiTags("auth")
@@ -46,7 +47,7 @@ export class AuthController {
   })
   @Post("login")
   async login(
-    @Request() req: RequstWithUser,
+    @Request() req: RequestWithUser,
     @Res({ passthrough: true }) res: Response
   ) {
     const user = req.user;
@@ -99,7 +100,7 @@ export class AuthController {
     return user;
   }
 
-  //
+  //refresh token
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: "Refresh Access Token",
@@ -110,9 +111,10 @@ export class AuthController {
     description: "Access token refreshed successfully",
     type: RefreshAccessTokenResponseDto,
   })
+  @UseGuards(RefreshJwtGuard)
   @Post("refreshAccessToken")
   async refreshToken(
-    @Request() req: RequstWithUser,
+    @Request() req: RequestWithUser,
     @Res({ passthrough: true }) res: Response
   ) {
     const token = await this.authService.refreshToken(

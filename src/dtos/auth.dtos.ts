@@ -257,6 +257,41 @@ export class AuthUserResponseDto extends UserResponseDto {
   accessToken: string;
 }
 
+//jwt payload 
+export class JwtPayloadDto {
+  @ApiProperty({
+    description: "Username or email of the authenticated user",
+    example: "cynthia.wanjiku@example.com",
+  })
+  username: string;
+
+  @ApiProperty({
+    description: "User unique identifier (JWT subject)",
+    example: "3d5f28b4-3b36-4bb2-9372-1187f0ad9abd",
+  })
+  sub: string;
+
+  @ApiProperty({
+    description: "List of roles assigned to the user",
+    example: ["HOMEREPRESENTATIVE"],
+    isArray: true,
+    type: String,
+  })
+  roles: string[];
+
+  @ApiProperty({
+    description: "Issued at timestamp",
+    example: 1763452612,
+  })
+  iat: number;
+
+  @ApiProperty({
+    description: "Expiry timestamp",
+    example: 4355452612,
+  })
+  exp: number;
+}
+
 export class RefreshAccessTokenResponseDto {
   @ApiProperty({
     description: "Newly issued JWT access token after refreshing",
