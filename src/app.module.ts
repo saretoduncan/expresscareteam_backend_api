@@ -7,6 +7,7 @@ import { RolesModule } from "./roles/roles.module";
 import { AdultHomeModule } from "./adult-home/adult-home.module";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { EmailModule } from './email/email.module';
+import { RedisModule } from './redis/redis.module';
 
 @Global()
 @Module({
@@ -37,6 +38,8 @@ import { EmailModule } from './email/email.module';
     AdultHomeModule,
 
     EmailModule,
+
+    RedisModule,
   ],
   providers: [],
   exports: [],

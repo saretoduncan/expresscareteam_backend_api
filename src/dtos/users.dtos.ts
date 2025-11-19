@@ -39,6 +39,8 @@ export class CreateUserDto {
   })
   password: string;
 
+  
+
   @ApiProperty({ example: 'HOMEREPRESENTATIVE', description: 'User role, must be HOMEREPRESENTATIVE or CAREGIVER' })
   @IsEnum(RoleEnum, {
     message: "Role must be one of the following:HOMEREPRESENTATIVE, CAREGIVER",

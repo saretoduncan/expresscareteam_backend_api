@@ -15,6 +15,7 @@ const roles_module_1 = require("./roles/roles.module");
 const adult_home_module_1 = require("./adult-home/adult-home.module");
 const typeorm_1 = require("@nestjs/typeorm");
 const email_module_1 = require("./email/email.module");
+const redis_module_1 = require("./redis/redis.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -42,6 +43,7 @@ exports.AppModule = AppModule = __decorate([
             roles_module_1.RolesModule,
             adult_home_module_1.AdultHomeModule,
             email_module_1.EmailModule,
+            redis_module_1.RedisModule,
         ],
         providers: [],
         exports: [],

@@ -3,6 +3,7 @@ export declare class RegisterCaregiverDto {
     firstName: string;
     lastName: string;
     password: string;
+    confirmPassword: string;
     email: string;
     dateOfBirth: Date;
     gender: string;
@@ -17,6 +18,7 @@ export declare class RegisterProviderDto {
     last_name: string;
     email: string;
     password: string;
+    confirmPassword: string;
     phone_number: string;
     job_title: string;
     adult_home_name: string;
@@ -44,4 +46,15 @@ export declare class JwtPayloadDto {
 }
 export declare class RefreshAccessTokenResponseDto {
     accessToken: string;
+}
+export declare class ResetPasswordRequestDto {
+    email: string;
+}
+export declare class VerifyResetPasswordOtp {
+    email: string;
+    otp: string;
+}
+export declare class UpdatePasswordRequestDto {
+    password: string;
+    confirmPassword: string;
 }

@@ -1,7 +1,7 @@
 import { Strategy } from "passport-jwt";
 import { JwtPayloadDto } from "src/dtos/auth.dtos";
 import { UsersService } from "src/users/users.service";
-declare const RefreshJwtStrategy_base: new (...args: [opt: import("passport-jwt").StrategyOptionsWithRequest] | [opt: import("passport-jwt").StrategyOptionsWithoutRequest]) => Strategy & {
+declare const RefreshJwtStrategy_base: new (...args: [opt: import("passport-jwt").StrategyOptionsWithoutRequest] | [opt: import("passport-jwt").StrategyOptionsWithRequest]) => Strategy & {
     validate(...args: any[]): unknown;
 };
 export declare class RefreshJwtStrategy extends RefreshJwtStrategy_base {

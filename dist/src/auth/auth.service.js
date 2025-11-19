@@ -22,15 +22,21 @@ const bcrypt = require("bcrypt");
 const typeorm_1 = require("@nestjs/typeorm");
 const users_entity_1 = require("../users/users.entity");
 const typeorm_2 = require("typeorm");
+const email_service_1 = require("../email/email.service");
+const redis_service_1 = require("../redis/redis.service");
 let AuthService = class AuthService {
     userService;
     adultHomeService;
     jwtService;
+    emailService;
+    redisService;
     userRepo;
-    constructor(userService, adultHomeService, jwtService, userRepo) {
+    constructor(userService, adultHomeService, jwtService, emailService, redisService, userRepo) {
         this.userService = userService;
         this.adultHomeService = adultHomeService;
         this.jwtService = jwtService;
+        this.emailService = emailService;
+        this.redisService = redisService;
         this.userRepo = userRepo;
     }
     async signJwtToken(username, id, roles, secret, expireTime) {
@@ -166,9 +172,47 @@ let AuthService = class AuthService {
             throw new common_1.HttpException(e.message, common_1.HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    async updatePassword(password, userId) {
+    async sendUpdatePassOtp(email) {
         try {
-            await this.userService.updatePassword(userId, password);
+            const user = await this.userService.getUserByUsername(email);
+            const otpCode = Math.floor(100000 + Math.random() * 900000);
+            await this.redisService.set(user.username, otpCode.toString(), 60 * 10);
+            this.emailService
+                .sendPasswordResetCodeMail(email, user.adultHomeRepresentative?.firstName ??
+                user.caregiver?.firstName ??
+                "", otpCode.toString())
+                .catch((err) => console.error("email job failed", err));
+        }
+        catch (e) {
+            throw new common_1.HttpException(e.message, e.statusCode);
+        }
+    }
+    async verifyResetOtp(email, otpCode) {
+        const getOtp = await this.redisService.get(email);
+        if (!getOtp)
+            throw new common_1.UnauthorizedException("The OTP is invalid");
+        if (getOtp !== otpCode)
+            throw new common_1.UnauthorizedException("The OTP is invalid");
+        const user = await this.userRepo.findOne({
+            where: {
+                username: email,
+            },
+        });
+        if (!user) {
+            throw new common_1.UnauthorizedException("The Otp is Invalid");
+        }
+        const accessToken = await this.signJwtToken(user.username, user.id, user.roles.map((r) => r.name), process.env.RESET_PASSWORD_TOKEN_SECRET, process.env.ACCESS_TOKEN_EXPIRY_TIME);
+    }
+    async updatePassword(password, id) {
+        try {
+            const user = await this.userRepo.findOne({
+                where: {
+                    id,
+                },
+            });
+            if (!user)
+                throw new common_1.UnauthorizedException("The OTP is invalid");
+            await this.userService.updatePassword(user.id, password);
             return;
         }
         catch (e) {
@@ -183,10 +227,12 @@ let AuthService = class AuthService {
 exports.AuthService = AuthService;
 exports.AuthService = AuthService = __decorate([
     (0, common_1.Injectable)(),
-    __param(3, (0, typeorm_1.InjectRepository)(users_entity_1.User)),
+    __param(5, (0, typeorm_1.InjectRepository)(users_entity_1.User)),
     __metadata("design:paramtypes", [users_service_1.UsersService,
         adult_home_service_1.AdultHomeService,
         jwt_1.JwtService,
+        email_service_1.EmailService,
+        redis_service_1.RedisService,
         typeorm_2.Repository])
 ], AuthService);
 //# sourceMappingURL=auth.service.js.map

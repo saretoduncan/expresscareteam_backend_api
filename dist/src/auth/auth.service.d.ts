@@ -6,12 +6,16 @@ import { UsersService } from "src/users/users.service";
 import { Response } from "express";
 import { User } from "src/users/users.entity";
 import { Repository } from "typeorm";
+import { EmailService } from "src/email/email.service";
+import { RedisService } from "src/redis/redis.service";
 export declare class AuthService {
     private readonly userService;
     private readonly adultHomeService;
     private readonly jwtService;
+    private readonly emailService;
+    private readonly redisService;
     private readonly userRepo;
-    constructor(userService: UsersService, adultHomeService: AdultHomeService, jwtService: JwtService, userRepo: Repository<User>);
+    constructor(userService: UsersService, adultHomeService: AdultHomeService, jwtService: JwtService, emailService: EmailService, redisService: RedisService, userRepo: Repository<User>);
     private signJwtToken;
     private signRefresherToken;
     private setCookie;
@@ -20,6 +24,8 @@ export declare class AuthService {
     loginUser(user: UserResponseDto, res: Response): Promise<AuthUserResponseDto>;
     validateUser(username: string, password: string): Promise<any>;
     refreshToken(username: string, id: string, roles: string[]): Promise<RefreshAccessTokenResponseDto>;
-    updatePassword(password: string, userId: string): Promise<void>;
+    sendUpdatePassOtp(email: string): Promise<void>;
+    verifyResetOtp(email: string, otpCode: string): Promise<void>;
+    updatePassword(password: string, id: string): Promise<void>;
     logout(res: Response): Promise<void>;
 }

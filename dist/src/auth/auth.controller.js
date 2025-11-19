@@ -41,6 +41,15 @@ let AuthController = class AuthController {
         const token = await this.authService.refreshToken(req.user.username, req.user.id, req.user.roles.map((r) => r.name));
         return token;
     }
+    async requestResetPasswordOtp(req) {
+        return await this.authService.sendUpdatePassOtp(req.email);
+    }
+    async verifyResetPassword(req) {
+        return await this.authService.verifyResetOtp(req.email, req.otp);
+    }
+    async resetPassword(req, body) {
+        return await this.authService.updatePassword(body.email, req.sub);
+    }
     async logout(res) {
         await this.authService.logout(res);
         return;
@@ -127,6 +136,32 @@ __decorate([
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "refreshToken", null);
+__decorate([
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    (0, common_1.Post)("/requestResetOTP"),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [auth_dtos_1.ResetPasswordRequestDto]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "requestResetPasswordOtp", null);
+__decorate([
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    (0, common_1.Post)("/verifyResetOtp"),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [auth_dtos_1.VerifyResetPasswordOtp]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "verifyResetPassword", null);
+__decorate([
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    (0, common_1.Patch)("/resetPassword"),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [auth_dtos_1.JwtPayloadDto,
+        auth_dtos_1.ResetPasswordRequestDto]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "resetPassword", null);
 __decorate([
     (0, common_1.HttpCode)(common_1.HttpStatus.OK),
     (0, swagger_1.ApiOperation)({

@@ -7,16 +7,20 @@ import {
   Post,
   UseGuards,
   Body,
+  Patch,
 } from "@nestjs/common";
 import { UserResponseDto } from "src/dtos/users.dtos";
 import { AuthService } from "./auth.service";
 import { AuthGuard } from "@nestjs/passport";
 import {
   AuthUserResponseDto,
+  JwtPayloadDto,
   LoginUserDto,
   RefreshAccessTokenResponseDto,
   RegisterCaregiverDto,
   RegisterProviderDto,
+  ResetPasswordRequestDto,
+  VerifyResetPasswordOtp,
 } from "src/dtos/auth.dtos";
 import { Response } from "express";
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
@@ -124,7 +128,31 @@ export class AuthController {
     );
     return token;
   }
+  //send reset password email
 
+  @HttpCode(HttpStatus.OK)
+  @Post("/requestResetOTP")
+  async requestResetPasswordOtp(@Body() req: ResetPasswordRequestDto) {
+    return await this.authService.sendUpdatePassOtp(req.email);
+  }
+  //verify reset password
+  @HttpCode(HttpStatus.OK)
+  @Post("/verifyResetOtp")
+  async verifyResetPassword(@Body() req: VerifyResetPasswordOtp) {
+    return await this.authService.verifyResetOtp(req.email, req.otp);
+  }
+  //reset password
+
+  @HttpCode(HttpStatus.OK)
+  @Patch("/resetPassword")
+  async resetPassword(
+    @Request() req: JwtPayloadDto,
+    @Body() body: ResetPasswordRequestDto
+  ) {
+    return await this.authService.updatePassword(body.email, req.sub);
+  }
+
+  //logout user
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: "Logout user",

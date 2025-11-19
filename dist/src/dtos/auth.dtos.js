@@ -9,15 +9,17 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.RefreshAccessTokenResponseDto = exports.JwtPayloadDto = exports.AuthUserResponseDto = exports.LoginUserDto = exports.RegisterProviderDto = exports.RegisterCaregiverDto = void 0;
+exports.UpdatePasswordRequestDto = exports.VerifyResetPasswordOtp = exports.ResetPasswordRequestDto = exports.RefreshAccessTokenResponseDto = exports.JwtPayloadDto = exports.AuthUserResponseDto = exports.LoginUserDto = exports.RegisterProviderDto = exports.RegisterCaregiverDto = void 0;
 const class_validator_1 = require("class-validator");
 const users_dtos_1 = require("./users.dtos");
 const class_transformer_1 = require("class-transformer");
 const swagger_1 = require("@nestjs/swagger");
+const customValidation_1 = require("./customValidation");
 class RegisterCaregiverDto {
     firstName;
     lastName;
     password;
+    confirmPassword;
     email;
     dateOfBirth;
     gender;
@@ -52,6 +54,14 @@ __decorate([
     }),
     __metadata("design:type", String)
 ], RegisterCaregiverDto.prototype, "password", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        description: "Confirmation of the new password. Must match the 'password' field.",
+        example: "NewPassword123",
+    }),
+    (0, customValidation_1.MatchPasswords)({ message: "Password must match" }),
+    __metadata("design:type", String)
+], RegisterCaregiverDto.prototype, "confirmPassword", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({
         description: "Caregiver's email address",
@@ -132,6 +142,7 @@ class RegisterProviderDto {
     last_name;
     email;
     password;
+    confirmPassword;
     phone_number;
     job_title;
     adult_home_name;
@@ -177,6 +188,14 @@ __decorate([
     }),
     __metadata("design:type", String)
 ], RegisterProviderDto.prototype, "password", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        description: "Confirmation of the new password. Must match the 'password' field.",
+        example: "NewPassword123",
+    }),
+    (0, customValidation_1.MatchPasswords)({ message: "Password must match" }),
+    __metadata("design:type", String)
+], RegisterProviderDto.prototype, "confirmPassword", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({
         description: "Provider's phone number",
@@ -367,4 +386,63 @@ __decorate([
     }),
     __metadata("design:type", String)
 ], RefreshAccessTokenResponseDto.prototype, "accessToken", void 0);
+class ResetPasswordRequestDto {
+    email;
+}
+exports.ResetPasswordRequestDto = ResetPasswordRequestDto;
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        description: "Email address of the user requesting password reset",
+        example: "user@example.com",
+    }),
+    (0, class_validator_1.IsEmail)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], ResetPasswordRequestDto.prototype, "email", void 0);
+class VerifyResetPasswordOtp {
+    email;
+    otp;
+}
+exports.VerifyResetPasswordOtp = VerifyResetPasswordOtp;
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        description: "Email address of the user requesting password reset",
+        example: "user@example.com",
+    }),
+    (0, class_validator_1.IsEmail)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], VerifyResetPasswordOtp.prototype, "email", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        description: "New password for the account. Must be at least 6 characters, including uppercase and lowercase letters.",
+        example: "NewPassword123",
+    }),
+    (0, swagger_1.ApiProperty)({
+        description: "OTP code sent to the user's email for verification",
+        example: "123456",
+    }),
+    __metadata("design:type", String)
+], VerifyResetPasswordOtp.prototype, "otp", void 0);
+class UpdatePasswordRequestDto {
+    password;
+    confirmPassword;
+}
+exports.UpdatePasswordRequestDto = UpdatePasswordRequestDto;
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.MinLength)(6, { message: "Password must be at least 6 characters long" }),
+    (0, class_validator_1.Matches)(/^(?=.*[a-z])(?=.*[A-Z]).{6,}$/, {
+        message: "Password must contain at least one uppercase and one lowercase letter",
+    }),
+    __metadata("design:type", String)
+], UpdatePasswordRequestDto.prototype, "password", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        description: "Confirmation of the new password. Must match the 'password' field.",
+        example: "NewPassword123",
+    }),
+    (0, customValidation_1.MatchPasswords)({ message: "Password must match" }),
+    __metadata("design:type", String)
+], UpdatePasswordRequestDto.prototype, "confirmPassword", void 0);
 //# sourceMappingURL=auth.dtos.js.map
