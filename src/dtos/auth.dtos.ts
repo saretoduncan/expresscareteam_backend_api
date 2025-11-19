@@ -256,3 +256,12 @@ export class AuthUserResponseDto extends UserResponseDto {
   @Expose()
   accessToken: string;
 }
+
+export class RefreshAccessTokenResponseDto {
+  @ApiProperty({
+    description: "Newly issued JWT access token after refreshing",
+    example:
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNjg1MjM5MDIyfQ.xxxxxx",
+  })
+  accessToken: string;
+}

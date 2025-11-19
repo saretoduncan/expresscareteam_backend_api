@@ -36,6 +36,10 @@ let AuthController = class AuthController {
         const user = await this.authService.registerProvider(req, res);
         return user;
     }
+    async refreshToken(req, res) {
+        const token = await this.authService.refreshToken(req.user.username, req.user.id, req.user.roles.map((r) => r.name));
+        return token;
+    }
     async logout(res) {
         await this.authService.logout(res);
         return;
@@ -68,13 +72,13 @@ __decorate([
 __decorate([
     (0, common_1.HttpCode)(common_1.HttpStatus.CREATED),
     (0, swagger_1.ApiOperation)({
-        summary: 'Register a new caregiver account',
-        description: 'Creates a new caregiver user account with the provided details.',
+        summary: "Register a new caregiver account",
+        description: "Creates a new caregiver user account with the provided details.",
     }),
     (0, swagger_1.ApiBody)({ type: auth_dtos_1.RegisterCaregiverDto }),
     (0, swagger_1.ApiResponse)({
         status: 201,
-        description: 'Caregiver registered successfully. Returns the authenticated user info and JWT.',
+        description: "Caregiver registered successfully. Returns the authenticated user info and JWT.",
         type: auth_dtos_1.AuthUserResponseDto,
     }),
     (0, common_1.Post)("register/caregiver"),
@@ -87,13 +91,13 @@ __decorate([
 __decorate([
     (0, common_1.HttpCode)(common_1.HttpStatus.CREATED),
     (0, swagger_1.ApiOperation)({
-        summary: 'Register a new provider account',
-        description: 'Creates a new provider user account with the provided details.',
+        summary: "Register a new provider account",
+        description: "Creates a new provider user account with the provided details.",
     }),
     (0, swagger_1.ApiBody)({ type: auth_dtos_1.RegisterProviderDto }),
     (0, swagger_1.ApiResponse)({
         status: 201,
-        description: 'Provider registered successfully. Returns the authenticated user info and JWT.',
+        description: "Provider registered successfully. Returns the authenticated user info and JWT.",
         type: auth_dtos_1.AuthUserResponseDto,
     }),
     (0, common_1.Post)("register/provider"),
@@ -106,12 +110,30 @@ __decorate([
 __decorate([
     (0, common_1.HttpCode)(common_1.HttpStatus.OK),
     (0, swagger_1.ApiOperation)({
-        summary: 'Logout user',
-        description: 'Logs out the user and clears authentication cookies.',
+        summary: "Refresh Access Token",
+        description: "create a new access token using the refresh token",
     }),
     (0, swagger_1.ApiResponse)({
         status: 200,
-        description: 'User logged out successfully',
+        description: "Access token refreshed successfully",
+        type: auth_dtos_1.RefreshAccessTokenResponseDto,
+    }),
+    (0, common_1.Post)("refreshAccessToken"),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Res)({ passthrough: true })),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "refreshToken", null);
+__decorate([
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    (0, swagger_1.ApiOperation)({
+        summary: "Logout user",
+        description: "Logs out the user and clears authentication cookies.",
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: 200,
+        description: "User logged out successfully",
     }),
     (0, common_1.Post)("logout"),
     __param(0, (0, common_1.Res)({ passthrough: true })),
@@ -120,7 +142,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "logout", null);
 exports.AuthController = AuthController = __decorate([
-    (0, swagger_1.ApiTags)('auth'),
+    (0, swagger_1.ApiTags)("auth"),
     (0, common_1.Controller)("auth"),
     __metadata("design:paramtypes", [auth_service_1.AuthService])
 ], AuthController);

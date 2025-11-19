@@ -14,6 +14,7 @@ import { AuthGuard } from "@nestjs/passport";
 import {
   AuthUserResponseDto,
   LoginUserDto,
+  RefreshAccessTokenResponseDto,
   RegisterCaregiverDto,
   RegisterProviderDto,
 } from "src/dtos/auth.dtos";
@@ -22,7 +23,7 @@ import { ApiBody, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 interface RequstWithUser extends Request {
   user: UserResponseDto;
 }
-@ApiTags('auth')
+@ApiTags("auth")
 @Controller("auth")
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -32,6 +33,7 @@ export class AuthController {
   @ApiOperation({
     summary: "Authenticate user with email/username  and password",
   })
+  //login
   @ApiBody({ type: LoginUserDto })
   @ApiResponse({
     status: 200,
@@ -51,16 +53,18 @@ export class AuthController {
     const loggedInUser = await this.authService.loginUser(user, res);
     return loggedInUser;
   }
-
+  //register caregiver
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
-    summary: 'Register a new caregiver account',
-    description: 'Creates a new caregiver user account with the provided details.',
+    summary: "Register a new caregiver account",
+    description:
+      "Creates a new caregiver user account with the provided details.",
   })
   @ApiBody({ type: RegisterCaregiverDto })
   @ApiResponse({
     status: 201,
-    description: 'Caregiver registered successfully. Returns the authenticated user info and JWT.',
+    description:
+      "Caregiver registered successfully. Returns the authenticated user info and JWT.",
     type: AuthUserResponseDto,
   })
   @Post("register/caregiver")
@@ -72,15 +76,18 @@ export class AuthController {
     return user;
   }
 
+  //register provider
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
-    summary: 'Register a new provider account',
-    description: 'Creates a new provider user account with the provided details.',
+    summary: "Register a new provider account",
+    description:
+      "Creates a new provider user account with the provided details.",
   })
   @ApiBody({ type: RegisterProviderDto })
   @ApiResponse({
     status: 201,
-    description: 'Provider registered successfully. Returns the authenticated user info and JWT.',
+    description:
+      "Provider registered successfully. Returns the authenticated user info and JWT.",
     type: AuthUserResponseDto,
   })
   @Post("register/provider")
@@ -92,14 +99,38 @@ export class AuthController {
     return user;
   }
 
+  //
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
-    summary: 'Logout user',
-    description: 'Logs out the user and clears authentication cookies.',
+    summary: "Refresh Access Token",
+    description: "create a new access token using the refresh token",
   })
   @ApiResponse({
     status: 200,
-    description: 'User logged out successfully',
+    description: "Access token refreshed successfully",
+    type: RefreshAccessTokenResponseDto,
+  })
+  @Post("refreshAccessToken")
+  async refreshToken(
+    @Request() req: RequstWithUser,
+    @Res({ passthrough: true }) res: Response
+  ) {
+    const token = await this.authService.refreshToken(
+      req.user.username,
+      req.user.id,
+      req.user.roles.map((r) => r.name)
+    );
+    return token;
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: "Logout user",
+    description: "Logs out the user and clears authentication cookies.",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "User logged out successfully",
   })
   @Post("logout")
   async logout(@Res({ passthrough: true }) res: Response) {

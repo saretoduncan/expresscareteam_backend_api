@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AuthUserResponseDto = exports.LoginUserDto = exports.RegisterProviderDto = exports.RegisterCaregiverDto = void 0;
+exports.RefreshAccessTokenResponseDto = exports.AuthUserResponseDto = exports.LoginUserDto = exports.RegisterProviderDto = exports.RegisterCaregiverDto = void 0;
 const class_validator_1 = require("class-validator");
 const users_dtos_1 = require("./users.dtos");
 const class_transformer_1 = require("class-transformer");
@@ -311,4 +311,15 @@ __decorate([
     (0, class_transformer_1.Expose)(),
     __metadata("design:type", String)
 ], AuthUserResponseDto.prototype, "accessToken", void 0);
+class RefreshAccessTokenResponseDto {
+    accessToken;
+}
+exports.RefreshAccessTokenResponseDto = RefreshAccessTokenResponseDto;
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        description: "Newly issued JWT access token after refreshing",
+        example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNjg1MjM5MDIyfQ.xxxxxx",
+    }),
+    __metadata("design:type", String)
+], RefreshAccessTokenResponseDto.prototype, "accessToken", void 0);
 //# sourceMappingURL=auth.dtos.js.map

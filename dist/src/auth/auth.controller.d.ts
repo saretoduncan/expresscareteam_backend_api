@@ -1,6 +1,6 @@
 import { UserResponseDto } from "src/dtos/users.dtos";
 import { AuthService } from "./auth.service";
-import { AuthUserResponseDto, RegisterCaregiverDto, RegisterProviderDto } from "src/dtos/auth.dtos";
+import { AuthUserResponseDto, RefreshAccessTokenResponseDto, RegisterCaregiverDto, RegisterProviderDto } from "src/dtos/auth.dtos";
 import { Response } from "express";
 interface RequstWithUser extends Request {
     user: UserResponseDto;
@@ -11,6 +11,7 @@ export declare class AuthController {
     login(req: RequstWithUser, res: Response): Promise<AuthUserResponseDto>;
     registerCaregiver(req: RegisterCaregiverDto, res: Response): Promise<AuthUserResponseDto>;
     registerProvider(req: RegisterProviderDto, res: Response): Promise<AuthUserResponseDto>;
+    refreshToken(req: RequstWithUser, res: Response): Promise<RefreshAccessTokenResponseDto>;
     logout(res: Response): Promise<void>;
 }
 export {};

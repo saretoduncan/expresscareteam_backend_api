@@ -1,6 +1,6 @@
 import { JwtService } from "@nestjs/jwt";
 import { AdultHomeService } from "src/adult-home/adult-home.service";
-import { AuthUserResponseDto, RegisterCaregiverDto, RegisterProviderDto } from "src/dtos/auth.dtos";
+import { AuthUserResponseDto, RefreshAccessTokenResponseDto, RegisterCaregiverDto, RegisterProviderDto } from "src/dtos/auth.dtos";
 import { UserResponseDto } from "src/dtos/users.dtos";
 import { UsersService } from "src/users/users.service";
 import { Response } from "express";
@@ -19,6 +19,7 @@ export declare class AuthService {
     registerProvider(registerProviderDto: RegisterProviderDto, res: Response): Promise<AuthUserResponseDto>;
     loginUser(user: UserResponseDto, res: Response): Promise<AuthUserResponseDto>;
     validateUser(username: string, password: string): Promise<any>;
+    refreshToken(username: string, id: string, roles: string[]): Promise<RefreshAccessTokenResponseDto>;
     updatePassword(password: string, userId: string): Promise<void>;
     logout(res: Response): Promise<void>;
 }

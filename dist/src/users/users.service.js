@@ -335,7 +335,9 @@ let UsersService = class UsersService {
                 jobTitle: createHomeRepDto.jobTitle,
                 adultHomeId: getHome.id,
             });
-            return await this.userRepo.save(user);
+            const savedUser = await this.userRepo.save(user);
+            const { password, ...result } = savedUser;
+            return result;
         }
         catch (e) {
             throw new common_1.HttpException(e.message, common_1.HttpStatus.INTERNAL_SERVER_ERROR);

@@ -35,3 +35,6 @@ export declare class LoginUserDto {
 export declare class AuthUserResponseDto extends UserResponseDto {
     accessToken: string;
 }
+export declare class RefreshAccessTokenResponseDto {
+    accessToken: string;
+}
