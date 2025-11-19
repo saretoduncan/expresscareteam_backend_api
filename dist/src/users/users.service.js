@@ -128,9 +128,6 @@ let UsersService = class UsersService {
                     caregiver: true,
                     adultHomeRepresentative: true,
                 },
-                select: {
-                    password: true,
-                },
             });
             if (!user)
                 throw new common_1.HttpException("User not found", common_1.HttpStatus.NOT_FOUND);

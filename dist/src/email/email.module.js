@@ -17,19 +17,18 @@ exports.EmailModule = EmailModule = __decorate([
     (0, common_1.Global)(),
     (0, common_1.Module)({
         imports: [
-            mailer_1.MailerModule.forRoot({
-                transport: {
-                    host: process.env.MAIL_HOST,
-                    port: Number(process.env.MAIL_PORT),
-                    secure: true,
-                    auth: {
-                        user: process.env.MAIL_USER,
-                        pass: process.env.MAIL_PASS,
+            mailer_1.MailerModule.forRootAsync({
+                useFactory: () => ({
+                    transport: {
+                        host: process.env.MAIL_HOST,
+                        port: process.env.MAIL_PORT,
+                        secure: true,
+                        auth: {
+                            user: process.env.MAIL_USER,
+                            pass: process.env.MAIL_PASS,
+                        },
                     },
-                    default: {
-                        from: "Express Care Team",
-                    },
-                },
+                }),
             }),
         ],
         providers: [email_service_1.EmailService],

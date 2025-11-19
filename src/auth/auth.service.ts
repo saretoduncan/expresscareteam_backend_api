@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  UnauthorizedException,
+} from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { AdultHomeService } from "src/adult-home/adult-home.service";
 import { RoleEnum } from "src/common/enums";
@@ -15,6 +20,8 @@ import { Response } from "express";
 import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "src/users/users.entity";
 import { Repository } from "typeorm";
+import { EmailService } from "src/email/email.service";
+import { RedisService } from "src/redis/redis.service";
 
 @Injectable()
 export class AuthService {
@@ -22,6 +29,8 @@ export class AuthService {
     private readonly userService: UsersService,
     private readonly adultHomeService: AdultHomeService,
     private readonly jwtService: JwtService,
+    private readonly emailService: EmailService,
+    private readonly redisService: RedisService,
     @InjectRepository(User) private readonly userRepo: Repository<User>
   ) {}
   //sigh jwt token
@@ -201,7 +210,7 @@ export class AuthService {
           adultHomeRepresentative: true,
         },
       });
-      console.log(user);
+     
       if (!user) {
         throw new HttpException(
           "User is not registered with us",
@@ -240,10 +249,68 @@ export class AuthService {
       throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
-  //update password
-  async updatePassword(password: string, userId: string) {
+  //send otp before reset password
+  async sendUpdatePassOtp(email: string) {
     try {
-      await this.userService.updatePassword(userId, password);
+      const user = await this.userService.getUserByUsername(email);
+      const otpCode = Math.floor(100000 + Math.random() * 900000);
+      await this.redisService.set(user.username, otpCode.toString(), 60 * 10);
+      // let name:string
+
+      await this.emailService
+        .sendPasswordResetCodeMail(
+          email,
+          user.adultHomeRepresentative?.firstName ??
+            user.caregiver?.firstName ??
+            "",
+          otpCode.toString()
+        )
+        .catch((err) => console.error("email job failed", err));
+    } catch (e) {
+      throw new HttpException(e.message, e.statusCode);
+    }
+  }
+  async verifyResetOtp(
+    email: string,
+    otpCode: string
+  ): Promise<RefreshAccessTokenResponseDto> {
+    const getOtp = await this.redisService.get(email);
+    if (!getOtp) throw new UnauthorizedException("The OTP is invalid");
+    if (getOtp !== otpCode)
+      throw new UnauthorizedException("The OTP is invalid");
+    const user = await this.userRepo.findOne({
+      where: {
+        username: email,
+      },
+      relations: {
+        roles: true,
+      },
+    });
+    if (!user) {
+      throw new UnauthorizedException("The Otp is Invalid");
+    }
+
+    const accessToken = await this.signJwtToken(
+      user.username,
+      user.id,
+      user.roles.map((r) => r.name),
+      process.env.RESET_PASSWORD_TOKEN_SECRET!!,
+      process.env.ACCESS_TOKEN_EXPIRY_TIME!!
+    );
+    await this.redisService.del(email);
+    return { accessToken: accessToken };
+  }
+  //update password
+  async updatePassword(password: string, id: string) {
+    try {
+      const user = await this.userRepo.findOne({
+        where: {
+          id: id,
+        },
+      });
+      if (!user) throw new UnauthorizedException("The OTP is invalid");
+      console.log(user)
+      await this.userService.updatePassword(user.id, password);
       return;
     } catch (e) {
       throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);

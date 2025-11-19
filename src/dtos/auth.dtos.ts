@@ -9,11 +9,13 @@ import {
   Matches,
   MaxLength,
   MinLength,
+  ValidatorConstraint,
 } from "class-validator";
-import { RoleEnum } from "src/common/enums";
+
 import { UserResponseDto } from "./users.dtos";
 import { Expose } from "class-transformer";
 import { ApiProperty } from "@nestjs/swagger";
+import { MatchPasswords } from "./customValidation";
 
 export class RegisterCaregiverDto {
   @ApiProperty({ description: "Caregiver's first name", example: "John" })
@@ -38,6 +40,14 @@ export class RegisterCaregiverDto {
       "Password must contain at least one uppercase and one lowercase letter",
   })
   password: string;
+
+  @ApiProperty({
+    description:
+      "Confirmation of the new password. Must match the 'password' field.",
+    example: "NewPassword123",
+  })
+  @MatchPasswords({ message: "Password must match" })
+  confirmPassword: string;
 
   @ApiProperty({
     description: "Caregiver's email address",
@@ -138,6 +148,13 @@ export class RegisterProviderDto {
       "Password must contain at least one uppercase and one lowercase letter",
   })
   password: string;
+  @ApiProperty({
+    description:
+      "Confirmation of the new password. Must match the 'password' field.",
+    example: "NewPassword123",
+  })
+  @MatchPasswords({ message: "Password must match" })
+  confirmPassword: string;
 
   @ApiProperty({
     description: "Provider's phone number",
@@ -257,7 +274,7 @@ export class AuthUserResponseDto extends UserResponseDto {
   accessToken: string;
 }
 
-//jwt payload 
+//jwt payload
 export class JwtPayloadDto {
   @ApiProperty({
     description: "Username or email of the authenticated user",
@@ -299,4 +316,56 @@ export class RefreshAccessTokenResponseDto {
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNjg1MjM5MDIyfQ.xxxxxx",
   })
   accessToken: string;
+}
+
+export class ResetPasswordRequestDto {
+  @ApiProperty({
+    description: "Email address of the user requesting password reset",
+    example: "user@example.com",
+  })
+  @IsEmail()
+  @IsNotEmpty()
+  email: string;
+}
+
+export class VerifyResetPasswordOtp {
+  @ApiProperty({
+    description: "Email address of the user requesting password reset",
+    example: "user@example.com",
+  })
+  @IsEmail()
+  @IsNotEmpty()
+  email: string;
+
+ 
+  @ApiProperty({
+    description: "OTP code sent to the user's email for verification",
+    example: "123456",
+  })
+  @IsNotEmpty()
+  @IsString()
+  otp: string;
+}
+
+export class UpdatePasswordRequestDto {
+  @ApiProperty({
+    description:
+      "Password for the account. Must be at least 6 characters, including uppercase and lowercase letters.",
+    example: "Password123",
+  })
+  @IsString()
+  @MinLength(6, { message: "Password must be at least 6 characters long" })
+  @Matches(/^(?=.*[a-z])(?=.*[A-Z]).{6,}$/, {
+    message:
+      "Password must contain at least one uppercase and one lowercase letter",
+  })
+  password: string;
+
+  @ApiProperty({
+    description:
+      "Confirmation of the new password. Must match the 'password' field.",
+    example: "NewPassword123",
+  })
+  @MatchPasswords({ message: "Password must match" })
+  confirmPassword: string;
 }

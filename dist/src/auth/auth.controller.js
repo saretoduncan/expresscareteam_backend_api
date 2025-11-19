@@ -41,6 +41,16 @@ let AuthController = class AuthController {
         const token = await this.authService.refreshToken(req.user.username, req.user.id, req.user.roles.map((r) => r.name));
         return token;
     }
+    async requestResetPasswordOtp(req) {
+        return await this.authService.sendUpdatePassOtp(req.email);
+    }
+    async verifyResetPassword(req) {
+        return await this.authService.verifyResetOtp(req.email, req.otp);
+    }
+    async resetPassword(req, body) {
+        console.log(req.user.sub);
+        return await this.authService.updatePassword(body.password, req.user.sub);
+    }
     async logout(res) {
         await this.authService.logout(res);
         return;
@@ -119,6 +129,16 @@ __decorate([
         description: "Access token refreshed successfully",
         type: auth_dtos_1.RefreshAccessTokenResponseDto,
     }),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    (0, swagger_1.ApiOperation)({
+        summary: "Refresh Access Token",
+        description: "Create a new access token using the refresh token",
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: 200,
+        description: "Access token refreshed successfully",
+        type: auth_dtos_1.RefreshAccessTokenResponseDto,
+    }),
     (0, common_1.UseGuards)(index_guards_1.RefreshJwtGuard),
     (0, common_1.Post)("refreshAccessToken"),
     __param(0, (0, common_1.Request)()),
@@ -127,6 +147,49 @@ __decorate([
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "refreshToken", null);
+__decorate([
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    (0, swagger_1.ApiBody)({ type: auth_dtos_1.ResetPasswordRequestDto }),
+    (0, swagger_1.ApiResponse)({
+        status: 200,
+        description: "OTP email successfully sent",
+    }),
+    (0, common_1.Post)("/requestResetOtp"),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [auth_dtos_1.ResetPasswordRequestDto]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "requestResetPasswordOtp", null);
+__decorate([
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    (0, swagger_1.ApiBody)({ type: auth_dtos_1.VerifyResetPasswordOtp }),
+    (0, swagger_1.ApiResponse)({
+        status: 200,
+        description: "OTP verification success",
+        type: auth_dtos_1.RefreshAccessTokenResponseDto,
+    }),
+    (0, common_1.Post)("/verifyResetOtp"),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [auth_dtos_1.VerifyResetPasswordOtp]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "verifyResetPassword", null);
+__decorate([
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    (0, swagger_1.ApiBody)({ type: auth_dtos_1.UpdatePasswordRequestDto }),
+    (0, swagger_1.ApiResponse)({
+        status: 200,
+        description: "Password updated successfully",
+    }),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, common_1.UseGuards)(index_guards_1.ResetPasswordGuard),
+    (0, common_1.Patch)("/resetPassword"),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, auth_dtos_1.UpdatePasswordRequestDto]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "resetPassword", null);
 __decorate([
     (0, common_1.HttpCode)(common_1.HttpStatus.OK),
     (0, swagger_1.ApiOperation)({

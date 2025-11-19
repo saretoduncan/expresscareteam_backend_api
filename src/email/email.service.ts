@@ -11,11 +11,16 @@ export class EmailService {
     name: string,
     message: string
   ) {
-    await this.mailService.sendMail({
-      to,
-      subject: subject,
-      html: message,
-    });
+   this.mailService
+      .sendMail({
+        to,
+
+        subject: subject,
+        html: message,
+        from: `"Express Care Team" <${process.env.MAIL_USER}>`,
+        context: { name },
+      })
+      .catch((err) => console.error("email job failed", err));
   }
   async sendPasswordResetCodeMail(
     to: string,
@@ -23,16 +28,16 @@ export class EmailService {
     name: string,
     otp: string
   ) {
-    const message = `<h1>Hi ${name}</h1>
-    <p>We received a request to reset your Express Care Team Account password.<p>
-    <br><br>
-    <strong style="color:green; font-size:30px;">${otp}</strong>
-    <br><br>
-    <p>If you don't use this code within 10 minutes, it will expire.</p>
-    <br><br>
-    <p>Thanks,</p>
-    <br><br>
-    <p>Express Care Team</p>
+    const message = `<p>Hi ${name},</p>
+
+<p>We received a request to reset your Express Care Team account password. Please use the OTP below to proceed:</p>
+
+<strong style="color:green; font-size:30px;">${otp}</strong>
+
+<p>This code will expire in 10 minutes.</p>
+
+<p>Thank you,</p>
+<p>Express Care Team</p>
 
     `;
     await this.sendEmail(to, "Password Reset", name, message);

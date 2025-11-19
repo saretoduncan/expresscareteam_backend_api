@@ -8,6 +8,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { User } from "src/users/users.entity";
 import { RefreshJwtStrategy } from "src/strategy/refreshJwt.strategy";
 import { AccessJwtStrategy } from "src/strategy/accessJwt.strategy";
+import { ResetPasswordJwtStrategy } from "src/strategy/resetPasswordJwt.strategy";
 
 @Global()
 @Module({
@@ -21,6 +22,7 @@ import { AccessJwtStrategy } from "src/strategy/accessJwt.strategy";
     LocalStrategy,
     RefreshJwtStrategy,
     AccessJwtStrategy,
+    ResetPasswordJwtStrategy
   ],
   controllers: [AuthController],
   exports: [AccessJwtStrategy],
