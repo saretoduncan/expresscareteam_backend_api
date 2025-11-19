@@ -20,11 +20,12 @@ import {
   RegisterCaregiverDto,
   RegisterProviderDto,
   ResetPasswordRequestDto,
+  UpdatePasswordRequestDto,
   VerifyResetPasswordOtp,
 } from "src/dtos/auth.dtos";
 import { Response } from "express";
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
-import { RefreshJwtGuard } from "src/guards/index.guards";
+import { RefreshJwtGuard, ResetPasswordGuard } from "src/guards/index.guards";
 interface RequestWithUser extends Request {
   user: UserResponseDto;
 }
@@ -104,7 +105,6 @@ export class AuthController {
     return user;
   }
 
-  //refresh token
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: "Refresh Access Token",
@@ -131,12 +131,23 @@ export class AuthController {
   //send reset password email
 
   @HttpCode(HttpStatus.OK)
+  @ApiBody({ type: ResetPasswordRequestDto })
+  @ApiResponse({
+    status: 200,
+    description: "Otp email successfully sent",
+  })
   @Post("/requestResetOTP")
   async requestResetPasswordOtp(@Body() req: ResetPasswordRequestDto) {
     return await this.authService.sendUpdatePassOtp(req.email);
   }
   //verify reset password
   @HttpCode(HttpStatus.OK)
+  @ApiBody({ type: VerifyResetPasswordOtp })
+  @ApiResponse({
+    status: 200,
+    description: "OTP verification success",
+    type: RefreshAccessTokenResponseDto,
+  })
   @Post("/verifyResetOtp")
   async verifyResetPassword(@Body() req: VerifyResetPasswordOtp) {
     return await this.authService.verifyResetOtp(req.email, req.otp);
@@ -144,12 +155,18 @@ export class AuthController {
   //reset password
 
   @HttpCode(HttpStatus.OK)
+  @ApiBody({ type: UpdatePasswordRequestDto })
+  @ApiResponse({
+    status: 200,
+    description: "password updated successfully",
+  })
+  @UseGuards(ResetPasswordGuard)
   @Patch("/resetPassword")
   async resetPassword(
     @Request() req: JwtPayloadDto,
-    @Body() body: ResetPasswordRequestDto
+    @Body() body: UpdatePasswordRequestDto
   ) {
-    return await this.authService.updatePassword(body.email, req.sub);
+    return await this.authService.updatePassword(body.password, req.sub);
   }
 
   //logout user
