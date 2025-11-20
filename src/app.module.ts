@@ -8,6 +8,7 @@ import { AdultHomeModule } from "./adult-home/adult-home.module";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { EmailModule } from './email/email.module';
 import { RedisModule } from './redis/redis.module';
+import { CaregiverRequirementsModule } from './caregiver-requirements/caregiver-requirements.module';
 
 @Global()
 @Module({
@@ -40,6 +41,8 @@ import { RedisModule } from './redis/redis.module';
     EmailModule,
 
     RedisModule,
+
+    CaregiverRequirementsModule,
   ],
   providers: [],
   exports: [],

@@ -1,3 +1,4 @@
+import { CaregiverRequirements } from "src/caregiver-requirements/caregiver-requirements.entity";
 import { User } from "src/users/users.entity";
 import {
   Column,
@@ -36,4 +37,6 @@ export class Caregiver {
   @OneToOne(() => User, (user) => user.caregiver)
   @JoinColumn({ name: "userId" })
   user: User;
+  @OneToOne(() => CaregiverRequirements, (requirements) => requirements.caregiver)
+  requirements?: CaregiverRequirements;
 }
