@@ -15,6 +15,15 @@ export interface ICaregiverRequirements {
   diabetesSpecialtyTraining?: string;
   caregiverId: string;
 }
+export interface IRequiredCaregiverRequirements{
+   backgroundCheck: string;
+  firstAid_cpr: string;
+  figurePrint: string;
+  safetyOrientation: string;
+  tuberculosisStepDate: string;
+  foodCard: string;
+}
+
 export interface ICaregiverUpdateRequirements {
   backgroundCheck?: string;
   firstAid_cpr?: string;
@@ -31,4 +40,9 @@ export interface ICaregiverUpdateRequirements {
   developmentDisability?: string;
   diabetesSpecialtyTraining?: string;
   caregiverId?: string;
+}
+
+export interface IRequirementsField{
+  name:string,
+  maxCount:1
 }

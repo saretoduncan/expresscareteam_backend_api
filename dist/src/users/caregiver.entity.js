@@ -10,6 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Caregiver = void 0;
+const caregiver_requirements_entity_1 = require("../caregiver-requirements/caregiver-requirements.entity");
 const users_entity_1 = require("./users.entity");
 const typeorm_1 = require("typeorm");
 let Caregiver = class Caregiver {
@@ -26,6 +27,7 @@ let Caregiver = class Caregiver {
     zipcode;
     userId;
     user;
+    requirements;
 };
 exports.Caregiver = Caregiver;
 __decorate([
@@ -81,6 +83,10 @@ __decorate([
     (0, typeorm_1.JoinColumn)({ name: "userId" }),
     __metadata("design:type", users_entity_1.User)
 ], Caregiver.prototype, "user", void 0);
+__decorate([
+    (0, typeorm_1.OneToOne)(() => caregiver_requirements_entity_1.CaregiverRequirements, (requirements) => requirements.caregiver),
+    __metadata("design:type", caregiver_requirements_entity_1.CaregiverRequirements)
+], Caregiver.prototype, "requirements", void 0);
 exports.Caregiver = Caregiver = __decorate([
     (0, typeorm_1.Entity)({ name: "caregivers" })
 ], Caregiver);

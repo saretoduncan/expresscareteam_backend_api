@@ -16,6 +16,9 @@ const adult_home_module_1 = require("./adult-home/adult-home.module");
 const typeorm_1 = require("@nestjs/typeorm");
 const email_module_1 = require("./email/email.module");
 const redis_module_1 = require("./redis/redis.module");
+const caregiver_requirements_module_1 = require("./caregiver-requirements/caregiver-requirements.module");
+const platform_express_1 = require("@nestjs/platform-express");
+const constants_1 = require("./common/constants");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -38,12 +41,18 @@ exports.AppModule = AppModule = __decorate([
                     synchronize: true,
                 }),
             }),
+            platform_express_1.MulterModule.registerAsync({
+                useFactory: () => ({
+                    dest: constants_1.FILE_UPLOAD_DIR,
+                })
+            }),
             auth_module_1.AuthModule,
             users_module_1.UsersModule,
             roles_module_1.RolesModule,
             adult_home_module_1.AdultHomeModule,
             email_module_1.EmailModule,
             redis_module_1.RedisModule,
+            caregiver_requirements_module_1.CaregiverRequirementsModule,
         ],
         providers: [],
         exports: [],
