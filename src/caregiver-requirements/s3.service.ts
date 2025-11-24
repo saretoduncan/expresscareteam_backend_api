@@ -1,9 +1,7 @@
-import { PutObjectCommand, S3, S3Client } from "@aws-sdk/client-s3";
+import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { randomBytes } from "crypto";
 import { extname } from "path/win32";
-import { Readable } from "stream";
 
 @Injectable()
 export class S3Services {
