@@ -12,6 +12,6 @@ import { S3Services } from "./s3.service";
 
   providers: [CaregiverRequirementsService, S3Services],
   controllers: [CaregiverRequirementsController],
-  exports: [CaregiverRequirementsService],
+  exports: [CaregiverRequirementsService, S3Services],
 })
 export class CaregiverRequirementsModule {}

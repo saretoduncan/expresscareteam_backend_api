@@ -10,7 +10,6 @@ import { InjectRepository } from "@nestjs/typeorm";
 import {
   ICaregiverRequirements,
   ICaregiverUpdateRequirements,
-  IRequiredCaregiverRequirements,
 } from "src/interfaces/caregiverRequirementInterface";
 import { Caregiver } from "src/users/caregiver.entity";
 

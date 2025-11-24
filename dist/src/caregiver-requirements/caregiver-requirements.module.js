@@ -23,7 +23,7 @@ exports.CaregiverRequirementsModule = CaregiverRequirementsModule = __decorate([
         imports: [typeorm_1.TypeOrmModule.forFeature([caregiver_requirements_entity_1.CaregiverRequirements, caregiver_entity_1.Caregiver])],
         providers: [caregiver_requirements_service_1.CaregiverRequirementsService, s3_service_1.S3Services],
         controllers: [caregiver_requirements_controller_1.CaregiverRequirementsController],
-        exports: [caregiver_requirements_service_1.CaregiverRequirementsService],
+        exports: [caregiver_requirements_service_1.CaregiverRequirementsService, s3_service_1.S3Services],
     })
 ], CaregiverRequirementsModule);
 //# sourceMappingURL=caregiver-requirements.module.js.map

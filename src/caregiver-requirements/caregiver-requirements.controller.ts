@@ -4,7 +4,6 @@ import {
   Get,
   Post,
   Query,
-  UploadedFile,
   UploadedFiles,
   UseInterceptors,
 } from "@nestjs/common";
@@ -15,7 +14,6 @@ import { FileFieldsInterceptor } from "@nestjs/platform-express";
 import { ApiBody, ApiConsumes, ApiQuery } from "@nestjs/swagger";
 import { UploadCaregiverRequirementsDto } from "src/dtos/carigiver-requirements.dtos";
 import { S3Services } from "./s3.service";
-import { extname } from "path";
 
 @Controller("caregiver-requirements")
 export class CaregiverRequirementsController {
