@@ -23,7 +23,7 @@ exports.EmailModule = EmailModule = __decorate([
                 useFactory: (configService) => ({
                     transport: {
                         host: configService.get("MAIL_HOST"),
-                        port: configService.get("MAIL_PORT"),
+                        port: 465,
                         secure: true,
                         auth: {
                             user: configService.get("MAIL_USER"),
