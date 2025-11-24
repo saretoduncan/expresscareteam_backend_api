@@ -22,7 +22,10 @@ let AdultHome = class AdultHome {
     street;
     zipcode;
     website;
+    homeDescription;
     reps;
+    createdAt;
+    updatedAt;
 };
 exports.AdultHome = AdultHome;
 __decorate([
@@ -62,9 +65,21 @@ __decorate([
     __metadata("design:type", String)
 ], AdultHome.prototype, "website", void 0);
 __decorate([
+    (0, typeorm_1.Column)({ nullable: false, type: "text" }),
+    __metadata("design:type", String)
+], AdultHome.prototype, "homeDescription", void 0);
+__decorate([
     (0, typeorm_1.OneToMany)(() => adult_home_representative_entity_1.AdultHomeRepresentative, (rep) => rep.adultHome),
     __metadata("design:type", Array)
 ], AdultHome.prototype, "reps", void 0);
+__decorate([
+    (0, typeorm_1.CreateDateColumn)({ type: "timestamp" }),
+    __metadata("design:type", Date)
+], AdultHome.prototype, "createdAt", void 0);
+__decorate([
+    (0, typeorm_1.UpdateDateColumn)({ type: "timestamp" }),
+    __metadata("design:type", Date)
+], AdultHome.prototype, "updatedAt", void 0);
 exports.AdultHome = AdultHome = __decorate([
     (0, typeorm_1.Entity)({ name: "adult_homes" })
 ], AdultHome);

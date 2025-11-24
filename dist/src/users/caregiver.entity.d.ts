@@ -1,3 +1,4 @@
+import { CaregiverRequirements } from "src/caregiver-requirements/caregiver-requirements.entity";
 import { User } from "src/users/users.entity";
 export declare class Caregiver {
     id: string;
@@ -13,4 +14,7 @@ export declare class Caregiver {
     zipcode: string;
     userId: string;
     user: User;
+    requirements?: CaregiverRequirements;
+    createdAt: Date;
+    updatedAt: Date;
 }

@@ -1,7 +1,7 @@
 services:
   postgres:
     image: postgres:16.9
-    container_name: expresscareteam_nest
+    container_name: expresscareteam_backend_db
     ports:
       - "${DB_PORT}:5432"
     restart: always
@@ -12,7 +12,7 @@ services:
   
   redis:
     image: redis:7
-    container_name: expresscareteam_redis
+    container_name: redis_expresscareteam
     restart: unless-stopped
     ports:
       - "6379:6379"

@@ -1,5 +1,12 @@
 import { AdultHomeRepresentative } from "src/users/adult-home-representative.entity";
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from "typeorm";
 
 @Entity({ name: "adult_homes" })
 export class AdultHome {
@@ -30,6 +37,15 @@ export class AdultHome {
   @Column({ nullable: true })
   website?: string;
 
+  @Column({ nullable: false, type: "text" })
+  homeDescription: string;
+
   @OneToMany(() => AdultHomeRepresentative, (rep) => rep.adultHome)
   reps: AdultHomeRepresentative[];
+
+  @CreateDateColumn({ type: "timestamp" })
+  createdAt: Date;
+
+  @UpdateDateColumn({ type: "timestamp" })
+  updatedAt: Date;
 }

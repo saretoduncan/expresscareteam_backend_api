@@ -11,4 +11,6 @@ export declare class AdultHomeRepresentative {
     adultHomeId: string;
     user: User;
     adultHome: AdultHome;
+    createdAt: Date;
+    updatedAt: Date;
 }

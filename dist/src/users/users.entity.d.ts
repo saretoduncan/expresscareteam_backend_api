@@ -8,4 +8,6 @@ export declare class User {
     caregiver?: Caregiver;
     adultHomeRepresentative?: AdultHomeRepresentative;
     roles: Roles[];
+    createdAt: Date;
+    updatedAt: Date;
 }

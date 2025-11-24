@@ -9,5 +9,8 @@ export declare class AdultHome {
     street: string;
     zipcode: string;
     website?: string;
+    homeDescription: string;
     reps: AdultHomeRepresentative[];
+    createdAt: Date;
+    updatedAt: Date;
 }

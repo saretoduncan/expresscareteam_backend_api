@@ -24,6 +24,8 @@ let AdultHomeRepresentative = class AdultHomeRepresentative {
     adultHomeId;
     user;
     adultHome;
+    createdAt;
+    updatedAt;
 };
 exports.AdultHomeRepresentative = AdultHomeRepresentative;
 __decorate([
@@ -59,15 +61,23 @@ __decorate([
     __metadata("design:type", String)
 ], AdultHomeRepresentative.prototype, "adultHomeId", void 0);
 __decorate([
-    (0, typeorm_1.OneToOne)(() => users_entity_1.User, user => user.adultHomeRepresentative),
-    (0, typeorm_1.JoinColumn)({ name: 'userId' }),
+    (0, typeorm_1.OneToOne)(() => users_entity_1.User, (user) => user.adultHomeRepresentative),
+    (0, typeorm_1.JoinColumn)({ name: "userId" }),
     __metadata("design:type", users_entity_1.User)
 ], AdultHomeRepresentative.prototype, "user", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => adult_home_entity_1.AdultHome, home => home.reps),
-    (0, typeorm_1.JoinColumn)({ name: 'adultHomeId' }),
+    (0, typeorm_1.ManyToOne)(() => adult_home_entity_1.AdultHome, (home) => home.reps),
+    (0, typeorm_1.JoinColumn)({ name: "adultHomeId" }),
     __metadata("design:type", adult_home_entity_1.AdultHome)
 ], AdultHomeRepresentative.prototype, "adultHome", void 0);
+__decorate([
+    (0, typeorm_1.CreateDateColumn)({ type: "timestamp" }),
+    __metadata("design:type", Date)
+], AdultHomeRepresentative.prototype, "createdAt", void 0);
+__decorate([
+    (0, typeorm_1.UpdateDateColumn)({ type: "timestamp" }),
+    __metadata("design:type", Date)
+], AdultHomeRepresentative.prototype, "updatedAt", void 0);
 exports.AdultHomeRepresentative = AdultHomeRepresentative = __decorate([
     (0, typeorm_1.Entity)("adult_home_representatives")
 ], AdultHomeRepresentative);

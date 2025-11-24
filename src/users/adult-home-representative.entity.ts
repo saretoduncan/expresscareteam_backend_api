@@ -1,4 +1,14 @@
-import { PrimaryGeneratedColumn, Column, Entity, OneToOne, JoinColumn, ManyToMany, ManyToOne } from "typeorm";
+import {
+  PrimaryGeneratedColumn,
+  Column,
+  Entity,
+  OneToOne,
+  JoinColumn,
+  ManyToMany,
+  ManyToOne,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from "typeorm";
 import { User } from "./users.entity";
 import { AdultHome } from "src/adult-home/adult-home.entity";
 @Entity("adult_home_representatives")
@@ -27,10 +37,16 @@ export class AdultHomeRepresentative {
   @Column()
   adultHomeId: string;
 
-  @OneToOne(()=>User, user=>user.adultHomeRepresentative)
-  @JoinColumn({name:'userId'})
-  user:User;
-  @ManyToOne(()=>AdultHome,home=>home.reps)
-  @JoinColumn({name:'adultHomeId'})
-  adultHome:AdultHome
+  @OneToOne(() => User, (user) => user.adultHomeRepresentative)
+  @JoinColumn({ name: "userId" })
+  user: User;
+  @ManyToOne(() => AdultHome, (home) => home.reps)
+  @JoinColumn({ name: "adultHomeId" })
+  adultHome: AdultHome;
+
+  @CreateDateColumn({ type: "timestamp" })
+  createdAt: Date;
+
+  @UpdateDateColumn({ type: "timestamp" })
+  updatedAt: Date;
 }

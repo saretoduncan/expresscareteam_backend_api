@@ -8,6 +8,9 @@ import { AdultHomeModule } from "./adult-home/adult-home.module";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { EmailModule } from './email/email.module';
 import { RedisModule } from './redis/redis.module';
+import { CaregiverRequirementsModule } from './caregiver-requirements/caregiver-requirements.module';
+import { MulterModule } from "@nestjs/platform-express";
+import { FILE_UPLOAD_DIR } from "./common/constants";
 
 @Global()
 @Module({
@@ -29,6 +32,14 @@ import { RedisModule } from './redis/redis.module';
         synchronize: true,
       }),
     }),
+    MulterModule.registerAsync(
+{
+  useFactory:()=>({
+    dest:FILE_UPLOAD_DIR,
+    
+  })
+}
+    ),
     AuthModule,
 
     UsersModule,
@@ -40,6 +51,8 @@ import { RedisModule } from './redis/redis.module';
     EmailModule,
 
     RedisModule,
+
+    CaregiverRequirementsModule,
   ],
   providers: [],
   exports: [],
