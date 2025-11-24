@@ -11,7 +11,7 @@ export class EmailService {
     name: string,
     message: string
   ) {
-  await this.mailService
+    this.mailService
       .sendMail({
         to,
 
