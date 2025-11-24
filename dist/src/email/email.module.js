@@ -27,6 +27,7 @@ exports.EmailModule = EmailModule = __decorate([
                             user: process.env.MAIL_USER,
                             pass: process.env.MAIL_PASS,
                         },
+                        family: 4,
                     },
                 }),
             }),
