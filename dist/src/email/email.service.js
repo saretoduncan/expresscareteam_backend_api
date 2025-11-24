@@ -18,7 +18,7 @@ let EmailService = class EmailService {
         this.mailService = mailService;
     }
     async sendEmail(to, subject, name, message) {
-        await this.mailService
+        this.mailService
             .sendMail({
             to,
             subject: subject,

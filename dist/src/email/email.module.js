@@ -10,6 +10,7 @@ exports.EmailModule = void 0;
 const mailer_1 = require("@nestjs-modules/mailer");
 const common_1 = require("@nestjs/common");
 const email_service_1 = require("./email.service");
+const config_1 = require("@nestjs/config");
 let EmailModule = class EmailModule {
 };
 exports.EmailModule = EmailModule;
@@ -17,19 +18,21 @@ exports.EmailModule = EmailModule = __decorate([
     (0, common_1.Global)(),
     (0, common_1.Module)({
         imports: [
+            config_1.ConfigModule,
             mailer_1.MailerModule.forRootAsync({
-                useFactory: () => ({
+                useFactory: (configService) => ({
                     transport: {
-                        host: process.env.MAIL_HOST,
-                        port: Number(process.env.MAIL_PORT) ?? 465,
+                        host: configService.get("MAIL_HOST"),
+                        port: configService.get("MAIL_PORT"),
                         secure: true,
                         auth: {
-                            user: process.env.MAIL_USER,
-                            pass: process.env.MAIL_PASS,
+                            user: configService.get("MAIL_USER"),
+                            pass: configService.get("MAIL_PASS"),
                         },
                         family: 4,
                     },
                 }),
+                inject: [config_1.ConfigService],
             }),
         ],
         providers: [email_service_1.EmailService],

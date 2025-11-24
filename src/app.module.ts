@@ -17,7 +17,7 @@ import { FILE_UPLOAD_DIR } from "./common/constants";
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: ".env",
+     
     }),
 
     TypeOrmModule.forRootAsync({
