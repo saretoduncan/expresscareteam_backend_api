@@ -1,22 +1,12 @@
 import { diskStorage, memoryStorage } from "multer";
 import { Request } from "express";
-import {
-  FILE_UPLOAD_DIR,
-  TEMPORARY_FILE_UPLOAD_DIR,
-} from "src/common/constants";
+
 import { BadRequestException } from "@nestjs/common";
 export const mutlerConfig = {
   limits: {
     fileSize: 2 * 1024 * 1024, //2MB
   },
-  storage: diskStorage({
-    destination: TEMPORARY_FILE_UPLOAD_DIR,
-    filename: (req, file, cb) => {
-      const unique = Date.now() + "-" + Math.round(Math.random() * 1e9);
-      cb(null, `${unique}.pdf`);
-    },
-  }),
-
+  storage: memoryStorage(),
   fileFilter: (
     req: Request,
     file: Express.Multer.File,

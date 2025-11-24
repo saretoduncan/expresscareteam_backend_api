@@ -15,4 +15,6 @@ export declare class Caregiver {
     userId: string;
     user: User;
     requirements?: CaregiverRequirements;
+    createdAt: Date;
+    updatedAt: Date;
 }

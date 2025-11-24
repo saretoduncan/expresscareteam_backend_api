@@ -2,12 +2,14 @@ import { Caregiver } from "src/users/caregiver.entity";
 import { Roles } from "src/roles/roles.entity";
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinTable,
   ManyToMany,
   ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from "typeorm";
 import { AdultHomeRepresentative } from "./adult-home-representative.entity";
 
@@ -33,4 +35,10 @@ export class User {
   @ManyToMany(() => Roles, (role) => role.users, { cascade: true })
   @JoinTable()
   roles: Roles[];
+
+  @CreateDateColumn({ type: "timestamp" })
+  createdAt: Date;
+
+  @UpdateDateColumn({ type: "timestamp" })
+  updatedAt: Date;
 }

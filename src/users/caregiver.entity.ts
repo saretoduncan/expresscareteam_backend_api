@@ -2,10 +2,12 @@ import { CaregiverRequirements } from "src/caregiver-requirements/caregiver-requ
 import { User } from "src/users/users.entity";
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   OneToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from "typeorm";
 
 @Entity({ name: "caregivers" })
@@ -37,6 +39,15 @@ export class Caregiver {
   @OneToOne(() => User, (user) => user.caregiver)
   @JoinColumn({ name: "userId" })
   user: User;
-  @OneToOne(() => CaregiverRequirements, (requirements) => requirements.caregiver)
+  @OneToOne(
+    () => CaregiverRequirements,
+    (requirements) => requirements.caregiver
+  )
   requirements?: CaregiverRequirements;
+
+  @CreateDateColumn({ type: "timestamp" })
+  createdAt: Date;
+
+  @UpdateDateColumn({ type: "timestamp" })
+  updatedAt: Date;
 }

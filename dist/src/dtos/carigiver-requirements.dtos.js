@@ -36,7 +36,7 @@ __decorate([
         type: "string",
         format: "binary",
     }),
-    __metadata("design:type", Array)
+    __metadata("design:type", Object)
 ], UploadCaregiverRequirementsDto.prototype, "backgroundCheck", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
@@ -45,7 +45,7 @@ __decorate([
         type: "string",
         format: "binary",
     }),
-    __metadata("design:type", Array)
+    __metadata("design:type", Object)
 ], UploadCaregiverRequirementsDto.prototype, "firstAid_cpr", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
@@ -54,7 +54,7 @@ __decorate([
         type: "string",
         format: "binary",
     }),
-    __metadata("design:type", Array)
+    __metadata("design:type", Object)
 ], UploadCaregiverRequirementsDto.prototype, "figurePrint", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
@@ -63,7 +63,7 @@ __decorate([
         type: "string",
         format: "binary",
     }),
-    __metadata("design:type", Array)
+    __metadata("design:type", Object)
 ], UploadCaregiverRequirementsDto.prototype, "safetyOrientation", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
@@ -72,7 +72,7 @@ __decorate([
         type: "string",
         format: "binary",
     }),
-    __metadata("design:type", Array)
+    __metadata("design:type", Object)
 ], UploadCaregiverRequirementsDto.prototype, "tuberculosisStepDate", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
@@ -82,7 +82,7 @@ __decorate([
         type: "string",
         format: "binary",
     }),
-    __metadata("design:type", Array)
+    __metadata("design:type", Object)
 ], UploadCaregiverRequirementsDto.prototype, "longTermCare", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
@@ -91,7 +91,7 @@ __decorate([
         type: "string",
         format: "binary",
     }),
-    __metadata("design:type", Array)
+    __metadata("design:type", Object)
 ], UploadCaregiverRequirementsDto.prototype, "foodCard", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
@@ -101,7 +101,7 @@ __decorate([
         type: "string",
         format: "binary",
     }),
-    __metadata("design:type", Array)
+    __metadata("design:type", Object)
 ], UploadCaregiverRequirementsDto.prototype, "nurseDelegation", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
@@ -111,7 +111,7 @@ __decorate([
         type: "string",
         format: "binary",
     }),
-    __metadata("design:type", Array)
+    __metadata("design:type", Object)
 ], UploadCaregiverRequirementsDto.prototype, "dementiaSpecialist", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
@@ -121,7 +121,7 @@ __decorate([
         type: "string",
         format: "binary",
     }),
-    __metadata("design:type", Array)
+    __metadata("design:type", Object)
 ], UploadCaregiverRequirementsDto.prototype, "mentalHealthSpeciality", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
@@ -131,7 +131,7 @@ __decorate([
         type: "string",
         format: "binary",
     }),
-    __metadata("design:type", Array)
+    __metadata("design:type", Object)
 ], UploadCaregiverRequirementsDto.prototype, "administrationTrainingSpecialist", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
@@ -141,7 +141,7 @@ __decorate([
         type: "string",
         format: "binary",
     }),
-    __metadata("design:type", Array)
+    __metadata("design:type", Object)
 ], UploadCaregiverRequirementsDto.prototype, "continuingEducation", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
@@ -151,7 +151,7 @@ __decorate([
         type: "string",
         format: "binary",
     }),
-    __metadata("design:type", Array)
+    __metadata("design:type", Object)
 ], UploadCaregiverRequirementsDto.prototype, "developmentDisability", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
@@ -161,6 +161,6 @@ __decorate([
         type: "string",
         format: "binary",
     }),
-    __metadata("design:type", Array)
+    __metadata("design:type", Object)
 ], UploadCaregiverRequirementsDto.prototype, "diabetesSpecialtyTraining", void 0);
 //# sourceMappingURL=carigiver-requirements.dtos.js.map

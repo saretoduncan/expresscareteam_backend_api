@@ -13,6 +13,7 @@ const caregiver_requirements_controller_1 = require("./caregiver-requirements.co
 const typeorm_1 = require("@nestjs/typeorm");
 const caregiver_requirements_entity_1 = require("./caregiver-requirements.entity");
 const caregiver_entity_1 = require("../users/caregiver.entity");
+const s3_service_1 = require("./s3.service");
 let CaregiverRequirementsModule = class CaregiverRequirementsModule {
 };
 exports.CaregiverRequirementsModule = CaregiverRequirementsModule;
@@ -20,7 +21,7 @@ exports.CaregiverRequirementsModule = CaregiverRequirementsModule = __decorate([
     (0, common_1.Global)(),
     (0, common_1.Module)({
         imports: [typeorm_1.TypeOrmModule.forFeature([caregiver_requirements_entity_1.CaregiverRequirements, caregiver_entity_1.Caregiver])],
-        providers: [caregiver_requirements_service_1.CaregiverRequirementsService],
+        providers: [caregiver_requirements_service_1.CaregiverRequirementsService, s3_service_1.S3Services],
         controllers: [caregiver_requirements_controller_1.CaregiverRequirementsController],
         exports: [caregiver_requirements_service_1.CaregiverRequirementsService],
     })

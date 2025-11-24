@@ -16,6 +16,8 @@ let Roles = class Roles {
     id;
     name;
     users;
+    createdAt;
+    updatedAt;
 };
 exports.Roles = Roles;
 __decorate([
@@ -30,6 +32,14 @@ __decorate([
     (0, typeorm_1.ManyToMany)(() => users_entity_1.User, (user) => user.roles),
     __metadata("design:type", Array)
 ], Roles.prototype, "users", void 0);
+__decorate([
+    (0, typeorm_1.CreateDateColumn)({ type: "timestamp" }),
+    __metadata("design:type", Date)
+], Roles.prototype, "createdAt", void 0);
+__decorate([
+    (0, typeorm_1.UpdateDateColumn)({ type: "timestamp" }),
+    __metadata("design:type", Date)
+], Roles.prototype, "updatedAt", void 0);
 exports.Roles = Roles = __decorate([
     (0, typeorm_1.Entity)({ name: "roles" })
 ], Roles);

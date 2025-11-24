@@ -19,47 +19,17 @@ const multer_config_1 = require("../config/multer.config");
 const platform_express_1 = require("@nestjs/platform-express");
 const swagger_1 = require("@nestjs/swagger");
 const carigiver_requirements_dtos_1 = require("../dtos/carigiver-requirements.dtos");
+const s3_service_1 = require("./s3.service");
 let CaregiverRequirementsController = class CaregiverRequirementsController {
     caregiverRequirementsService;
-    constructor(caregiverRequirementsService) {
+    s3Service;
+    constructor(caregiverRequirementsService, s3Service) {
         this.caregiverRequirementsService = caregiverRequirementsService;
+        this.s3Service = s3Service;
     }
     async uploadCaregiverRequirements(caregiverId, files) {
-        if (!caregiverId.trim()) {
-            throw new common_1.BadRequestException("Caregiver ID is required");
-        }
-        const requiredFields = [
-            "backgroundCheck",
-            "firstAid_cpr",
-            "figurePrint",
-            "safetyOrientation",
-            "tuberculosisStepDate",
-            "foodCard",
-        ];
-        for (const field of requiredFields) {
-            if (!files[field]) {
-                throw new common_1.BadRequestException(`${field} is required.`);
-            }
-        }
-        return await this.caregiverRequirementsService.createCaregiverRequirements({
-            backgroundCheck: files.backgroundCheck[0].path,
-            caregiverId: caregiverId,
-            firstAid_cpr: files.firstAid_cpr[0].path,
-            figurePrint: files.figurePrint[0].path,
-            safetyOrientation: files.safetyOrientation[0].path,
-            foodCard: files.foodCard[0].path,
-            tuberculosisStepDate: files.tuberculosisStepDate[0].path,
-            longTermCare: files.longTermCare && files.longTermCare[0].path,
-            nurseDelegation: files.nurseDelegation && files.nurseDelegation[0].path,
-            dementiaSpecialist: files.dementiaSpecialist && files.dementiaSpecialist[0].path,
-            mentalHealthSpeciality: files.mentalHealthSpeciality && files.mentalHealthSpeciality[0].path,
-            administrationTrainingSpecialist: files.administrationTrainingSpecialist &&
-                files.administrationTrainingSpecialist[0].path,
-            continuingEducation: files.continuingEducation && files.continuingEducation[0].path,
-            developmentDisability: files.developmentDisability && files.developmentDisability[0].path,
-            diabetesSpecialtyTraining: files.diabetesSpecialtyTraining &&
-                files.diabetesSpecialtyTraining[0].path,
-        });
+        const url = await this.s3Service.streamUpload(files.backgroundCheck, files.backgroundCheck.mimetype);
+        console.log(url);
     }
     async getCaregiverRequirementsById(id) {
         if (!id.trim())
@@ -116,6 +86,7 @@ __decorate([
 ], CaregiverRequirementsController.prototype, "getCaregiverRequirementsByCaregiverId", null);
 exports.CaregiverRequirementsController = CaregiverRequirementsController = __decorate([
     (0, common_1.Controller)("caregiver-requirements"),
-    __metadata("design:paramtypes", [caregiver_requirements_service_1.CaregiverRequirementsService])
+    __metadata("design:paramtypes", [caregiver_requirements_service_1.CaregiverRequirementsService,
+        s3_service_1.S3Services])
 ], CaregiverRequirementsController);
 //# sourceMappingURL=caregiver-requirements.controller.js.map

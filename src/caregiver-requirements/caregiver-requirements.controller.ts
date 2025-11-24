@@ -14,11 +14,14 @@ import { mutlerConfig } from "src/config/multer.config";
 import { FileFieldsInterceptor } from "@nestjs/platform-express";
 import { ApiBody, ApiConsumes, ApiQuery } from "@nestjs/swagger";
 import { UploadCaregiverRequirementsDto } from "src/dtos/carigiver-requirements.dtos";
+import { S3Services } from "./s3.service";
+import { extname } from "path";
 
 @Controller("caregiver-requirements")
 export class CaregiverRequirementsController {
   constructor(
-    private readonly caregiverRequirementsService: CaregiverRequirementsService
+    private readonly caregiverRequirementsService: CaregiverRequirementsService,
+    private readonly s3Service: S3Services
   ) {}
 
   //create caregiver requirements
@@ -52,47 +55,53 @@ export class CaregiverRequirementsController {
     @Query("caregiverId") caregiverId: string,
     @UploadedFiles() files: UploadCaregiverRequirementsDto
   ) {
-    if (!caregiverId.trim()) {
-      throw new BadRequestException("Caregiver ID is required");
-    }
-    const requiredFields = [
-      "backgroundCheck",
-      "firstAid_cpr",
-      "figurePrint",
-      "safetyOrientation",
-      "tuberculosisStepDate",
-      "foodCard",
-    ];
-    for (const field of requiredFields) {
-      if (!files[field]) {
-        throw new BadRequestException(`${field} is required.`);
-      }
-    }
-    return await this.caregiverRequirementsService.createCaregiverRequirements({
-      backgroundCheck: files.backgroundCheck[0].path,
-      caregiverId: caregiverId,
-      firstAid_cpr: files.firstAid_cpr[0].path,
-      figurePrint: files.figurePrint[0].path,
-      safetyOrientation: files.safetyOrientation[0].path,
-      foodCard: files.foodCard[0].path,
-      tuberculosisStepDate: files.tuberculosisStepDate[0].path,
-      longTermCare: files.longTermCare && files.longTermCare[0].path,
-      nurseDelegation: files.nurseDelegation && files.nurseDelegation[0].path,
-      dementiaSpecialist:
-        files.dementiaSpecialist && files.dementiaSpecialist[0].path,
-      mentalHealthSpeciality:
-        files.mentalHealthSpeciality && files.mentalHealthSpeciality[0].path,
-      administrationTrainingSpecialist:
-        files.administrationTrainingSpecialist &&
-        files.administrationTrainingSpecialist[0].path,
-      continuingEducation:
-        files.continuingEducation && files.continuingEducation[0].path,
-      developmentDisability:
-        files.developmentDisability && files.developmentDisability[0].path,
-      diabetesSpecialtyTraining:
-        files.diabetesSpecialtyTraining &&
-        files.diabetesSpecialtyTraining[0].path,
-    });
+  
+  
+
+    const url= await this.s3Service.streamUpload(files.backgroundCheck, files.backgroundCheck.mimetype)
+    console.log(url)
+    // if (!caregiverId.trim()) {
+    //   throw new BadRequestException("Caregiver ID is required");
+    // }
+
+    // const requiredFields = [
+    //   "backgroundCheck",
+    //   "firstAid_cpr",
+    //   "figurePrint",
+    //   "safetyOrientation",
+    //   "tuberculosisStepDate",
+    //   "foodCard",
+    // ];
+    // for (const field of requiredFields) {
+    //   if (!files[field]) {
+    //     throw new BadRequestException(`${field} is required.`);
+    //   }
+    // }
+    // return await this.caregiverRequirementsService.createCaregiverRequirements({
+    //   backgroundCheck: files.backgroundCheck[0].path,
+    //   caregiverId: caregiverId,
+    //   firstAid_cpr: files.firstAid_cpr[0].path,
+    //   figurePrint: files.figurePrint[0].path,
+    //   safetyOrientation: files.safetyOrientation[0].path,
+    //   foodCard: files.foodCard[0].path,
+    //   tuberculosisStepDate: files.tuberculosisStepDate[0].path,
+    //   longTermCare: files.longTermCare && files.longTermCare[0].path,
+    //   nurseDelegation: files.nurseDelegation && files.nurseDelegation[0].path,
+    //   dementiaSpecialist:
+    //     files.dementiaSpecialist && files.dementiaSpecialist[0].path,
+    //   mentalHealthSpeciality:
+    //     files.mentalHealthSpeciality && files.mentalHealthSpeciality[0].path,
+    //   administrationTrainingSpecialist:
+    //     files.administrationTrainingSpecialist &&
+    //     files.administrationTrainingSpecialist[0].path,
+    //   continuingEducation:
+    //     files.continuingEducation && files.continuingEducation[0].path,
+    //   developmentDisability:
+    //     files.developmentDisability && files.developmentDisability[0].path,
+    //   diabetesSpecialtyTraining:
+    //     files.diabetesSpecialtyTraining &&
+    //     files.diabetesSpecialtyTraining[0].path,
+    // });
   }
 
   //get caregiver requirements by id

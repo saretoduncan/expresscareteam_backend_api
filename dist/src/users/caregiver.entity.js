@@ -28,6 +28,8 @@ let Caregiver = class Caregiver {
     userId;
     user;
     requirements;
+    createdAt;
+    updatedAt;
 };
 exports.Caregiver = Caregiver;
 __decorate([
@@ -87,6 +89,14 @@ __decorate([
     (0, typeorm_1.OneToOne)(() => caregiver_requirements_entity_1.CaregiverRequirements, (requirements) => requirements.caregiver),
     __metadata("design:type", caregiver_requirements_entity_1.CaregiverRequirements)
 ], Caregiver.prototype, "requirements", void 0);
+__decorate([
+    (0, typeorm_1.CreateDateColumn)({ type: "timestamp" }),
+    __metadata("design:type", Date)
+], Caregiver.prototype, "createdAt", void 0);
+__decorate([
+    (0, typeorm_1.UpdateDateColumn)({ type: "timestamp" }),
+    __metadata("design:type", Date)
+], Caregiver.prototype, "updatedAt", void 0);
 exports.Caregiver = Caregiver = __decorate([
     (0, typeorm_1.Entity)({ name: "caregivers" })
 ], Caregiver);

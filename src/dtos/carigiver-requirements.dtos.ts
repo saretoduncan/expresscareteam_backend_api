@@ -8,7 +8,7 @@ export class UploadCaregiverRequirementsDto {
     type: "string",
     format: "binary",
   })
-  backgroundCheck: Express.Multer.File[];
+  backgroundCheck: Express.Multer.File;
 
   @IsNotEmpty()
   @ApiProperty({
@@ -16,7 +16,7 @@ export class UploadCaregiverRequirementsDto {
     type: "string",
     format: "binary",
   })
-  firstAid_cpr: Express.Multer.File[];
+  firstAid_cpr: Express.Multer.File;
 
   @IsNotEmpty()
   @ApiProperty({
@@ -24,7 +24,7 @@ export class UploadCaregiverRequirementsDto {
     type: "string",
     format: "binary",
   })
-  figurePrint: Express.Multer.File[];
+  figurePrint: Express.Multer.File;
 
   @IsNotEmpty()
   @ApiProperty({
@@ -32,7 +32,7 @@ export class UploadCaregiverRequirementsDto {
     type: "string",
     format: "binary",
   })
-  safetyOrientation: Express.Multer.File[];
+  safetyOrientation: Express.Multer.File;
 
   @IsNotEmpty()
   @ApiProperty({
@@ -40,7 +40,7 @@ export class UploadCaregiverRequirementsDto {
     type: "string",
     format: "binary",
   })
-  tuberculosisStepDate: Express.Multer.File[];
+  tuberculosisStepDate: Express.Multer.File;
 
   @IsOptional()
   @ApiProperty({
@@ -49,7 +49,7 @@ export class UploadCaregiverRequirementsDto {
     type: "string",
     format: "binary",
   })
-  longTermCare?: Express.Multer.File[];
+  longTermCare?: Express.Multer.File;
 
   @IsNotEmpty()
   @ApiProperty({
@@ -57,7 +57,7 @@ export class UploadCaregiverRequirementsDto {
     type: "string",
     format: "binary",
   })
-  foodCard: Express.Multer.File[];
+  foodCard: Express.Multer.File;
 
   @IsOptional()
   @ApiProperty({
@@ -66,7 +66,7 @@ export class UploadCaregiverRequirementsDto {
     type: "string",
     format: "binary",
   })
-  nurseDelegation?: Express.Multer.File[];
+  nurseDelegation?: Express.Multer.File;
 
   @IsOptional()
   @ApiProperty({
@@ -75,7 +75,7 @@ export class UploadCaregiverRequirementsDto {
     type: "string",
     format: "binary",
   })
-  dementiaSpecialist?: Express.Multer.File[];
+  dementiaSpecialist?: Express.Multer.File;
 
   @IsOptional()
   @ApiProperty({
@@ -84,7 +84,7 @@ export class UploadCaregiverRequirementsDto {
     type: "string",
     format: "binary",
   })
-  mentalHealthSpeciality?: Express.Multer.File[];
+  mentalHealthSpeciality?: Express.Multer.File;
 
   @IsOptional()
   @ApiProperty({
@@ -93,7 +93,7 @@ export class UploadCaregiverRequirementsDto {
     type: "string",
     format: "binary",
   })
-  administrationTrainingSpecialist?: Express.Multer.File[];
+  administrationTrainingSpecialist?: Express.Multer.File;
 
   @IsOptional()
   @ApiProperty({
@@ -102,7 +102,7 @@ export class UploadCaregiverRequirementsDto {
     type: "string",
     format: "binary",
   })
-  continuingEducation?: Express.Multer.File[];
+  continuingEducation?: Express.Multer.File;
 
   @IsOptional()
   @ApiProperty({
@@ -111,7 +111,7 @@ export class UploadCaregiverRequirementsDto {
     type: "string",
     format: "binary",
   })
-  developmentDisability?: Express.Multer.File[];
+  developmentDisability?: Express.Multer.File;
 
   @IsOptional()
   @ApiProperty({
@@ -120,5 +120,5 @@ export class UploadCaregiverRequirementsDto {
     type: "string",
     format: "binary",
   })
-  diabetesSpecialtyTraining?: Express.Multer.File[];
+  diabetesSpecialtyTraining?: Express.Multer.File;
 }

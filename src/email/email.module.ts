@@ -10,7 +10,7 @@ import { EmailService } from "./email.service";
       useFactory: () => ({
         transport: {
           host: process.env.MAIL_HOST,
-          port: Number(process.env.MAIL_PORT),
+          port: Number(process.env.MAIL_PORT) ?? 465,
           secure: true,
 
           auth: {
