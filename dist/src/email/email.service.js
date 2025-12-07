@@ -10,23 +10,29 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EmailService = void 0;
-const mailer_1 = require("@nestjs-modules/mailer");
 const common_1 = require("@nestjs/common");
 let EmailService = class EmailService {
-    mailService;
-    constructor(mailService) {
-        this.mailService = mailService;
+    mailJet;
+    MAIL_API_KEY;
+    MAIL_API_SECRET;
+    constructor() {
+        this.MAIL_API_KEY = process.env.MAIL_API_KEY;
+        this.MAIL_API_SECRET = process.env.MAIL_API_SECRET;
+        const MailJet = require("node-mailjet");
+        this.mailJet = MailJet.apiConnect(this.MAIL_API_KEY, this.MAIL_API_SECRET);
     }
     async sendEmail(to, subject, name, message) {
-        this.mailService
-            .sendMail({
-            to,
-            subject: subject,
-            html: message,
-            from: `"Express Care Team" <${process.env.MAIL_USER}>`,
-            context: { name },
+        const request = await this.mailJet
+            .post("send")
+            .request({
+            FromEmail: process.env.MAIL_USER,
+            FromName: "Express Care Team",
+            Subject: subject,
+            "Html-part": message,
+            Recipients: [{ Email: to }],
         })
-            .catch((err) => console.error("email job failed", err));
+            .then((res) => res)
+            .then((err) => console.log(err));
     }
     async sendPasswordResetCodeMail(to, name, otp) {
         const message = `<p>Hi ${name},</p>
@@ -38,15 +44,13 @@ let EmailService = class EmailService {
 <p>This code will expire in 10 minutes.</p>
 
 <p>Thank you,</p>
-<p>Express Care Team</p>
-
-    `;
+<p>Express Care Team</p>`;
         await this.sendEmail(to, "Password Reset", name, message);
     }
 };
 exports.EmailService = EmailService;
 exports.EmailService = EmailService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [mailer_1.MailerService])
+    __metadata("design:paramtypes", [])
 ], EmailService);
 //# sourceMappingURL=email.service.js.map
