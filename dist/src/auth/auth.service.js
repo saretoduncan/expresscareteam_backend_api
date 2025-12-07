@@ -216,7 +216,6 @@ let AuthService = class AuthService {
             });
             if (!user)
                 throw new common_1.UnauthorizedException("The OTP is invalid");
-            console.log(user);
             await this.userService.updatePassword(user.id, password);
             return;
         }

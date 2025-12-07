@@ -309,7 +309,7 @@ export class AuthService {
         },
       });
       if (!user) throw new UnauthorizedException("The OTP is invalid");
-      console.log(user)
+  
       await this.userService.updatePassword(user.id, password);
       return;
     } catch (e) {
