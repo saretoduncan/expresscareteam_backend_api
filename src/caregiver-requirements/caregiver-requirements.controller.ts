@@ -13,13 +13,14 @@ import { mutlerConfig } from "src/config/multer.config";
 import { FileFieldsInterceptor } from "@nestjs/platform-express";
 import { ApiBody, ApiConsumes, ApiQuery } from "@nestjs/swagger";
 import { UploadCaregiverRequirementsDto } from "src/dtos/carigiver-requirements.dtos";
-import { S3Services } from "./s3.service";
+
+import { GcsService } from "./gsc.service";
 
 @Controller("caregiver-requirements")
 export class CaregiverRequirementsController {
   constructor(
     private readonly caregiverRequirementsService: CaregiverRequirementsService,
-    private readonly s3Service: S3Services
+    private readonly gscService: GcsService
   ) {}
 
   //create caregiver requirements
@@ -53,10 +54,9 @@ export class CaregiverRequirementsController {
     @Query("caregiverId") caregiverId: string,
     @UploadedFiles() files: UploadCaregiverRequirementsDto
   ) {
-  
-  
 
-    const url= await this.s3Service.streamUpload(files.backgroundCheck, files.backgroundCheck.mimetype)
+
+    const url= await this.gscService.uploadFile(files.backgroundCheck[0])
     console.log(url)
     // if (!caregiverId.trim()) {
     //   throw new BadRequestException("Caregiver ID is required");
@@ -76,7 +76,7 @@ export class CaregiverRequirementsController {
     //   }
     // }
     // return await this.caregiverRequirementsService.createCaregiverRequirements({
-    //   backgroundCheck: files.backgroundCheck[0].path,
+    //   backgroundCheck: files[0].backgroundCheck
     //   caregiverId: caregiverId,
     //   firstAid_cpr: files.firstAid_cpr[0].path,
     //   figurePrint: files.figurePrint[0].path,

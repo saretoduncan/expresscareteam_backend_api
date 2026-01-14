@@ -11,4 +11,5 @@ export declare class CaregiverRequirementsService {
     getCaregiverRequirementsByCaregiverId(caregiverId: string): Promise<CaregiverRequirements>;
     updateCaregiverRequirements(id: string, caregiverRequirements: ICaregiverUpdateRequirements): Promise<CaregiverRequirements>;
     deleteCaregiverRequirements(id: string): Promise<void>;
+    getfilesFromgs(filename: string): Promise<void>;
 }

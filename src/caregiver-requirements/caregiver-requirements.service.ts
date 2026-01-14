@@ -36,6 +36,7 @@ export class CaregiverRequirementsService {
       });
       if (!caregiver)
         throw new HttpException("Caregiver not found", HttpStatus.NOT_FOUND);
+
       const newCaregiverRequirement = this.caregiverRequirementsRepo.create({
         administrationTrainingSpecialist:
           caregiverRequirements.administrationTrainingSpecialist,
@@ -129,4 +130,7 @@ export class CaregiverRequirementsService {
       throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
+  async getfilesFromgs(filename:string){
+
+ }
 }

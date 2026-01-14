@@ -121,6 +121,8 @@ let CaregiverRequirementsService = class CaregiverRequirementsService {
             throw new common_1.HttpException(e.message, common_1.HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    async getfilesFromgs(filename) {
+    }
 };
 exports.CaregiverRequirementsService = CaregiverRequirementsService;
 exports.CaregiverRequirementsService = CaregiverRequirementsService = __decorate([

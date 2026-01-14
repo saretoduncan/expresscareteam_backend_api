@@ -4,14 +4,15 @@ import { CaregiverRequirementsController } from "./caregiver-requirements.contro
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { CaregiverRequirements } from "./caregiver-requirements.entity";
 import { Caregiver } from "src/users/caregiver.entity";
-import { S3Services } from "./s3.service";
+
+import { GcsService } from "./gsc.service";
 
 @Global()
 @Module({
   imports: [TypeOrmModule.forFeature([CaregiverRequirements, Caregiver])],
 
-  providers: [CaregiverRequirementsService, S3Services],
+  providers: [CaregiverRequirementsService,GcsService],
   controllers: [CaregiverRequirementsController],
-  exports: [CaregiverRequirementsService, S3Services],
+  exports: [CaregiverRequirementsService, GcsService],
 })
 export class CaregiverRequirementsModule {}

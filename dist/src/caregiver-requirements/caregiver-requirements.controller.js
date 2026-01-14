@@ -19,16 +19,16 @@ const multer_config_1 = require("../config/multer.config");
 const platform_express_1 = require("@nestjs/platform-express");
 const swagger_1 = require("@nestjs/swagger");
 const carigiver_requirements_dtos_1 = require("../dtos/carigiver-requirements.dtos");
-const s3_service_1 = require("./s3.service");
+const gsc_service_1 = require("./gsc.service");
 let CaregiverRequirementsController = class CaregiverRequirementsController {
     caregiverRequirementsService;
-    s3Service;
-    constructor(caregiverRequirementsService, s3Service) {
+    gscService;
+    constructor(caregiverRequirementsService, gscService) {
         this.caregiverRequirementsService = caregiverRequirementsService;
-        this.s3Service = s3Service;
+        this.gscService = gscService;
     }
     async uploadCaregiverRequirements(caregiverId, files) {
-        const url = await this.s3Service.streamUpload(files.backgroundCheck, files.backgroundCheck.mimetype);
+        const url = await this.gscService.uploadFile(files.backgroundCheck[0]);
         console.log(url);
     }
     async getCaregiverRequirementsById(id) {
@@ -87,6 +87,6 @@ __decorate([
 exports.CaregiverRequirementsController = CaregiverRequirementsController = __decorate([
     (0, common_1.Controller)("caregiver-requirements"),
     __metadata("design:paramtypes", [caregiver_requirements_service_1.CaregiverRequirementsService,
-        s3_service_1.S3Services])
+        gsc_service_1.GcsService])
 ], CaregiverRequirementsController);
 //# sourceMappingURL=caregiver-requirements.controller.js.map
