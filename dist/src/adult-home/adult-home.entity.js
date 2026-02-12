@@ -10,6 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AdultHome = void 0;
+const job_entity_1 = require("../jobs/job.entity");
 const adult_home_representative_entity_1 = require("../users/adult-home-representative.entity");
 const typeorm_1 = require("typeorm");
 let AdultHome = class AdultHome {
@@ -24,6 +25,7 @@ let AdultHome = class AdultHome {
     website;
     homeDescription;
     reps;
+    jobs;
     createdAt;
     updatedAt;
 };
@@ -72,6 +74,10 @@ __decorate([
     (0, typeorm_1.OneToMany)(() => adult_home_representative_entity_1.AdultHomeRepresentative, (rep) => rep.adultHome),
     __metadata("design:type", Array)
 ], AdultHome.prototype, "reps", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => job_entity_1.JobsEntity, (job) => job.adult_home),
+    __metadata("design:type", Array)
+], AdultHome.prototype, "jobs", void 0);
 __decorate([
     (0, typeorm_1.CreateDateColumn)({ type: "timestamp" }),
     __metadata("design:type", Date)

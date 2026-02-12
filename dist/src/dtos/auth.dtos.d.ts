@@ -29,6 +29,7 @@ export declare class RegisterProviderDto {
     adult_home_street: string;
     adult_home_zipcode: string;
     adult_home_website?: string;
+    homeDescription: string;
 }
 export declare class LoginUserDto {
     username: string;

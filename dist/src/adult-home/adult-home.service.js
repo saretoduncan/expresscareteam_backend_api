@@ -44,6 +44,7 @@ let AdultHomeService = class AdultHomeService {
                 street: createAdultHomeDto.street,
                 website: createAdultHomeDto.website,
                 zipcode: createAdultHomeDto.zipcode,
+                homeDescription: createAdultHomeDto.homeDescription
             });
             await this.adultHomeRepo.save(newHome);
             return newHome;

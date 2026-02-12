@@ -359,6 +359,26 @@ let UsersService = class UsersService {
             throw new common_1.HttpException(e.message, common_1.HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    async getHomeRepByUserAndHomeId(userId, homeId) {
+        const user = await this.userRepo.findOne({
+            where: {
+                id: userId,
+                adultHomeRepresentative: {
+                    adultHomeId: homeId,
+                },
+            },
+            relations: {
+                roles: true,
+                adultHomeRepresentative: {
+                    adultHome: true
+                },
+            },
+        });
+        if (!user) {
+            throw new common_1.HttpException("home rep not found", common_1.HttpStatus.NOT_FOUND);
+        }
+        return user;
+    }
 };
 exports.UsersService = UsersService;
 exports.UsersService = UsersService = __decorate([

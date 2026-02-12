@@ -1,3 +1,4 @@
+import { JobsEntity } from "src/jobs/job.entity";
 import { AdultHomeRepresentative } from "src/users/adult-home-representative.entity";
 export declare class AdultHome {
     id: string;
@@ -11,6 +12,7 @@ export declare class AdultHome {
     website?: string;
     homeDescription: string;
     reps: AdultHomeRepresentative[];
+    jobs: JobsEntity[];
     createdAt: Date;
     updatedAt: Date;
 }

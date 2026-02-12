@@ -25,4 +25,5 @@ export declare class UsersService {
     updateCaregiver(caregiver: CreateCaregiverDto): Promise<User>;
     createHomeRep(createHomeRepDto: CreateAdultHomeRepresentativeRequestDto): Promise<UserResponseDto>;
     getAllHomeRep(): Promise<UserResponseDto[]>;
+    getHomeRepByUserAndHomeId(userId: string, homeId: string): Promise<UserResponseDto>;
 }

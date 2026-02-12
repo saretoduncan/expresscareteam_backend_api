@@ -49,12 +49,12 @@ export class JobsEntity {
   @Column({ type: Number })
   staff_needed: number;
 
-  @Column({ type: "array" })
+  @Column("text", { array: true })
   certificates_needed: string[];
 
   @Column({ type: "boolean", default: false })
   is_urgent: boolean;
-  
+
   @Column({ type: "text" })
   description: string;
 

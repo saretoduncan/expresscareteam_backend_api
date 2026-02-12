@@ -153,6 +153,7 @@ class RegisterProviderDto {
     adult_home_street;
     adult_home_zipcode;
     adult_home_website;
+    homeDescription;
 }
 exports.RegisterProviderDto = RegisterProviderDto;
 __decorate([
@@ -295,6 +296,16 @@ __decorate([
     }),
     __metadata("design:type", String)
 ], RegisterProviderDto.prototype, "adult_home_website", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        description: "home descriptions",
+        example: "home descriptions",
+        required: true,
+    }),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], RegisterProviderDto.prototype, "homeDescription", void 0);
 class LoginUserDto {
     username;
     password;

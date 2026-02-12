@@ -23,60 +23,100 @@ class CreateAdultHomeDto {
     street;
     zipcode;
     website;
+    homeDescription;
 }
 exports.CreateAdultHomeDto = CreateAdultHomeDto;
 __decorate([
-    (0, swagger_1.ApiProperty)({ description: 'Name of the adult home facility.', example: 'Sunrise Adult Care Home' }),
+    (0, swagger_1.ApiProperty)({
+        description: "Name of the adult home facility.",
+        example: "Sunrise Adult Care Home",
+    }),
     (0, class_validator_1.IsNotEmpty)(),
     (0, class_validator_1.IsString)(),
-    (0, class_validator_1.MaxLength)(100, { message: 'Name cannot exceed 100 characters' }),
+    (0, class_validator_1.MaxLength)(100, { message: "Name cannot exceed 100 characters" }),
     __metadata("design:type", String)
 ], CreateAdultHomeDto.prototype, "name", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ description: 'Contact email address of the adult home.', example: 'info@sunrisehome.com' }),
+    (0, swagger_1.ApiProperty)({
+        description: "Contact email address of the adult home.",
+        example: "info@sunrisehome.com",
+    }),
     (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsEmail)({}, { message: 'Email must be a valid address' }),
+    (0, class_validator_1.IsEmail)({}, { message: "Email must be a valid address" }),
     __metadata("design:type", String)
 ], CreateAdultHomeDto.prototype, "email", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ description: 'Valid phone number for the adult home.', example: '+254700111222' }),
+    (0, swagger_1.ApiProperty)({
+        description: "Valid phone number for the adult home.",
+        example: "+254700111222",
+    }),
     (0, class_validator_1.IsNotEmpty)(),
     (0, class_validator_1.IsString)(),
-    (0, class_validator_1.Matches)(/^[0-9+\-\s()]+$/, { message: 'Phone number contains invalid characters' }),
-    (0, class_validator_1.Length)(10, 15, { message: 'Phone number must be between 10 and 15 digits' }),
+    (0, class_validator_1.Matches)(/^[0-9+\-\s()]+$/, {
+        message: "Phone number contains invalid characters",
+    }),
+    (0, class_validator_1.Length)(10, 15, { message: "Phone number must be between 10 and 15 digits" }),
     __metadata("design:type", String)
 ], CreateAdultHomeDto.prototype, "phone", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ description: 'City where the adult home is located.', example: 'Nairobi' }),
+    (0, swagger_1.ApiProperty)({
+        description: "City where the adult home is located.",
+        example: "Nairobi",
+    }),
     (0, class_validator_1.IsNotEmpty)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], CreateAdultHomeDto.prototype, "city", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ description: 'State or region of the adult home.', example: 'Nairobi County' }),
+    (0, swagger_1.ApiProperty)({
+        description: "State or region of the adult home.",
+        example: "Nairobi County",
+    }),
     (0, class_validator_1.IsNotEmpty)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], CreateAdultHomeDto.prototype, "state", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ description: 'Street address of the adult home.', example: '123 Care Street' }),
+    (0, swagger_1.ApiProperty)({
+        description: "Street address of the adult home.",
+        example: "123 Care Street",
+    }),
     (0, class_validator_1.IsNotEmpty)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], CreateAdultHomeDto.prototype, "street", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ description: 'Zipcode or postal code of the adult home location.', example: '00100' }),
+    (0, swagger_1.ApiProperty)({
+        description: "Zipcode or postal code of the adult home location.",
+        example: "00100",
+    }),
     (0, class_validator_1.IsNotEmpty)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], CreateAdultHomeDto.prototype, "zipcode", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ description: 'Optional website URL for the adult home.', example: 'https://sunrisehome.com', required: false }),
+    (0, swagger_1.ApiProperty)({
+        description: "Optional website URL for the adult home.",
+        example: "https://sunrisehome.com",
+        required: false,
+    }),
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
-    (0, class_validator_1.Matches)(/^(https?:\/\/)?([\w-]+\.)+[\w-]{2,}(\/[\w-./?%&=]*)?$/, { message: 'Website must be a valid URL' }),
+    (0, class_validator_1.Matches)(/^(https?:\/\/)?([\w-]+\.)+[\w-]{2,}(\/[\w-./?%&=]*)?$/, {
+        message: "Website must be a valid URL",
+    }),
     __metadata("design:type", String)
 ], CreateAdultHomeDto.prototype, "website", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        description: "home descriptions",
+        example: "home descriptions",
+        required: true,
+    }),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], CreateAdultHomeDto.prototype, "homeDescription", void 0);
 let AdultHomeResponseDto = class AdultHomeResponseDto {
     id;
     email;
@@ -91,52 +131,83 @@ let AdultHomeResponseDto = class AdultHomeResponseDto {
 };
 exports.AdultHomeResponseDto = AdultHomeResponseDto;
 __decorate([
-    (0, swagger_1.ApiProperty)({ description: 'Unique identifier for the adult home', example: '123e4567-e89b-12d3-a456-426614174000' }),
+    (0, swagger_1.ApiProperty)({
+        description: "Unique identifier for the adult home",
+        example: "123e4567-e89b-12d3-a456-426614174000",
+    }),
     (0, class_transformer_1.Expose)(),
     __metadata("design:type", String)
 ], AdultHomeResponseDto.prototype, "id", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ description: 'Contact email of the adult home', example: 'info@sunrisehome.com' }),
+    (0, swagger_1.ApiProperty)({
+        description: "Contact email of the adult home",
+        example: "info@sunrisehome.com",
+    }),
     (0, class_transformer_1.Expose)(),
     __metadata("design:type", String)
 ], AdultHomeResponseDto.prototype, "email", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ description: 'Name of the adult home facility', example: 'Sunrise Adult Care Home' }),
+    (0, swagger_1.ApiProperty)({
+        description: "Name of the adult home facility",
+        example: "Sunrise Adult Care Home",
+    }),
     (0, class_transformer_1.Expose)(),
     __metadata("design:type", String)
 ], AdultHomeResponseDto.prototype, "name", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ description: 'Contact phone number of the adult home', example: '+254700111222' }),
+    (0, swagger_1.ApiProperty)({
+        description: "Contact phone number of the adult home",
+        example: "+254700111222",
+    }),
     (0, class_transformer_1.Expose)(),
     __metadata("design:type", String)
 ], AdultHomeResponseDto.prototype, "phone", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ description: 'City where the adult home is located', example: 'Nairobi' }),
+    (0, swagger_1.ApiProperty)({
+        description: "City where the adult home is located",
+        example: "Nairobi",
+    }),
     (0, class_transformer_1.Expose)(),
     __metadata("design:type", String)
 ], AdultHomeResponseDto.prototype, "city", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ description: 'State or region of the adult home', example: 'Nairobi County' }),
+    (0, swagger_1.ApiProperty)({
+        description: "State or region of the adult home",
+        example: "Nairobi County",
+    }),
     (0, class_transformer_1.Expose)(),
     __metadata("design:type", String)
 ], AdultHomeResponseDto.prototype, "state", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ description: 'Street address of the adult home', example: '123 Care Street' }),
+    (0, swagger_1.ApiProperty)({
+        description: "Street address of the adult home",
+        example: "123 Care Street",
+    }),
     (0, class_transformer_1.Expose)(),
     __metadata("design:type", String)
 ], AdultHomeResponseDto.prototype, "street", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ description: 'Zipcode or postal code of the adult home', example: '00100' }),
+    (0, swagger_1.ApiProperty)({
+        description: "Zipcode or postal code of the adult home",
+        example: "00100",
+    }),
     (0, class_transformer_1.Expose)(),
     __metadata("design:type", String)
 ], AdultHomeResponseDto.prototype, "zipcode", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ description: 'Website URL of the adult home, if available', example: 'https://sunrisehome.com', nullable: true }),
+    (0, swagger_1.ApiProperty)({
+        description: "Website URL of the adult home, if available",
+        example: "https://sunrisehome.com",
+        nullable: true,
+    }),
     (0, class_transformer_1.Expose)(),
     __metadata("design:type", Object)
 ], AdultHomeResponseDto.prototype, "website", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ description: 'List of representatives associated with the adult home', type: [users_dtos_1.AdultHomeRepresentativeResponseDto] }),
+    (0, swagger_1.ApiProperty)({
+        description: "List of representatives associated with the adult home",
+        type: [users_dtos_1.AdultHomeRepresentativeResponseDto],
+    }),
     (0, class_transformer_1.Expose)(),
     (0, class_transformer_1.Type)(() => users_dtos_1.AdultHomeRepresentativeResponseDto),
     __metadata("design:type", Array)

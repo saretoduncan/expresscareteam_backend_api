@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Caregiver = void 0;
 const caregiver_requirements_entity_1 = require("../caregiver-requirements/caregiver-requirements.entity");
+const job_application_entity_1 = require("../jobs/job_application.entity");
 const users_entity_1 = require("./users.entity");
 const typeorm_1 = require("typeorm");
 let Caregiver = class Caregiver {
@@ -28,6 +29,7 @@ let Caregiver = class Caregiver {
     userId;
     user;
     requirements;
+    JobApplications;
     createdAt;
     updatedAt;
 };
@@ -89,6 +91,10 @@ __decorate([
     (0, typeorm_1.OneToOne)(() => caregiver_requirements_entity_1.CaregiverRequirements, (requirements) => requirements.caregiver),
     __metadata("design:type", caregiver_requirements_entity_1.CaregiverRequirements)
 ], Caregiver.prototype, "requirements", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => job_application_entity_1.JobApplications, (application) => application),
+    __metadata("design:type", Array)
+], Caregiver.prototype, "JobApplications", void 0);
 __decorate([
     (0, typeorm_1.CreateDateColumn)({ type: "timestamp" }),
     __metadata("design:type", Date)

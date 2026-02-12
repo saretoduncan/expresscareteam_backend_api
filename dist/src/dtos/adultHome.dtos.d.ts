@@ -1,4 +1,4 @@
-import { AdultHomeRepresentativeResponseDto } from './users.dtos';
+import { AdultHomeRepresentativeResponseDto } from "./users.dtos";
 export declare class CreateAdultHomeDto {
     name: string;
     email: string;
@@ -8,6 +8,7 @@ export declare class CreateAdultHomeDto {
     street: string;
     zipcode: string;
     website?: string;
+    homeDescription: string;
 }
 export declare class AdultHomeResponseDto {
     id: string;

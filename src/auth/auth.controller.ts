@@ -46,7 +46,7 @@ interface RequestWithUser extends Request {
 /**
  * Interface extending the standard Request object to include the JWT payload.
  */
-interface RequestWithJwtPayload extends Request {
+export interface RequestWithJwtPayload extends Request {
   /**
    * The JWT payload extracted from the token, containing user identification data.
    */

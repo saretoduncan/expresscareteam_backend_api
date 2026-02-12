@@ -31,7 +31,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly emailService: EmailService,
     private readonly redisService: RedisService,
-    @InjectRepository(User) private readonly userRepo: Repository<User>
+    @InjectRepository(User) private readonly userRepo: Repository<User>,
   ) {}
   //sigh jwt token
   private async signJwtToken(
@@ -39,25 +39,25 @@ export class AuthService {
     id: string,
     roles: string[],
     secret: string,
-    expireTime: string
+    expireTime: string,
   ) {
     return await this.jwtService.signAsync(
       { username: username, sub: id, roles: roles },
-      { expiresIn: Number(expireTime), secret: secret }
+      { expiresIn: Number(expireTime), secret: secret },
     );
   }
   //sign refresh token
   private async signRefresherToken(
     username: string,
     id: string,
-    roles: string[]
+    roles: string[],
   ) {
     return await this.signJwtToken(
       username,
       id,
       roles,
       process.env.REFRESH_TOKEN_SECRET!!,
-      process.env.REFRESH_TOKEN_EXPIRY_TIME!!
+      process.env.REFRESH_TOKEN_EXPIRY_TIME!!,
     );
   }
   //set cookie
@@ -73,7 +73,7 @@ export class AuthService {
   //create caregiver
   async registerCaregiver(
     registerCaregiverDto: RegisterCaregiverDto,
-    res: Response
+    res: Response,
   ): Promise<AuthUserResponseDto> {
     try {
       const newUser = await this.userService.createUser({
@@ -99,12 +99,12 @@ export class AuthService {
         newUser.id,
         newUser.roles.map((role) => role.name),
         process.env.ACCESS_TOKEN_SECRET!!,
-        process.env.ACCESS_TOKEN_EXPIRY_TIME!!
+        process.env.ACCESS_TOKEN_EXPIRY_TIME!!,
       );
       const refreshToken = await this.signRefresherToken(
         newUser.username,
         newUser.id,
-        newUser.roles.map((role) => role.name)
+        newUser.roles.map((role) => role.name),
       );
       this.setCookie(res, refreshToken);
       return { ...newCaregiver, accessToken };
@@ -115,7 +115,7 @@ export class AuthService {
   //create provider
   async registerProvider(
     registerProviderDto: RegisterProviderDto,
-    res: Response
+    res: Response,
   ): Promise<AuthUserResponseDto> {
     try {
       const [newUser, newHome] = await Promise.all([
@@ -133,6 +133,7 @@ export class AuthService {
           street: registerProviderDto.adult_home_street,
           zipcode: registerProviderDto.adult_home_zipcode,
           website: registerProviderDto.adult_home_website,
+          homeDescription: registerProviderDto.homeDescription,
         }),
       ]);
       const newHomeRep = await this.userService.createHomeRep({
@@ -150,12 +151,12 @@ export class AuthService {
         newUser.id,
         newUser.roles.map((role) => role.name),
         process.env.ACCESS_TOKEN_SECRET!!,
-        process.env.ACCESS_TOKEN_EXPIRY_TIME!!
+        process.env.ACCESS_TOKEN_EXPIRY_TIME!!,
       );
       const refreshToken = await this.signRefresherToken(
         newUser.username,
         newUser.id,
-        newUser.roles.map((role) => role.name)
+        newUser.roles.map((role) => role.name),
       );
       this.setCookie(res, refreshToken);
 
@@ -168,7 +169,7 @@ export class AuthService {
   //login
   async loginUser(
     user: UserResponseDto,
-    res: Response
+    res: Response,
   ): Promise<AuthUserResponseDto> {
     try {
       const accessToken = await this.signJwtToken(
@@ -176,13 +177,13 @@ export class AuthService {
         user.id,
         user.roles.map((role) => role.name),
         process.env.ACCESS_TOKEN_SECRET!!,
-        process.env.ACCESS_TOKEN_EXPIRY_TIME!!
+        process.env.ACCESS_TOKEN_EXPIRY_TIME!!,
       );
 
       const refreshToken = await this.signRefresherToken(
         user.username,
         user.id,
-        user.roles.map((role) => role.name)
+        user.roles.map((role) => role.name),
       );
       this.setCookie(res, refreshToken);
 
@@ -197,7 +198,7 @@ export class AuthService {
       if (!username)
         throw new HttpException(
           "USERNAME field cannot be left empty",
-          HttpStatus.BAD_REQUEST
+          HttpStatus.BAD_REQUEST,
         );
       const user = await this.userRepo.findOne({
         where: {
@@ -210,11 +211,11 @@ export class AuthService {
           adultHomeRepresentative: true,
         },
       });
-     
+
       if (!user) {
         throw new HttpException(
           "User is not registered with us",
-          HttpStatus.UNAUTHORIZED
+          HttpStatus.UNAUTHORIZED,
         );
       }
       const isPasswordCorrect = await bcrypt.compare(password, user.password);
@@ -232,7 +233,7 @@ export class AuthService {
   async refreshToken(
     username: string,
     id: string,
-    roles: string[]
+    roles: string[],
   ): Promise<RefreshAccessTokenResponseDto> {
     try {
       const accessToken = await this.signJwtToken(
@@ -240,7 +241,7 @@ export class AuthService {
         id,
         roles,
         process.env.ACCESS_TOKEN_SECRET!!,
-        process.env.ACCESS_TOKEN_EXPIRY_TIME!!
+        process.env.ACCESS_TOKEN_EXPIRY_TIME!!,
       );
       return {
         accessToken: accessToken,
@@ -263,7 +264,7 @@ export class AuthService {
           user.adultHomeRepresentative?.firstName ??
             user.caregiver?.firstName ??
             "",
-          otpCode.toString()
+          otpCode.toString(),
         )
         .catch((err) => console.error("email job failed", err));
     } catch (e) {
@@ -272,7 +273,7 @@ export class AuthService {
   }
   async verifyResetOtp(
     email: string,
-    otpCode: string
+    otpCode: string,
   ): Promise<RefreshAccessTokenResponseDto> {
     const getOtp = await this.redisService.get(email);
     if (!getOtp) throw new UnauthorizedException("The OTP is invalid");
@@ -295,7 +296,7 @@ export class AuthService {
       user.id,
       user.roles.map((r) => r.name),
       process.env.RESET_PASSWORD_TOKEN_SECRET!!,
-      process.env.ACCESS_TOKEN_EXPIRY_TIME!!
+      process.env.ACCESS_TOKEN_EXPIRY_TIME!!,
     );
     await this.redisService.del(email);
     return { accessToken: accessToken };
@@ -309,7 +310,7 @@ export class AuthService {
         },
       });
       if (!user) throw new UnauthorizedException("The OTP is invalid");
-  
+
       await this.userService.updatePassword(user.id, password);
       return;
     } catch (e) {

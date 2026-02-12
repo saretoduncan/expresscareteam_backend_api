@@ -19,6 +19,7 @@ const redis_module_1 = require("./redis/redis.module");
 const caregiver_requirements_module_1 = require("./caregiver-requirements/caregiver-requirements.module");
 const platform_express_1 = require("@nestjs/platform-express");
 const constants_1 = require("./common/constants");
+const jobs_module_1 = require("./jobs/jobs.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -52,6 +53,7 @@ exports.AppModule = AppModule = __decorate([
             email_module_1.EmailModule,
             redis_module_1.RedisModule,
             caregiver_requirements_module_1.CaregiverRequirementsModule,
+            jobs_module_1.JobsModule,
         ],
         providers: [],
         exports: [],

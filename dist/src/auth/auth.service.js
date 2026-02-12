@@ -100,6 +100,7 @@ let AuthService = class AuthService {
                     street: registerProviderDto.adult_home_street,
                     zipcode: registerProviderDto.adult_home_zipcode,
                     website: registerProviderDto.adult_home_website,
+                    homeDescription: registerProviderDto.homeDescription,
                 }),
             ]);
             const newHomeRep = await this.userService.createHomeRep({

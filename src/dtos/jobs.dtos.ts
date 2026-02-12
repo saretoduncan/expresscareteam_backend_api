@@ -1,4 +1,4 @@
-import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { ApiProperty, ApiPropertyOptional, PartialType } from "@nestjs/swagger";
 import {
   IsString,
   IsEnum,
@@ -10,10 +10,12 @@ import {
   IsArray,
   ArrayNotEmpty,
   IsBoolean,
+  IsUUID,
 } from "class-validator";
 import { EJOBTYPE } from "src/jobs/job.entity";
+import { EAPPLICATIONSTATUS } from "src/jobs/job_application.entity";
 
-export class PostJobDto {
+export class PostJobDtoReq {
   @ApiProperty({
     example: "Registered Nurse",
     description: "Role required for the job",
@@ -94,7 +96,7 @@ export class PostJobDto {
 
   @ApiProperty({
     example: "Night shift for ICU ward, 2 nurses required.",
-    description: "Detailed job description",
+    description: "Detailed description of the home and job",
   })
   @IsString()
   description: string;
@@ -105,4 +107,101 @@ export class PostJobDto {
   })
   @IsString()
   adult_home_id: string;
+}
+export class UpdateJobDto extends PartialType(PostJobDtoReq) {}
+export class IsJobFilledDtoReq{
+  @IsString()
+  @ApiProperty({
+    example: true,
+    description: "update job status if it its field",
+  })
+  @IsBoolean()
+  isJobFilled: boolean;
+}
+export class CreateJobApplicationDto {
+  @ApiProperty({
+    example: "9f2c3d6a-8a9e-4c6a-bc77-123456789abc",
+    description: "Caregiver ID applying for the job",
+  })
+  @IsUUID()
+  caregiver_id: string;
+
+  @ApiProperty({
+    example: "3b7a1f10-91c2-4a1b-9f3d-abcdef123456",
+    description: "Job ID being applied for",
+  })
+  @IsUUID()
+  job_id: string;
+}
+
+export class JobsDtoRes {
+  @ApiProperty()
+  id: string;
+
+  @ApiProperty()
+  job_role: string;
+
+  @ApiProperty({ enum: EJOBTYPE })
+  job_type: EJOBTYPE;
+
+  @ApiProperty()
+  start_date: Date;
+
+  @ApiProperty()
+  end_date?: Date;
+
+  @ApiProperty()
+  shift_start: string;
+
+  @ApiProperty()
+  shift_end: string;
+
+  @ApiProperty()
+  payment_rate: string;
+
+  @ApiProperty()
+  staff_needed: number;
+
+  @ApiProperty({ type: [String] })
+  certificates_needed: string[];
+
+  @ApiProperty()
+  is_urgent: boolean;
+
+  @ApiProperty()
+  is_filled: boolean;
+
+  @ApiProperty()
+  description: string;
+
+  @ApiProperty()
+  createdAt: Date;
+
+  @ApiProperty()
+  updatedAt: Date;
+}
+export class JobApplicationResponseDto {
+  @ApiProperty()
+  id: string;
+
+  @ApiProperty()
+  caregiver_id: string;
+
+  @ApiProperty()
+  job_id: string;
+
+  @ApiProperty({ enum: EAPPLICATIONSTATUS })
+  status: EAPPLICATIONSTATUS;
+
+  @ApiProperty()
+  appliedAt: Date;
+
+  @ApiProperty({ nullable: true })
+  acceptedAt: Date | null;
+
+  @ApiProperty({ nullable: true })
+  rejectedAt: Date | null;
+
+  @ApiProperty()
+  updatedAt: Date;
 }

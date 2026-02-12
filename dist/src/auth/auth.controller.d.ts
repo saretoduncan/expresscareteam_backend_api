@@ -5,7 +5,7 @@ import { Response } from "express";
 interface RequestWithUser extends Request {
     user: UserResponseDto;
 }
-interface RequestWithJwtPayload extends Request {
+export interface RequestWithJwtPayload extends Request {
     user: JwtPayloadDto;
 }
 export declare class AuthController {
