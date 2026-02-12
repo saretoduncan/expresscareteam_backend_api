@@ -245,6 +245,14 @@ export class RegisterProviderDto {
     message: "Website must be a valid URL",
   })
   adult_home_website?: string;
+  @ApiProperty({
+    description: "home descriptions",
+    example: "home descriptions",
+    required: true,
+  })
+  @IsString()
+  @IsNotEmpty()
+  homeDescription: string;
 }
 export class LoginUserDto {
   @ApiProperty({
@@ -337,7 +345,6 @@ export class VerifyResetPasswordOtp {
   @IsNotEmpty()
   email: string;
 
- 
   @ApiProperty({
     description: "OTP code sent to the user's email for verification",
     example: "123456",
