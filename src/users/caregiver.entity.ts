@@ -1,10 +1,12 @@
 import { CaregiverRequirements } from "src/caregiver-requirements/caregiver-requirements.entity";
+import { JobApplications } from "src/jobs/job_application.entity";
 import { User } from "src/users/users.entity";
 import {
   Column,
   CreateDateColumn,
   Entity,
   JoinColumn,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -41,9 +43,11 @@ export class Caregiver {
   user: User;
   @OneToOne(
     () => CaregiverRequirements,
-    (requirements) => requirements.caregiver
+    (requirements) => requirements.caregiver,
   )
   requirements?: CaregiverRequirements;
+  @OneToMany(() => JobApplications, (application) => application)
+  JobApplications: JobApplications[];
 
   @CreateDateColumn({ type: "timestamp" })
   createdAt: Date;

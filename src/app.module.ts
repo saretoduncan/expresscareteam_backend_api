@@ -11,6 +11,7 @@ import { RedisModule } from './redis/redis.module';
 import { CaregiverRequirementsModule } from './caregiver-requirements/caregiver-requirements.module';
 import { MulterModule } from "@nestjs/platform-express";
 import { FILE_UPLOAD_DIR } from "./common/constants";
+import { JobsModule } from './jobs/jobs.module';
 
 @Global()
 @Module({
@@ -53,6 +54,8 @@ import { FILE_UPLOAD_DIR } from "./common/constants";
     RedisModule,
 
     CaregiverRequirementsModule,
+
+    JobsModule,
   ],
   providers: [],
   exports: [],

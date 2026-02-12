@@ -12,6 +12,7 @@ import {
   ICaregiverUpdateRequirements,
 } from "src/interfaces/caregiverRequirementInterface";
 import { Caregiver } from "src/users/caregiver.entity";
+import { GcsService } from "./gsc.service";
 
 @Injectable()
 export class CaregiverRequirementsService {
@@ -19,7 +20,8 @@ export class CaregiverRequirementsService {
     @InjectRepository(CaregiverRequirements)
     private readonly caregiverRequirementsRepo: Repository<CaregiverRequirements>,
     @InjectRepository(Caregiver)
-    private readonly caregiverRepo: Repository<Caregiver>
+    private readonly caregiverRepo: Repository<Caregiver>,
+    private readonly gscService:GcsService
   ) {}
 
   async createCaregiverRequirements(

@@ -18,12 +18,15 @@ const typeorm_1 = require("typeorm");
 const caregiver_requirements_entity_1 = require("./caregiver-requirements.entity");
 const typeorm_2 = require("@nestjs/typeorm");
 const caregiver_entity_1 = require("../users/caregiver.entity");
+const gsc_service_1 = require("./gsc.service");
 let CaregiverRequirementsService = class CaregiverRequirementsService {
     caregiverRequirementsRepo;
     caregiverRepo;
-    constructor(caregiverRequirementsRepo, caregiverRepo) {
+    gscService;
+    constructor(caregiverRequirementsRepo, caregiverRepo, gscService) {
         this.caregiverRequirementsRepo = caregiverRequirementsRepo;
         this.caregiverRepo = caregiverRepo;
+        this.gscService = gscService;
     }
     async createCaregiverRequirements(caregiverRequirements) {
         try {
@@ -130,6 +133,7 @@ exports.CaregiverRequirementsService = CaregiverRequirementsService = __decorate
     __param(0, (0, typeorm_2.InjectRepository)(caregiver_requirements_entity_1.CaregiverRequirements)),
     __param(1, (0, typeorm_2.InjectRepository)(caregiver_entity_1.Caregiver)),
     __metadata("design:paramtypes", [typeorm_1.Repository,
-        typeorm_1.Repository])
+        typeorm_1.Repository,
+        gsc_service_1.GcsService])
 ], CaregiverRequirementsService);
 //# sourceMappingURL=caregiver-requirements.service.js.map
