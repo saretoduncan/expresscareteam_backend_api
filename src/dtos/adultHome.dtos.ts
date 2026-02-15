@@ -165,5 +165,5 @@ export class AdultHomeResponseDto {
   })
   @Expose()
   @Type(() => AdultHomeRepresentativeResponseDto)
-  reps: AdultHomeRepresentativeResponseDto[];
+  representatives: AdultHomeRepresentativeResponseDto;
 }

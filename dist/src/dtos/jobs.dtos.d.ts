@@ -1,7 +1,7 @@
-import { EJOBTYPE } from "src/jobs/job.entity";
+import { EJOBROLE, EJOBTYPE } from "src/jobs/job.entity";
 import { EAPPLICATIONSTATUS } from "src/jobs/job_application.entity";
 export declare class PostJobDtoReq {
-    job_role: string;
+    job_role: EJOBROLE;
     job_type: EJOBTYPE;
     start_date: string;
     end_date?: string;
@@ -11,7 +11,6 @@ export declare class PostJobDtoReq {
     staff_needed: number;
     certificates_needed: string[];
     is_urgent?: boolean;
-    description: string;
     adult_home_id: string;
 }
 declare const UpdateJobDto_base: import("@nestjs/common").Type<Partial<PostJobDtoReq>>;
@@ -23,6 +22,11 @@ export declare class IsJobFilledDtoReq {
 export declare class CreateJobApplicationDto {
     caregiver_id: string;
     job_id: string;
+}
+export declare class JobApplicationStatusRequestDto {
+    applicationId: string;
+    homeId: string;
+    caregiverId: string;
 }
 export declare class JobsDtoRes {
     id: string;
@@ -37,7 +41,6 @@ export declare class JobsDtoRes {
     certificates_needed: string[];
     is_urgent: boolean;
     is_filled: boolean;
-    description: string;
     createdAt: Date;
     updatedAt: Date;
 }

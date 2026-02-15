@@ -241,6 +241,24 @@ let UsersService = class UsersService {
             throw new common_1.HttpException(e.message, common_1.HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    async getCaregiverById(id) {
+        const caregiver = await this.userRepo.findOne({
+            relations: {
+                roles: true,
+                caregiver: true,
+                adultHomeRepresentative: true,
+            },
+            where: {
+                caregiver: {
+                    id: id,
+                },
+            },
+        });
+        if (!caregiver) {
+            throw new common_1.HttpException("Caregiv  er not found", common_1.HttpStatus.NOT_FOUND);
+        }
+        return caregiver;
+    }
     async getAllCaregivers() {
         try {
             const caregivers = await this.userRepo.find({
@@ -370,7 +388,7 @@ let UsersService = class UsersService {
             relations: {
                 roles: true,
                 adultHomeRepresentative: {
-                    adultHome: true
+                    adultHome: true,
                 },
             },
         });

@@ -127,7 +127,7 @@ let AdultHomeResponseDto = class AdultHomeResponseDto {
     street;
     zipcode;
     website;
-    reps;
+    representatives;
 };
 exports.AdultHomeResponseDto = AdultHomeResponseDto;
 __decorate([
@@ -210,8 +210,8 @@ __decorate([
     }),
     (0, class_transformer_1.Expose)(),
     (0, class_transformer_1.Type)(() => users_dtos_1.AdultHomeRepresentativeResponseDto),
-    __metadata("design:type", Array)
-], AdultHomeResponseDto.prototype, "reps", void 0);
+    __metadata("design:type", users_dtos_1.AdultHomeRepresentativeResponseDto)
+], AdultHomeResponseDto.prototype, "representatives", void 0);
 exports.AdultHomeResponseDto = AdultHomeResponseDto = __decorate([
     (0, class_transformer_1.Expose)()
 ], AdultHomeResponseDto);

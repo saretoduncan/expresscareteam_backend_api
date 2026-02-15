@@ -252,6 +252,25 @@ export class UsersService {
       throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
+  //get caregiver by id
+  async getCaregiverById(id: string): Promise<UserResponseDto> {
+    const caregiver = await this.userRepo.findOne({
+      relations: {
+        roles: true,
+        caregiver: true,
+        adultHomeRepresentative: true,
+      },
+      where: {
+        caregiver: {
+          id: id,
+        },
+      },
+    });
+    if (!caregiver) {
+      throw new HttpException("Caregiv  er not found", HttpStatus.NOT_FOUND);
+    }
+    return caregiver;
+  }
   //get all caregiver
   async getAllCaregivers(): Promise<UserResponseDto[]> {
     try {
@@ -392,7 +411,6 @@ export class UsersService {
     userId: string,
     homeId: string,
   ): Promise<UserResponseDto> {
-  
     const user = await this.userRepo.findOne({
       where: {
         id: userId,
@@ -403,11 +421,11 @@ export class UsersService {
       relations: {
         roles: true,
         adultHomeRepresentative: {
-          adultHome:true
+          adultHome: true,
         },
       },
     });
-    if (!user){
+    if (!user) {
       throw new HttpException("home rep not found", HttpStatus.NOT_FOUND);
     }
     return user;

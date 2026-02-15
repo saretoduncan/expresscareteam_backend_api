@@ -23,7 +23,7 @@ export class AdultHomeService {
           email: createAdultHomeDto.email,
         },
         relations: {
-          reps: true,
+          representative: true,
         },
       });
       if (home) {
@@ -54,7 +54,7 @@ export class AdultHomeService {
           id: id,
         },
         relations: {
-          reps: true,
+          representative: true,
         },
       });
       if (!home) {

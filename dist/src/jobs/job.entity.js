@@ -36,7 +36,6 @@ let JobsEntity = class JobsEntity {
     staff_needed;
     certificates_needed;
     is_urgent;
-    description;
     is_filled;
     adult_home_id;
     adult_home;
@@ -50,7 +49,7 @@ __decorate([
     __metadata("design:type", String)
 ], JobsEntity.prototype, "id", void 0);
 __decorate([
-    (0, typeorm_1.Column)(),
+    (0, typeorm_1.Column)({ type: "enum", enum: EJOBROLE }),
     __metadata("design:type", String)
 ], JobsEntity.prototype, "job_role", void 0);
 __decorate([
@@ -89,10 +88,6 @@ __decorate([
     (0, typeorm_1.Column)({ type: "boolean", default: false }),
     __metadata("design:type", Boolean)
 ], JobsEntity.prototype, "is_urgent", void 0);
-__decorate([
-    (0, typeorm_1.Column)({ type: "text" }),
-    __metadata("design:type", String)
-], JobsEntity.prototype, "description", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: "boolean", default: false }),
     __metadata("design:type", Boolean)

@@ -11,17 +11,19 @@ import {
   ArrayNotEmpty,
   IsBoolean,
   IsUUID,
+  IsISO8601,
 } from "class-validator";
-import { EJOBTYPE } from "src/jobs/job.entity";
+import { EJOBROLE, EJOBTYPE } from "src/jobs/job.entity";
 import { EAPPLICATIONSTATUS } from "src/jobs/job_application.entity";
 
 export class PostJobDtoReq {
   @ApiProperty({
-    example: "Registered Nurse",
-    description: "Role required for the job",
+    enum: EJOBROLE,
+    example: EJOBROLE.HCA,
+    description: "Role required for the job(HCA or CNA)",
   })
-  @IsString()
-  job_role: string;
+  @IsEnum(EJOBROLE)
+  job_role: EJOBROLE;
 
   @ApiProperty({
     enum: EJOBTYPE,
@@ -35,7 +37,7 @@ export class PostJobDtoReq {
     example: "2026-02-10",
     description: "Job start date (YYYY-MM-DD)",
   })
-  @IsDateString()
+  @IsISO8601({ strict: false })
   start_date: string;
 
   @ApiPropertyOptional({
@@ -43,7 +45,7 @@ export class PostJobDtoReq {
     description: "Job end date (YYYY-MM-DD)",
   })
   @IsOptional()
-  @IsDateString()
+  @IsISO8601({ strict: false })
   end_date?: string;
 
   @ApiProperty({
@@ -95,25 +97,18 @@ export class PostJobDtoReq {
   is_urgent?: boolean;
 
   @ApiProperty({
-    example: "Night shift for ICU ward, 2 nurses required.",
-    description: "Detailed description of the home and job",
-  })
-  @IsString()
-  description: string;
-
-  @ApiProperty({
     example: "c8b2f9a4-91c3-4f11-ae3a-6a99b6b6f222",
     description: "Adult home / facility ID",
   })
-  @IsString()
+  @IsUUID()
   adult_home_id: string;
 }
 export class UpdateJobDto extends PartialType(PostJobDtoReq) {}
-export class IsJobFilledDtoReq{
-  @IsString()
+export class IsJobFilledDtoReq {
   @ApiProperty({
     example: true,
     description: "update job status if it its field",
+    type: Boolean,
   })
   @IsBoolean()
   isJobFilled: boolean;
@@ -132,6 +127,26 @@ export class CreateJobApplicationDto {
   })
   @IsUUID()
   job_id: string;
+}
+export class JobApplicationStatusRequestDto {
+  @ApiProperty({
+    example: "c8b2f9f4-91c3-4f11-ae3a-6a99b6b6f222",
+    description: "Job application ID ",
+  })
+  @IsUUID()
+  applicationId: string;
+  @ApiProperty({
+    example: "c8b2f9a4-91c3-4f11-ae3a-6a99b6b6f222",
+    description: "Adult home / facility ID",
+  })
+  @IsUUID()
+  homeId: string;
+  @ApiProperty({
+    example: "9f2c3d6a-8a9e-4c6a-bc77-123456789abc",
+    description: "Caregiver ID applying for the job",
+  })
+  @IsUUID()
+  caregiverId: string;
 }
 
 export class JobsDtoRes {
@@ -170,9 +185,6 @@ export class JobsDtoRes {
 
   @ApiProperty()
   is_filled: boolean;
-
-  @ApiProperty()
-  description: string;
 
   @ApiProperty()
   createdAt: Date;

@@ -11,7 +11,7 @@ export declare enum EJOBROLE {
 }
 export declare class JobsEntity {
     id: string;
-    job_role: string;
+    job_role: EJOBROLE;
     job_type: EJOBTYPE;
     start_date: Date;
     end_date: Date;
@@ -21,7 +21,6 @@ export declare class JobsEntity {
     staff_needed: number;
     certificates_needed: string[];
     is_urgent: boolean;
-    description: string;
     is_filled: boolean;
     adult_home_id: string;
     adult_home: AdultHome;

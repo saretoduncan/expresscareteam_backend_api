@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.JobApplicationResponseDto = exports.JobsDtoRes = exports.CreateJobApplicationDto = exports.IsJobFilledDtoReq = exports.UpdateJobDto = exports.PostJobDtoReq = void 0;
+exports.JobApplicationResponseDto = exports.JobsDtoRes = exports.JobApplicationStatusRequestDto = exports.CreateJobApplicationDto = exports.IsJobFilledDtoReq = exports.UpdateJobDto = exports.PostJobDtoReq = void 0;
 const swagger_1 = require("@nestjs/swagger");
 const class_validator_1 = require("class-validator");
 const job_entity_1 = require("../jobs/job.entity");
@@ -25,16 +25,16 @@ class PostJobDtoReq {
     staff_needed;
     certificates_needed;
     is_urgent;
-    description;
     adult_home_id;
 }
 exports.PostJobDtoReq = PostJobDtoReq;
 __decorate([
     (0, swagger_1.ApiProperty)({
-        example: "Registered Nurse",
-        description: "Role required for the job",
+        enum: job_entity_1.EJOBROLE,
+        example: job_entity_1.EJOBROLE.HCA,
+        description: "Role required for the job(HCA or CNA)",
     }),
-    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsEnum)(job_entity_1.EJOBROLE),
     __metadata("design:type", String)
 ], PostJobDtoReq.prototype, "job_role", void 0);
 __decorate([
@@ -51,7 +51,7 @@ __decorate([
         example: "2026-02-10",
         description: "Job start date (YYYY-MM-DD)",
     }),
-    (0, class_validator_1.IsDateString)(),
+    (0, class_validator_1.IsISO8601)({ strict: false }),
     __metadata("design:type", String)
 ], PostJobDtoReq.prototype, "start_date", void 0);
 __decorate([
@@ -60,7 +60,7 @@ __decorate([
         description: "Job end date (YYYY-MM-DD)",
     }),
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsDateString)(),
+    (0, class_validator_1.IsISO8601)({ strict: false }),
     __metadata("design:type", String)
 ], PostJobDtoReq.prototype, "end_date", void 0);
 __decorate([
@@ -119,18 +119,10 @@ __decorate([
 ], PostJobDtoReq.prototype, "is_urgent", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({
-        example: "Night shift for ICU ward, 2 nurses required.",
-        description: "Detailed description of the home and job",
-    }),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], PostJobDtoReq.prototype, "description", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({
         example: "c8b2f9a4-91c3-4f11-ae3a-6a99b6b6f222",
         description: "Adult home / facility ID",
     }),
-    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsUUID)(),
     __metadata("design:type", String)
 ], PostJobDtoReq.prototype, "adult_home_id", void 0);
 class UpdateJobDto extends (0, swagger_1.PartialType)(PostJobDtoReq) {
@@ -141,10 +133,10 @@ class IsJobFilledDtoReq {
 }
 exports.IsJobFilledDtoReq = IsJobFilledDtoReq;
 __decorate([
-    (0, class_validator_1.IsString)(),
     (0, swagger_1.ApiProperty)({
         example: true,
         description: "update job status if it its field",
+        type: Boolean,
     }),
     (0, class_validator_1.IsBoolean)(),
     __metadata("design:type", Boolean)
@@ -170,6 +162,36 @@ __decorate([
     (0, class_validator_1.IsUUID)(),
     __metadata("design:type", String)
 ], CreateJobApplicationDto.prototype, "job_id", void 0);
+class JobApplicationStatusRequestDto {
+    applicationId;
+    homeId;
+    caregiverId;
+}
+exports.JobApplicationStatusRequestDto = JobApplicationStatusRequestDto;
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        example: "c8b2f9f4-91c3-4f11-ae3a-6a99b6b6f222",
+        description: "Job application ID ",
+    }),
+    (0, class_validator_1.IsUUID)(),
+    __metadata("design:type", String)
+], JobApplicationStatusRequestDto.prototype, "applicationId", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        example: "c8b2f9a4-91c3-4f11-ae3a-6a99b6b6f222",
+        description: "Adult home / facility ID",
+    }),
+    (0, class_validator_1.IsUUID)(),
+    __metadata("design:type", String)
+], JobApplicationStatusRequestDto.prototype, "homeId", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        example: "9f2c3d6a-8a9e-4c6a-bc77-123456789abc",
+        description: "Caregiver ID applying for the job",
+    }),
+    (0, class_validator_1.IsUUID)(),
+    __metadata("design:type", String)
+], JobApplicationStatusRequestDto.prototype, "caregiverId", void 0);
 class JobsDtoRes {
     id;
     job_role;
@@ -183,7 +205,6 @@ class JobsDtoRes {
     certificates_needed;
     is_urgent;
     is_filled;
-    description;
     createdAt;
     updatedAt;
 }
@@ -236,10 +257,6 @@ __decorate([
     (0, swagger_1.ApiProperty)(),
     __metadata("design:type", Boolean)
 ], JobsDtoRes.prototype, "is_filled", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)(),
-    __metadata("design:type", String)
-], JobsDtoRes.prototype, "description", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)(),
     __metadata("design:type", Date)

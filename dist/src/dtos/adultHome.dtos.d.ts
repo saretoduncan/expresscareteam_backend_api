@@ -20,5 +20,5 @@ export declare class AdultHomeResponseDto {
     street: string;
     zipcode: string;
     website: string | null;
-    reps: AdultHomeRepresentativeResponseDto[];
+    representatives: AdultHomeRepresentativeResponseDto;
 }

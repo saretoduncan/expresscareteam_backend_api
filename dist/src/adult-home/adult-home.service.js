@@ -29,7 +29,7 @@ let AdultHomeService = class AdultHomeService {
                     email: createAdultHomeDto.email,
                 },
                 relations: {
-                    reps: true,
+                    representative: true,
                 },
             });
             if (home) {
@@ -60,7 +60,7 @@ let AdultHomeService = class AdultHomeService {
                     id: id,
                 },
                 relations: {
-                    reps: true,
+                    representative: true,
                 },
             });
             if (!home) {

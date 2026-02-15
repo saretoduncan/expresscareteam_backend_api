@@ -44,14 +44,19 @@ export class JobsService {
       certificates_needed: createJobDto.certificates_needed,
       is_urgent: createJobDto.is_urgent,
       adult_home: isAdultHome,
-      description: createJobDto.description,
     });
     return await this.jobRepo.save(newJob);
   }
 
   //get all jobs
   async getAllJobs(): Promise<JobsEntity[]> {
-    return await this.jobRepo.find();
+    return await this.jobRepo.find({
+      relations: {
+        adult_home: {
+          representative: true,
+        },
+      },
+    });
   }
 
   //get job by id
@@ -62,7 +67,7 @@ export class JobsService {
       },
       relations: {
         adult_home: {
-          reps: {
+          representative: {
             user: true,
           },
         },
@@ -75,6 +80,8 @@ export class JobsService {
   }
   //getAllJobsByHome
   async getAllJobsByHome(adultHomeId: string): Promise<JobsEntity[]> {
+    const findHome = await this.adultHomeService.getAdultHomeById(adultHomeId);
+
     const jobs = await this.jobRepo.find({
       where: {
         adult_home_id: adultHomeId,
@@ -90,6 +97,7 @@ export class JobsService {
     adultHomeId: string,
     isFilled: boolean,
   ): Promise<JobsEntity[]> {
+    await this.adultHomeService.getAdultHomeById(adultHomeId);
     const jobs = await this.jobRepo.find({
       where: {
         adult_home_id: adultHomeId,
@@ -102,9 +110,14 @@ export class JobsService {
     return jobs;
   }
   //updateJob
-  async updateJobById(id: string, homeId: string,homeRepUserId:string, updateJobDto: UpdateJobDto) {
+  async updateJobById(
+    id: string,
+    homeId: string,
+    homeRepUserId: string,
+    updateJobDto: UpdateJobDto,
+  ) {
     const job = await this.getJobById(id);
-     if (!job.adult_home.reps.some((val) => val.userId === homeRepUserId)) {
+    if (job.adult_home.representative.userId !== homeRepUserId) {
       throw new ForbiddenException(
         "You are not allowed to implement to implement this functionality",
       );
@@ -131,7 +144,7 @@ export class JobsService {
     isJobFilled: boolean,
   ) {
     const job = await this.getJobById(id);
-    if (!job.adult_home.reps.some((val) => val.userId === homeRepUserId)) {
+    if (job.adult_home.representative.userId !== homeRepUserId) {
       throw new ForbiddenException(
         "You are not allowed to implement to implement this functionality",
       );
@@ -154,24 +167,29 @@ export class JobsService {
     caregiverId: string,
   ): Promise<JobApplications> {
     const job = await this.getJobById(jobId);
-    const caregiver = await this.userService.getUserById(caregiverId);
-    if (!caregiver.caregiver) {
+
+    const user = await this.userService.getCaregiverById(caregiverId);
+
+    if (!user.caregiver) {
       throw new BadRequestException("User is not a caregiver");
     }
+
     const application = await this.jobApplicationRepo.findOne({
       where: {
-        job: {
-          adult_home: true,
-        },
-        caregiver: caregiver,
+        caregiver_id: caregiverId,
+        job_id: jobId,
       },
     });
+
     if (application) {
       throw new BadRequestException("You've already applied for this job.");
     }
+    if (job.is_filled === true) {
+      throw new BadRequestException("This job is already filled");
+    }
     const newApplication = this.jobApplicationRepo.create({
-      job: job,
-      caregiver: caregiver,
+      job_id: job.id,
+      caregiver_id: user.caregiver.id,
     });
     return await this.jobApplicationRepo.save(newApplication);
   }
@@ -184,7 +202,7 @@ export class JobsService {
       relations: {
         job: {
           adult_home: {
-            reps: {
+            representative: {
               user: true,
             },
           },
@@ -202,7 +220,7 @@ export class JobsService {
     const job = await this.getJobById(jobId);
     const applications = await this.jobApplicationRepo.find({
       where: {
-        job: job,
+        job_id: job.id,
       },
       relations: {
         job: {
@@ -217,10 +235,10 @@ export class JobsService {
   async getAllApplicationsByCaregiver(
     caregiverId: string,
   ): Promise<JobApplications[]> {
-    const caregiver = await this.userService.getUserById(caregiverId);
+    await this.userService.getCaregiverById(caregiverId);
     const application = await this.jobApplicationRepo.find({
       where: {
-        caregiver: caregiver,
+        caregiver_id: caregiverId,
       },
       relations: {
         job: {
@@ -240,11 +258,7 @@ export class JobsService {
     homeId: string,
   ): Promise<JobApplications> {
     const application = await this.getApplicationById(jobApplicationId);
-    if (
-      !application.job.adult_home.reps.some(
-        (val) => val.userId === homeRepUserId,
-      )
-    ) {
+    if (application.job.adult_home.representative.userId !== homeRepUserId) {
       throw new ForbiddenException(
         "You are not allowed to implement to implement this functionality",
       );
@@ -259,8 +273,12 @@ export class JobsService {
         "this application doesn't belong the job posted by this home",
       );
     }
+    if (application.status === EAPPLICATIONSTATUS.ACCEPTED) {
+      throw new BadRequestException("This application is already accepted");
+    }
     application.status = EAPPLICATIONSTATUS.ACCEPTED;
     application.acceptedAt = new Date();
+    application.rejectedAt = null;
     return await this.jobApplicationRepo.save(application);
   }
   // update job rejection status
@@ -271,13 +289,9 @@ export class JobsService {
     homeId: string,
   ): Promise<JobApplications> {
     const application = await this.getApplicationById(jobApplicationId);
-    if (
-      !application.job.adult_home.reps.some(
-        (val) => val.userId === homeRepUserId,
-      )
-    ) {
+    if (application.job.adult_home.representative.userId !== homeRepUserId) {
       throw new ForbiddenException(
-        "You are not allowed to implement to implement this functionality",
+        "You are not allowed to  implement this functionality",
       );
     }
     if (application.caregiver_id !== caregiverId) {
@@ -291,8 +305,11 @@ export class JobsService {
         "this application doesn't belong the job posted by this home",
       );
     }
-
+    if (application.status === EAPPLICATIONSTATUS.REJECTED) {
+      throw new BadRequestException("This application is already rejected");
+    }
     application.status = EAPPLICATIONSTATUS.REJECTED;
+    application.acceptedAt = null;
     application.rejectedAt = new Date();
     return await this.jobApplicationRepo.save(application);
   }
@@ -302,11 +319,7 @@ export class JobsService {
     homeRepUserId: string,
   ): Promise<JobApplications> {
     const application = await this.getApplicationById(jobApplicationId);
-    if (
-      !application.job.adult_home.reps.some(
-        (val) => val.userId === homeRepUserId,
-      )
-    ) {
+    if (application.job.adult_home.representative.userId !== homeRepUserId) {
       throw new ForbiddenException(
         "You are not allowed to implement to implement this functionality",
       );

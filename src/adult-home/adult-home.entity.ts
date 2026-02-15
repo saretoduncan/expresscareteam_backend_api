@@ -6,6 +6,7 @@ import {
   Entity,
   JoinColumn,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
@@ -42,9 +43,9 @@ export class AdultHome {
   @Column({ nullable: false, type: "text" })
   homeDescription: string;
 
-  @OneToMany(() => AdultHomeRepresentative, (rep) => rep.adultHome)
+  @OneToOne(() => AdultHomeRepresentative, (rep) => rep.adultHome)
  
-  reps: AdultHomeRepresentative[];
+  representative: AdultHomeRepresentative;
 
   @OneToMany(() => JobsEntity, (job) => job.adult_home)
  

@@ -21,6 +21,7 @@ export declare class UsersService {
     revokeRole: (userId: string, roleId: string) => Promise<UserResponseDto>;
     deleteUser(id: string): Promise<void>;
     addCaregiver(caregiver: CreateCaregiverDto): Promise<UserResponseDto>;
+    getCaregiverById(id: string): Promise<UserResponseDto>;
     getAllCaregivers(): Promise<UserResponseDto[]>;
     updateCaregiver(caregiver: CreateCaregiverDto): Promise<User>;
     createHomeRep(createHomeRepDto: CreateAdultHomeRepresentativeRequestDto): Promise<UserResponseDto>;

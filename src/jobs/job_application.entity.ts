@@ -33,7 +33,7 @@ export class JobApplications {
   @ManyToOne(() => JobsEntity, (job) => job.JobApplications, {
     onDelete: "CASCADE",
   })
-  @JoinColumn({ name: "jobId" })
+  @JoinColumn({ name: "job_id" })
   job: JobsEntity;
 
   @Column({

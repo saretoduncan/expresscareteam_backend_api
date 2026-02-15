@@ -66,7 +66,7 @@ __decorate([
     __metadata("design:type", users_entity_1.User)
 ], AdultHomeRepresentative.prototype, "user", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => adult_home_entity_1.AdultHome, (home) => home.reps),
+    (0, typeorm_1.OneToOne)(() => adult_home_entity_1.AdultHome, (home) => home.representative),
     (0, typeorm_1.JoinColumn)({ name: "adultHomeId" }),
     __metadata("design:type", adult_home_entity_1.AdultHome)
 ], AdultHomeRepresentative.prototype, "adultHome", void 0);

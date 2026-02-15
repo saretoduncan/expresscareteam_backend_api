@@ -55,7 +55,7 @@ __decorate([
     (0, typeorm_1.ManyToOne)(() => job_entity_1.JobsEntity, (job) => job.JobApplications, {
         onDelete: "CASCADE",
     }),
-    (0, typeorm_1.JoinColumn)({ name: "jobId" }),
+    (0, typeorm_1.JoinColumn)({ name: "job_id" }),
     __metadata("design:type", job_entity_1.JobsEntity)
 ], JobApplications.prototype, "job", void 0);
 __decorate([

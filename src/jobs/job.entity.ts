@@ -25,8 +25,8 @@ export class JobsEntity {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @Column()
-  job_role: string;
+  @Column({type: "enum", enum: EJOBROLE})
+  job_role: EJOBROLE;
 
   @Column()
   job_type: EJOBTYPE;
@@ -55,8 +55,6 @@ export class JobsEntity {
   @Column({ type: "boolean", default: false })
   is_urgent: boolean;
 
-  @Column({ type: "text" })
-  description: string;
 
   @Column({ type: "boolean", default: false })
   is_filled: boolean;

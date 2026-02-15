@@ -11,7 +11,7 @@ export declare class AdultHome {
     zipcode: string;
     website?: string;
     homeDescription: string;
-    reps: AdultHomeRepresentative[];
+    representative: AdultHomeRepresentative;
     jobs: JobsEntity[];
     createdAt: Date;
     updatedAt: Date;

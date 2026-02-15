@@ -1,5 +1,5 @@
 import { JobsService } from "./jobs.service";
-import { CreateJobApplicationDto, IsJobFilledDtoReq, JobApplicationResponseDto, JobsDtoRes, PostJobDtoReq, UpdateJobDto } from "src/dtos/jobs.dtos";
+import { CreateJobApplicationDto, IsJobFilledDtoReq, JobApplicationResponseDto, JobApplicationStatusRequestDto, JobsDtoRes, PostJobDtoReq, UpdateJobDto } from "src/dtos/jobs.dtos";
 import { RequestWithJwtPayload } from "src/auth/auth.controller";
 export declare class JobsController {
     private readonly jobsService;
@@ -15,6 +15,6 @@ export declare class JobsController {
     getApplicationById(jobApplicationId: string): Promise<JobApplicationResponseDto>;
     getAllApplicationsByJob(jobId: string): Promise<JobApplicationResponseDto[]>;
     getAllApplicationsByCaregiver(caregiverId: string): Promise<JobApplicationResponseDto[]>;
-    acceptJobApplication(jobApplicationId: string, adultHomeId: string, caregiverId: string, req: RequestWithJwtPayload): Promise<import("./job_application.entity").JobApplications>;
-    rejectJobApplication(jobApplicationId: string, adultHomeId: string, caregiverId: string, req: RequestWithJwtPayload): Promise<import("./job_application.entity").JobApplications>;
+    acceptJobApplication(req: RequestWithJwtPayload, jobApplicationStatus: JobApplicationStatusRequestDto): Promise<import("./job_application.entity").JobApplications>;
+    rejectJobApplication(req: RequestWithJwtPayload, jobApplicationStatus: JobApplicationStatusRequestDto): Promise<import("./job_application.entity").JobApplications>;
 }

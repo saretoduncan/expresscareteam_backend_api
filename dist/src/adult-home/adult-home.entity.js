@@ -24,7 +24,7 @@ let AdultHome = class AdultHome {
     zipcode;
     website;
     homeDescription;
-    reps;
+    representative;
     jobs;
     createdAt;
     updatedAt;
@@ -71,9 +71,9 @@ __decorate([
     __metadata("design:type", String)
 ], AdultHome.prototype, "homeDescription", void 0);
 __decorate([
-    (0, typeorm_1.OneToMany)(() => adult_home_representative_entity_1.AdultHomeRepresentative, (rep) => rep.adultHome),
-    __metadata("design:type", Array)
-], AdultHome.prototype, "reps", void 0);
+    (0, typeorm_1.OneToOne)(() => adult_home_representative_entity_1.AdultHomeRepresentative, (rep) => rep.adultHome),
+    __metadata("design:type", adult_home_representative_entity_1.AdultHomeRepresentative)
+], AdultHome.prototype, "representative", void 0);
 __decorate([
     (0, typeorm_1.OneToMany)(() => job_entity_1.JobsEntity, (job) => job.adult_home),
     __metadata("design:type", Array)
