@@ -9,7 +9,7 @@ import {
 } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { JobsEntity } from "./job.entity";
-import { Repository } from "typeorm";
+import { Raw, Repository } from "typeorm";
 import { EAPPLICATIONSTATUS, JobApplications } from "./job_application.entity";
 import { PostJobDtoReq, UpdateJobDto } from "src/dtos/jobs.dtos";
 import { AdultHomeService } from "src/adult-home/adult-home.service";
@@ -31,6 +31,24 @@ export class JobsService {
     const isAdultHome = await this.adultHomeService.getAdultHomeById(
       createJobDto.adult_home_id,
     );
+    const exists = await this.jobRepo.findOne({
+      where: {
+        adult_home_id: createJobDto.adult_home_id,
+        job_role: createJobDto.job_role,
+        job_type: createJobDto.job_type,
+        start_date: createJobDto.start_date,
+        end_date: createJobDto.end_date,
+        shift_start: createJobDto.shift_start,
+        shift_end: createJobDto.shift_end,
+        payment_rate: createJobDto.payment_rate,
+        staff_needed: createJobDto.staff_needed,
+        is_urgent: createJobDto.is_urgent,
+        certificates_needed: Raw((alias)=>`${alias} = :certs`,{
+          certs: createJobDto.certificates_needed
+        }),
+      },
+    });
+    if (exists) throw new BadRequestException("Job already exists");
 
     const newJob = this.jobRepo.create({
       job_role: createJobDto.job_role,

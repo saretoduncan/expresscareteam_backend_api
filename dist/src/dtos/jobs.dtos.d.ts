@@ -3,8 +3,8 @@ import { EAPPLICATIONSTATUS } from "src/jobs/job_application.entity";
 export declare class PostJobDtoReq {
     job_role: EJOBROLE;
     job_type: EJOBTYPE;
-    start_date: string;
-    end_date?: string;
+    start_date: Date;
+    end_date?: Date;
     shift_start: string;
     shift_end: string;
     payment_rate: string;

@@ -52,7 +52,7 @@ __decorate([
         description: "Job start date (YYYY-MM-DD)",
     }),
     (0, class_validator_1.IsISO8601)({ strict: false }),
-    __metadata("design:type", String)
+    __metadata("design:type", Date)
 ], PostJobDtoReq.prototype, "start_date", void 0);
 __decorate([
     (0, swagger_1.ApiPropertyOptional)({
@@ -61,7 +61,7 @@ __decorate([
     }),
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsISO8601)({ strict: false }),
-    __metadata("design:type", String)
+    __metadata("design:type", Date)
 ], PostJobDtoReq.prototype, "end_date", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({
@@ -104,7 +104,6 @@ __decorate([
         type: [String],
     }),
     (0, class_validator_1.IsArray)(),
-    (0, class_validator_1.ArrayNotEmpty)(),
     (0, class_validator_1.IsString)({ each: true }),
     __metadata("design:type", Array)
 ], PostJobDtoReq.prototype, "certificates_needed", void 0);

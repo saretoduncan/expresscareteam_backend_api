@@ -38,7 +38,7 @@ export class PostJobDtoReq {
     description: "Job start date (YYYY-MM-DD)",
   })
   @IsISO8601({ strict: false })
-  start_date: string;
+  start_date: Date;
 
   @ApiPropertyOptional({
     example: "2026-02-20",
@@ -46,7 +46,7 @@ export class PostJobDtoReq {
   })
   @IsOptional()
   @IsISO8601({ strict: false })
-  end_date?: string;
+  end_date?: Date;
 
   @ApiProperty({
     example: "08:00",
@@ -84,7 +84,7 @@ export class PostJobDtoReq {
     type: [String],
   })
   @IsArray()
-  @ArrayNotEmpty()
+  
   @IsString({ each: true })
   certificates_needed: string[];
 
