@@ -3,7 +3,14 @@ services:
     build: .
     container_name: expresscareteam_backend_api
     restart: always
-    
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+      - redis
+
   postgres:
     image: postgres:16.9
     container_name: expresscareteam_backend_db
@@ -11,16 +18,20 @@ services:
       - "${DB_PORT}:5432"
     restart: always
     env_file:
-      - .env 
+      - .env
     volumes:
       - postgres_data:/var/lib/postgresql/data
-  
+
   redis:
     image: redis:7
     container_name: redis_expresscareteam
-    restart: unless-stopped
     ports:
-      - "{REDIS_PORT}:6379"
+      - "${REDIS_PORT}:6379"
+    restart: unless-stopped
+    
+    env_file:
+      - .env
+
 
 volumes:
   postgres_data:
