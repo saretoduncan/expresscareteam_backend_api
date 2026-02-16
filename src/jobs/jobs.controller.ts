@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Delete,
   Get,
   ParseUUIDPipe,
   Patch,
@@ -265,5 +266,10 @@ export class JobsController {
       req.user.sub,
       jobApplicationStatus.homeId,
     );
+  }
+
+  @Delete('/')
+  async deleteJob(@Query('jobId', new ParseUUIDPipe()) jobId: string, @Request() req: RequestWithJwtPayload){
+    
   }
 }

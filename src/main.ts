@@ -13,13 +13,15 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.enableCors({
     credentials: true,
+    origin: process.env.CLIENT_URL,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
   });
   app.use(cookieParser());
   app.setGlobalPrefix("api");
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
-    })
+    }),
   );
   const config = new DocumentBuilder()
     .setTitle("Express Care Team API")
