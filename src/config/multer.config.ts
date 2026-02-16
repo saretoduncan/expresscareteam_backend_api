@@ -1,12 +1,8 @@
-import { diskStorage, memoryStorage } from "multer";
 import { Request } from "express";
 
 import { BadRequestException } from "@nestjs/common";
-export const mutlerConfig = {
-  limits: {
-    fileSize: 2 * 1024 * 1024, //2MB
-  },
-  storage: memoryStorage(),
+import { diskStorage, Options } from "multer";
+export const mutlerConfig: Options = {
   fileFilter: (
     req: Request,
     file: Express.Multer.File,
@@ -20,4 +16,15 @@ export const mutlerConfig = {
     }
     cb(null, true);
   },
+
+  limits: {
+    fileSize: 2 * 1024 * 1024, //2MB
+  },  storage:diskStorage({
+    destination: './uploads',
+    filename:((req,file, cb)=>{
+     const fileName = Date.now() + '-' + file.originalname;
+      cb(null,fileName)
+    })
+    
+  }),
 };

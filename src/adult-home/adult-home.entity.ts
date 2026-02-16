@@ -1,9 +1,12 @@
+import { JobsEntity } from "src/jobs/job.entity";
 import { AdultHomeRepresentative } from "src/users/adult-home-representative.entity";
 import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
@@ -40,8 +43,13 @@ export class AdultHome {
   @Column({ nullable: false, type: "text" })
   homeDescription: string;
 
-  @OneToMany(() => AdultHomeRepresentative, (rep) => rep.adultHome)
-  reps: AdultHomeRepresentative[];
+  @OneToOne(() => AdultHomeRepresentative, (rep) => rep.adultHome)
+ 
+  representative: AdultHomeRepresentative;
+
+  @OneToMany(() => JobsEntity, (job) => job.adult_home)
+ 
+  jobs: JobsEntity[];
 
   @CreateDateColumn({ type: "timestamp" })
   createdAt: Date;

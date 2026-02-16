@@ -40,7 +40,8 @@ export class AdultHomeRepresentative {
   @OneToOne(() => User, (user) => user.adultHomeRepresentative)
   @JoinColumn({ name: "userId" })
   user: User;
-  @ManyToOne(() => AdultHome, (home) => home.reps)
+
+  @OneToOne(() => AdultHome, (home) => home.representative)
   @JoinColumn({ name: "adultHomeId" })
   adultHome: AdultHome;
 

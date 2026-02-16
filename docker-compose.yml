@@ -1,4 +1,9 @@
 services:
+  api:
+    build: .
+    container_name: expresscareteam_backend_api
+    restart: always
+    
   postgres:
     image: postgres:16.9
     container_name: expresscareteam_backend_db
@@ -15,7 +20,7 @@ services:
     container_name: redis_expresscareteam
     restart: unless-stopped
     ports:
-      - "6379:6379"
+      - "{REDIS_PORT}:6379"
 
 volumes:
   postgres_data:

@@ -23,7 +23,7 @@ export class AdultHomeService {
           email: createAdultHomeDto.email,
         },
         relations: {
-          reps: true,
+          representative: true,
         },
       });
       if (home) {
@@ -38,6 +38,7 @@ export class AdultHomeService {
         street: createAdultHomeDto.street,
         website: createAdultHomeDto.website,
         zipcode: createAdultHomeDto.zipcode,
+        homeDescription:createAdultHomeDto.homeDescription
       });
       await this.adultHomeRepo.save(newHome);
       return newHome;
@@ -53,7 +54,7 @@ export class AdultHomeService {
           id: id,
         },
         relations: {
-          reps: true,
+          representative: true,
         },
       });
       if (!home) {

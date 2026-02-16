@@ -24,7 +24,7 @@ export class UsersService {
     private adultHomeRepRepo: Repository<AdultHomeRepresentative>,
 
     private readonly rolesServices: RolesService,
-    private readonly adultHomeService: AdultHomeService
+    private readonly adultHomeService: AdultHomeService,
   ) {}
 
   //create user
@@ -40,15 +40,15 @@ export class UsersService {
         throw new HttpException("User already exists", HttpStatus.BAD_REQUEST);
       }
       const getRole = await this.rolesServices.getRoleByName(user.role);
-      
+
       const password = await bcrypt.hash(user.password, 10);
       const newUser = this.userRepo.create({
         username: user.email,
         password: password,
       });
-     
-      newUser.roles= [getRole];
-      
+
+      newUser.roles = [getRole];
+
       const savedUser = await this.userRepo.save(newUser);
       return await this.getUserById(savedUser.id);
     } catch (e) {
@@ -125,7 +125,6 @@ export class UsersService {
           caregiver: true,
           adultHomeRepresentative: true,
         },
-       
       });
       if (!user)
         throw new HttpException("User not found", HttpStatus.NOT_FOUND);
@@ -154,7 +153,7 @@ export class UsersService {
       if (user.roles.includes(role)) {
         throw new HttpException(
           "User already has the role",
-          HttpStatus.BAD_REQUEST
+          HttpStatus.BAD_REQUEST,
         );
       }
       user.roles.push(role);
@@ -167,7 +166,7 @@ export class UsersService {
   //revoke role from user
   revokeRole = async (
     userId: string,
-    roleId: string
+    roleId: string,
   ): Promise<UserResponseDto> => {
     try {
       const user = await this.userRepo.findOne({
@@ -184,7 +183,7 @@ export class UsersService {
       if (!user.roles.includes(role)) {
         throw new HttpException(
           "User does not have the role",
-          HttpStatus.BAD_REQUEST
+          HttpStatus.BAD_REQUEST,
         );
       }
       user.roles = user.roles.filter((r) => r.id === role.id);
@@ -208,7 +207,7 @@ export class UsersService {
       if (!user)
         throw new HttpException(
           "User to be deleted not found",
-          HttpStatus.BAD_REQUEST
+          HttpStatus.BAD_REQUEST,
         );
 
       await this.userRepo.delete(user.id);
@@ -252,6 +251,25 @@ export class UsersService {
     } catch (e) {
       throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+  }
+  //get caregiver by id
+  async getCaregiverById(id: string): Promise<UserResponseDto> {
+    const caregiver = await this.userRepo.findOne({
+      relations: {
+        roles: true,
+        caregiver: true,
+        adultHomeRepresentative: true,
+      },
+      where: {
+        caregiver: {
+          id: id,
+        },
+      },
+    });
+    if (!caregiver) {
+      throw new HttpException("Caregiv  er not found", HttpStatus.NOT_FOUND);
+    }
+    return caregiver;
   }
   //get all caregiver
   async getAllCaregivers(): Promise<UserResponseDto[]> {
@@ -337,7 +355,7 @@ export class UsersService {
   }
   //createHomeRep
   async createHomeRep(
-    createHomeRepDto: CreateAdultHomeRepresentativeRequestDto
+    createHomeRepDto: CreateAdultHomeRepresentativeRequestDto,
   ): Promise<UserResponseDto> {
     try {
       const user = await this.userRepo.findOne({
@@ -350,10 +368,10 @@ export class UsersService {
         throw new HttpException("User not created yet", HttpStatus.NOT_FOUND);
 
       const getHome = await this.adultHomeService.getAdultHomeById(
-        createHomeRepDto.adultHomeId
+        createHomeRepDto.adultHomeId,
       );
       const homeRepRole = await this.rolesServices.getRoleByName(
-        RoleEnum.HOMEREPRESENTATIVE
+        RoleEnum.HOMEREPRESENTATIVE,
       );
       user.adultHomeRepresentative = this.adultHomeRepRepo.create({
         firstName: createHomeRepDto.firstName,
@@ -364,8 +382,8 @@ export class UsersService {
         adultHomeId: getHome.id,
       });
       const savedUser = await this.userRepo.save(user);
-      const {password, ...result}=savedUser
-      return result
+      const { password, ...result } = savedUser;
+      return result;
     } catch (e) {
       throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -388,5 +406,28 @@ export class UsersService {
     } catch (e) {
       throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+  }
+  async getHomeRepByUserAndHomeId(
+    userId: string,
+    homeId: string,
+  ): Promise<UserResponseDto> {
+    const user = await this.userRepo.findOne({
+      where: {
+        id: userId,
+        adultHomeRepresentative: {
+          adultHomeId: homeId,
+        },
+      },
+      relations: {
+        roles: true,
+        adultHomeRepresentative: {
+          adultHome: true,
+        },
+      },
+    });
+    if (!user) {
+      throw new HttpException("home rep not found", HttpStatus.NOT_FOUND);
+    }
+    return user;
   }
 }
