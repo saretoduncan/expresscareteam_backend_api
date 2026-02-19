@@ -21,6 +21,6 @@ export const AppDataSource = new DataSource({
     JobApplications,
     CaregiverRequirements,
   ],
-  ssl: false,
+  ssl: process.env.SSL_REQUIRED === "true" ? { rejectUnauthorized: false } : false,
   synchronize: true,
 });

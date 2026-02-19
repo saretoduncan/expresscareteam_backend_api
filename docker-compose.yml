@@ -28,10 +28,9 @@ services:
     ports:
       - "6379:6379"
     restart: unless-stopped
-    
+
     env_file:
       - .env
-
 
 volumes:
   postgres_data:
