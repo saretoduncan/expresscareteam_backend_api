@@ -51,4 +51,4 @@ ENV PORT=8080
 EXPOSE 8080
 
 # Start the app
-CMD ["node", "--enable-source-maps", "dist/src/main.js"]
+CMD  pnpm run start:prod
