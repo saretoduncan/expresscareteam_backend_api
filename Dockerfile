@@ -49,5 +49,9 @@ ENV PORT=3000
 
 # Expose port
 EXPOSE 3000
+COPY entrypoint.sh .
+RUN chmod +x entrypoint.sh
+
 # Start the app
-CMD  pnpm run start:prod
+
+ENTRYPOINT ["./entrypoint.sh"]
