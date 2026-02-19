@@ -6,8 +6,9 @@ import * as dotenv from "dotenv";
 import * as cookieParser from "cookie-parser";
 import { ValidationPipe } from "@nestjs/common";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
-
-dotenv.config();
+if (process.env.NODE_ENV !== "production") {
+  dotenv.config();
+}
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -36,8 +37,9 @@ async function bootstrap() {
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup("api-docs", app, documentFactory);
-  const port = process.env.PORT || 8080;
-  await app.listen(port, '0.0.0.0', () => {
+
+  const port = process.env.PORT ? parseInt(process.env.PORT) : 3000;
+  await app.listen(port, "0.0.0.0", () => {
     console.log(`server running on port ${port}`);
   });
 }
