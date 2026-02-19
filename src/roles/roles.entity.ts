@@ -1,3 +1,4 @@
+import { RoleEnum } from "src/common/enums";
 import { User } from "src/users/users.entity";
 import {
   Column,
@@ -15,7 +16,7 @@ export class Roles {
   id: string;
 
   @Column({ unique: true })
-  name: string;
+  name: RoleEnum;
 
   @ManyToMany(() => User, (user) => user.roles)
   users: User[];

@@ -25,28 +25,33 @@ export default class Admin_Role_Seeder {
     // Seed admin user if not present
     const admin = await userRepo.findOne({
       where: { username: "ADMIN" },
-      relations: ["roles"],
+      relations:{
+        roles:true
+      },
     });
-
-    if (!admin) {
-      const adminRole = await rolesRepo.findOne({
-        where: { name: RoleEnum.ADMIN },
-      });
-      if (!adminRole) {
-        throw new Error("Admin role not found");
-      }
-      const hashedPassword = await bcrypt.hash("Admin123", 10);
-
-      const newAdmin = userRepo.create({
-        username: "admin",
-
-        password: hashedPassword,
-      });
-      newAdmin.roles.push(adminRole);
-
-      await userRepo.save(newAdmin);
-      console.log("Admin user created");
+    if (admin) {
+      console.log("Admin user already exists");
+      return;
     }
+
+    const adminRole = await rolesRepo.findOne({
+      where: { name: RoleEnum.ADMIN },
+    });
+    if (!adminRole) {
+      throw new Error("Admin role not found");
+    }
+    const hashedPassword = await bcrypt.hash("Admin123", 10);
+
+    const newAdmin = userRepo.create({
+      username: "ADMIN",
+      password: hashedPassword,
+      roles:[adminRole]
+    });
+   
+
+    await userRepo.save(newAdmin);
+    console.log("Admin user created");
+
     return;
   }
 }

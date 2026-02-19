@@ -44,7 +44,7 @@ export class CreateUserDto {
     message: "Role must be one of the following:HOMEREPRESENTATIVE, CAREGIVER",
   })
   @Validate(NoAdminRoleConstraint)
-  role: string;
+  role: RoleEnum;
 }
 
 @Expose()

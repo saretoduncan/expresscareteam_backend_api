@@ -29,7 +29,7 @@ export class RolesService {
     };
     createSeedRoles();
   }
-  async createRole(role: string): Promise<RolesResponseDto> {
+  async createRole(role: RoleEnum): Promise<RolesResponseDto> {
     const existingRole = await this.roleRepo.findOne({
       where: {
         name: role,
@@ -49,7 +49,7 @@ export class RolesService {
     }
   }
   //update roles by name
-  async getRoleByName(role: string): Promise<Roles> {
+  async getRoleByName(role: RoleEnum): Promise<Roles> {
     try {
       const getrole = await this.roleRepo.findOne({
         where: {
@@ -94,7 +94,7 @@ export class RolesService {
     }
   }
   //update role name
-  async updateRole(id: string, role: string): Promise<RolesResponseDto> {
+  async updateRole(id: string, role: RoleEnum): Promise<RolesResponseDto> {
     try {
       const getRole = await this.getRoleById(id);
       getRole.name = role;
