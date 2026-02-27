@@ -9,11 +9,12 @@ import { User } from "src/users/users.entity";
 import { RefreshJwtStrategy } from "src/strategy/refreshJwt.strategy";
 import { AccessJwtStrategy } from "src/strategy/accessJwt.strategy";
 import { ResetPasswordJwtStrategy } from "src/strategy/resetPasswordJwt.strategy";
+import { SessionSerializer } from "./sessionSerializer.service";
 
 @Global()
 @Module({
   imports: [
-    PassportModule,
+    PassportModule.register({ session: true }),
     JwtModule.register({}),
     TypeOrmModule.forFeature([User]),
   ],
@@ -22,7 +23,8 @@ import { ResetPasswordJwtStrategy } from "src/strategy/resetPasswordJwt.strategy
     LocalStrategy,
     RefreshJwtStrategy,
     AccessJwtStrategy,
-    ResetPasswordJwtStrategy
+    ResetPasswordJwtStrategy,
+    SessionSerializer,
   ],
   controllers: [AuthController],
   exports: [AccessJwtStrategy],

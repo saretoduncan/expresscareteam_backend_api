@@ -11,9 +11,7 @@
     "seed:dev": "ts-node src/seed.ts",
     "seed": "node dist/src/seed.js"
   },
-  "prisma": {
-    "seed": "ts-node ./prisma/seed.ts"
-  },
+
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -35,6 +33,7 @@
     "cookie-parser": "^1.4.7",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
+    "express-session": "^1.19.0",
     "fs-extra": "^11.3.2",
     "multer": "^2.0.2",
     "nanoid": "^5.1.6",
@@ -55,6 +54,7 @@
     "@types/bcrypt": "^6.0.0",
     "@types/cookie-parser": "^1.4.10",
     "@types/express": "^5.0.5",
+    "@types/express-session": "^1.18.2",
     "@types/multer": "^2.0.0",
     "@types/node": "^24.9.2",
     "@types/passport-jwt": "^4.0.1",

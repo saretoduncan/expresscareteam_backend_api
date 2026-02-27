@@ -10,6 +10,7 @@ import {
 } from "class-validator";
 import { AdultHomeRepresentativeResponseDto } from "./users.dtos";
 import { ApiProperty } from "@nestjs/swagger";
+import { MaxWords } from "src/common/validators/maxWords.validator";
 
 export class CreateAdultHomeDto {
   @ApiProperty({
@@ -90,7 +91,7 @@ export class CreateAdultHomeDto {
     required: true,
   })
   @IsString()
-  @IsNotEmpty()
+  @MaxWords(100)
   homeDescription: string;
 }
 @Expose()

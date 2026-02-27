@@ -17,15 +17,15 @@ export enum EJOBTYPE {
   FILL_IN = "FILL_IN",
 }
 export enum EJOBROLE {
-  HCA = "HCA",
-  CNA = "CNA",
+  HCA = "Heath Care Assistant",
+  CNA = "Certified Nursing Assistant",
 }
 @Entity({ name: "jobs" })
 export class JobsEntity {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @Column({type: "enum", enum: EJOBROLE})
+  @Column({ type: "enum", enum: EJOBROLE })
   job_role: EJOBROLE;
 
   @Column()
@@ -55,12 +55,14 @@ export class JobsEntity {
   @Column({ type: "boolean", default: false })
   is_urgent: boolean;
 
-
   @Column({ type: "boolean", default: false })
   is_filled: boolean;
 
   @Column()
   adult_home_id: string;
+
+  @Column({ nullable: true, type:"text" })
+  job_description: string;
 
   @ManyToOne(() => AdultHome, (adult_home) => adult_home.jobs)
   @JoinColumn({ name: "adult_home_id" })

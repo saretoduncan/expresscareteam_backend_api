@@ -15,7 +15,7 @@ import {
 import { UserResponseDto } from "./users.dtos";
 import { Expose } from "class-transformer";
 import { ApiProperty } from "@nestjs/swagger";
-import { MatchPasswords } from "./customValidation";
+import { MatchPasswords } from "../common/validators/matchPassword.validator";
 
 export class RegisterCaregiverDto {
   @ApiProperty({ description: "Caregiver's first name", example: "John" })

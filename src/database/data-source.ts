@@ -1,4 +1,5 @@
 import { AdultHome } from "src/adult-home/adult-home.entity";
+import { AuthSessionEntity } from "src/auth/session.entity";
 import { CaregiverRequirements } from "src/caregiver-requirements/caregiver-requirements.entity";
 import { JobsEntity } from "src/jobs/job.entity";
 import { JobApplications } from "src/jobs/job_application.entity";
@@ -20,7 +21,10 @@ export const AppDataSource = new DataSource({
     JobsEntity,
     JobApplications,
     CaregiverRequirements,
+    AuthSessionEntity,
   ],
-  ssl: process.env.SSL_REQUIRED === "true" ? { rejectUnauthorized: false } : false,
+  
+  ssl:
+    process.env.SSL_REQUIRED === "true" ? { rejectUnauthorized: false } : false,
   synchronize: true,
 });

@@ -13,6 +13,7 @@ import {
   IsUUID,
   IsISO8601,
 } from "class-validator";
+import { MaxWords } from "src/common/validators/maxWords.validator";
 import { EJOBROLE, EJOBTYPE } from "src/jobs/job.entity";
 import { EAPPLICATIONSTATUS } from "src/jobs/job_application.entity";
 
@@ -20,7 +21,7 @@ export class PostJobDtoReq {
   @ApiProperty({
     enum: EJOBROLE,
     example: EJOBROLE.HCA,
-    description: "Role required for the job(HCA or CNA)",
+    description: "Role required for the job(HCA or CNA). HCA is Health Care Assistant and CNA is Certified Nursing Assistant.",
   })
   @IsEnum(EJOBROLE)
   job_role: EJOBROLE;
@@ -28,7 +29,7 @@ export class PostJobDtoReq {
   @ApiProperty({
     enum: EJOBTYPE,
     example: EJOBTYPE.FULL_TIME,
-    description: "Type of job (full-time or part-time)",
+    description: `Type of job (${EJOBTYPE.FILL_IN} or ${EJOBTYPE.FULL_TIME} or ${EJOBTYPE.PART_TIME})`,
   })
   @IsEnum(EJOBTYPE)
   job_type: EJOBTYPE;
@@ -84,7 +85,6 @@ export class PostJobDtoReq {
     type: [String],
   })
   @IsArray()
-  
   @IsString({ each: true })
   certificates_needed: string[];
 
@@ -102,6 +102,16 @@ export class PostJobDtoReq {
   })
   @IsUUID()
   adult_home_id: string;
+
+  @ApiProperty({
+    description: "Detailed job description for the role (max 200 words)",
+    example:
+      "Assist residents with daily care, hygiene, mobility, and medication support. Ensure a safe and clean environment while providing emotional support and companionship.",
+    required: true,
+  })
+  @IsString()
+  @MaxWords(100)
+  job_description: string;
 }
 export class UpdateJobDto extends PartialType(PostJobDtoReq) {}
 export class IsJobFilledDtoReq {
@@ -185,6 +195,9 @@ export class JobsDtoRes {
 
   @ApiProperty()
   is_filled: boolean;
+
+  @ApiProperty()
+  job_description: string;
 
   @ApiProperty()
   createdAt: Date;

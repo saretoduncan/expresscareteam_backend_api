@@ -6,18 +6,43 @@ import * as dotenv from "dotenv";
 import * as cookieParser from "cookie-parser";
 import { ValidationPipe } from "@nestjs/common";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
+import { RedisService } from "./redis/redis.service";
+import * as session from "express-session";
+import { DbRedisStore } from "./auth/db-redis-session.store";
+
+import { AuthSessionEntity } from "./auth/session.entity";
+import { AppDataSource } from "./database/data-source";
 if (process.env.NODE_ENV !== "production") {
   dotenv.config();
 }
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+
   app.enableCors({
     credentials: true,
     origin: process.env.CLIENT_URL,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
   });
   app.use(cookieParser());
+  const sessionExpire = process.env.REFRESH_TOKEN_EXPIRY_TIME
+    ? parseInt(process.env.REFRESH_TOKEN_EXPIRY_TIME)
+    : 3600;
+  const redisService = app.get(RedisService);
+  const sessionRepo = AppDataSource.getRepository(AuthSessionEntity);
+  app.use(
+    session({
+      store: new DbRedisStore(redisService, sessionRepo, sessionExpire),
+      secret: process.env.SESSION_SECRET!!,
+      resave: false,
+      saveUninitialized: false,
+      cookie: {
+        maxAge: sessionExpire,
+        httpOnly: true,
+    
+      },
+    }),
+  );
   app.setGlobalPrefix("api");
   app.useGlobalPipes(
     new ValidationPipe({

@@ -2,6 +2,7 @@ import {
   Controller,
   Res,
   Request,
+  Req,
   HttpStatus,
   HttpCode,
   Post,
@@ -32,6 +33,7 @@ import {
   ApiTags,
 } from "@nestjs/swagger";
 import { RefreshJwtGuard, ResetPasswordGuard } from "src/guards/index.guards";
+import { nanoid } from "nanoid";
 
 /**
  * Interface extending the standard Request object to include the authenticated user.
@@ -40,6 +42,8 @@ interface RequestWithUser extends Request {
   /**
    * The authenticated user information attached to the request.
    */
+  logout: any;
+  session: any;
   user: UserResponseDto;
 }
 
@@ -81,10 +85,14 @@ export class AuthController {
   })
   @Post("login")
   async login(
-    @Request() req: RequestWithUser,
-    @Res({ passthrough: true }) res: Response
+    @Req() req: RequestWithUser,
+    @Res({ passthrough: true }) res: Response,
   ) {
     const user = req.user;
+    // const refreshToken = nanoid(12);
+    // req.session.refreshToken = refreshToken;
+    req.session.userId = user.id
+    req.session.save();
     const loggedInUser = await this.authService.loginUser(user, res);
     return loggedInUser;
   }
@@ -114,7 +122,7 @@ export class AuthController {
   @Post("register/caregiver")
   async registerCaregiver(
     @Body() req: RegisterCaregiverDto,
-    @Res({ passthrough: true }) res: Response
+    @Res({ passthrough: true }) res: Response,
   ) {
     const user = await this.authService.registerCaregiver(req, res);
     return user;
@@ -145,7 +153,7 @@ export class AuthController {
   @Post("register/provider")
   async registerProvider(
     @Body() req: RegisterProviderDto,
-    @Res({ passthrough: true }) res: Response
+    @Res({ passthrough: true }) res: Response,
   ) {
     const user = await this.authService.registerProvider(req, res);
     return user;
@@ -176,16 +184,15 @@ export class AuthController {
     description: "Access token refreshed successfully",
     type: RefreshAccessTokenResponseDto,
   })
-  @UseGuards(RefreshJwtGuard)
   @Post("refreshAccessToken")
   async refreshToken(
     @Request() req: RequestWithUser,
-    @Res({ passthrough: true }) res: Response
+    @Res({ passthrough: true }) res: Response,
   ) {
     const token = await this.authService.refreshToken(
       req.user.username,
       req.user.id,
-      req.user.roles.map((r) => r.name)
+      req.user.roles.map((r) => r.name),
     );
     return token;
   }
@@ -203,8 +210,7 @@ export class AuthController {
   async requestResetPasswordOtp(@Body() req: ResetPasswordRequestDto) {
     return await this.authService.sendUpdatePassOtp(req.email);
   }
- 
-  
+
   /**
    * Verify the OTP sent to the user's email for password reset.
    */
@@ -219,7 +225,6 @@ export class AuthController {
   async verifyResetPassword(@Body() req: VerifyResetPasswordOtp) {
     return await this.authService.verifyResetOtp(req.email, req.otp);
   }
- 
 
   /**
    * Reset the user's password.
@@ -236,7 +241,7 @@ export class AuthController {
   @Patch("/resetPassword")
   async resetPassword(
     @Request() req: RequestWithJwtPayload,
-    @Body() body: UpdatePasswordRequestDto
+    @Body() body: UpdatePasswordRequestDto,
   ) {
     console.log(req.user.sub);
     return await this.authService.updatePassword(body.password, req.user.sub);
@@ -258,8 +263,13 @@ export class AuthController {
     description: "User logged out successfully",
   })
   @Post("logout")
-  async logout(@Res({ passthrough: true }) res: Response) {
+  async logout(
+    @Req() req: RequestWithUser,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    req.session.destroy(() => {});
     await this.authService.logout(res);
+
     return;
   }
 }

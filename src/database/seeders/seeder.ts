@@ -25,8 +25,8 @@ export default class Admin_Role_Seeder {
     // Seed admin user if not present
     const admin = await userRepo.findOne({
       where: { username: "ADMIN" },
-      relations:{
-        roles:true
+      relations: {
+        roles: true,
       },
     });
     if (admin) {
@@ -45,9 +45,8 @@ export default class Admin_Role_Seeder {
     const newAdmin = userRepo.create({
       username: "ADMIN",
       password: hashedPassword,
-      roles:[adminRole]
+      roles: [adminRole],
     });
-   
 
     await userRepo.save(newAdmin);
     console.log("Admin user created");
