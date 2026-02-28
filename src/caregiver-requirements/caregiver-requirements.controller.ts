@@ -11,7 +11,7 @@ import {
 import { CaregiverRequirementsService } from "./caregiver-requirements.service";
 import { mutlerConfig } from "src/config/multer.config";
 import { FileFieldsInterceptor } from "@nestjs/platform-express";
-import { ApiBody, ApiConsumes, ApiQuery } from "@nestjs/swagger";
+import { ApiBody, ApiConsumes, ApiHeader, ApiQuery } from "@nestjs/swagger";
 import { UploadCaregiverRequirementsDto } from "src/dtos/carigiver-requirements.dtos";
 
 import { GcsService } from "./gsc.service";
@@ -27,6 +27,11 @@ export class CaregiverRequirementsController {
 
   @Post("/upload")
   @ApiQuery({ name: "caregiverId", required: true })
+   @ApiHeader({
+      name: "X-CSRF-Token",
+      description: "CSRF token fetched from /csrf-token endpoint",
+      required: true,
+    })
   @ApiBody({ type: UploadCaregiverRequirementsDto })
   @UseInterceptors(
     FileFieldsInterceptor(

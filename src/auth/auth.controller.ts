@@ -1,7 +1,6 @@
 import {
   Controller,
   Res,
-  Request,
   Req,
   HttpStatus,
   HttpCode,
@@ -9,6 +8,8 @@ import {
   UseGuards,
   Body,
   Patch,
+  UnauthorizedException,
+  Get,
 } from "@nestjs/common";
 import { UserResponseDto } from "src/dtos/users.dtos";
 import { AuthService } from "./auth.service";
@@ -24,26 +25,36 @@ import {
   UpdatePasswordRequestDto,
   VerifyResetPasswordOtp,
 } from "src/dtos/auth.dtos";
-import { Response } from "express";
+import { Response, Request } from "express";
 import {
   ApiBearerAuth,
   ApiBody,
+  ApiHeader,
   ApiOperation,
   ApiResponse,
   ApiTags,
 } from "@nestjs/swagger";
-import { RefreshJwtGuard, ResetPasswordGuard } from "src/guards/index.guards";
-import { nanoid } from "nanoid";
+import { ResetPasswordGuard } from "src/guards/index.guards";
+
+import { Session } from "express-session";
 
 /**
  * Interface extending the standard Request object to include the authenticated user.
  */
-interface RequestWithUser extends Request {
+export interface RequestWithSession extends Request {
   /**
    * The authenticated user information attached to the request.
    */
-  logout: any;
-  session: any;
+
+  session: Session & {
+    roles?: string[];
+    userId?: string;
+    username?: string;
+    userAgent?: string;
+    ipAddress?: string;
+  };
+  generateCsrfToken: () => string;
+
   user: UserResponseDto;
 }
 
@@ -79,21 +90,25 @@ export class AuthController {
     description: "Login successfull. Return JWT and user info.",
     type: AuthUserResponseDto,
   })
+  @ApiHeader({
+    name: "X-CSRF-Token",
+    description: "CSRF token fetched from /csrf-token endpoint",
+    required: true,
+  })
   @ApiResponse({
     status: 401,
     description: "Unauthorized – invalid credentials",
   })
   @Post("login")
   async login(
-    @Req() req: RequestWithUser,
+    @Req() req: RequestWithSession,
     @Res({ passthrough: true }) res: Response,
   ) {
     const user = req.user;
     // const refreshToken = nanoid(12);
     // req.session.refreshToken = refreshToken;
-    req.session.userId = user.id
-    req.session.save();
-    const loggedInUser = await this.authService.loginUser(user, res);
+
+    const loggedInUser = await this.authService.loginUser(req, user);
     return loggedInUser;
   }
 
@@ -111,6 +126,11 @@ export class AuthController {
     summary: "Register a new caregiver account",
     description:
       "Creates a new caregiver user account with the provided details.",
+  })
+  @ApiHeader({
+    name: "X-CSRF-Token",
+    description: "CSRF token fetched from /csrf-token endpoint",
+    required: true,
   })
   @ApiBody({ type: RegisterCaregiverDto })
   @ApiResponse({
@@ -144,6 +164,11 @@ export class AuthController {
       "Creates a new provider user account with the provided details.",
   })
   @ApiBody({ type: RegisterProviderDto })
+  @ApiHeader({
+    name: "X-CSRF-Token",
+    description: "CSRF token fetched from /csrf-token endpoint",
+    required: true,
+  })
   @ApiResponse({
     status: 201,
     description:
@@ -179,6 +204,11 @@ export class AuthController {
     summary: "Refresh Access Token",
     description: "Create a new access token using the refresh token",
   })
+  @ApiHeader({
+    name: "X-CSRF-Token",
+    description: "CSRF token fetched from /csrf-token endpoint",
+    required: true,
+  })
   @ApiResponse({
     status: 200,
     description: "Access token refreshed successfully",
@@ -186,13 +216,17 @@ export class AuthController {
   })
   @Post("refreshAccessToken")
   async refreshToken(
-    @Request() req: RequestWithUser,
+    @Req() req: RequestWithSession,
     @Res({ passthrough: true }) res: Response,
   ) {
+    if (!req.isAuthenticated()) {
+      throw new UnauthorizedException();
+    }
+
     const token = await this.authService.refreshToken(
-      req.user.username,
-      req.user.id,
-      req.user.roles.map((r) => r.name),
+      req.session.username!!,
+      req.session.id,
+      req.session.roles!!,
     );
     return token;
   }
@@ -201,6 +235,11 @@ export class AuthController {
    * Request a password reset OTP to be sent to the user's email.
    */
   @HttpCode(HttpStatus.OK)
+  @ApiHeader({
+    name: "X-CSRF-Token",
+    description: "CSRF token fetched from /csrf-token endpoint",
+    required: true,
+  })
   @ApiBody({ type: ResetPasswordRequestDto })
   @ApiResponse({
     status: 200,
@@ -215,6 +254,16 @@ export class AuthController {
    * Verify the OTP sent to the user's email for password reset.
    */
   @HttpCode(HttpStatus.OK)
+  @ApiHeader({
+    name: "X-CSRF-Token",
+    description: "CSRF token fetched from /csrf-token endpoint",
+    required: true,
+  })
+  @ApiHeader({
+    name: "X-CSRF-Token",
+    description: "CSRF token fetched from /csrf-token endpoint",
+    required: true,
+  })
   @ApiBody({ type: VerifyResetPasswordOtp })
   @ApiResponse({
     status: 200,
@@ -240,7 +289,7 @@ export class AuthController {
   @UseGuards(ResetPasswordGuard)
   @Patch("/resetPassword")
   async resetPassword(
-    @Request() req: RequestWithJwtPayload,
+    @Req() req: RequestWithJwtPayload,
     @Body() body: UpdatePasswordRequestDto,
   ) {
     console.log(req.user.sub);
@@ -258,18 +307,40 @@ export class AuthController {
     summary: "Logout user",
     description: "Logs out the user and clears authentication cookies.",
   })
+  @ApiHeader({
+    name: "X-CSRF-Token",
+    description: "CSRF token fetched from /csrf-token endpoint",
+    required: true,
+  })
   @ApiResponse({
     status: 200,
     description: "User logged out successfully",
   })
   @Post("logout")
   async logout(
-    @Req() req: RequestWithUser,
+    @Req() req: RequestWithSession,
     @Res({ passthrough: true }) res: Response,
   ) {
     req.session.destroy(() => {});
     await this.authService.logout(res);
 
     return;
+  }
+
+  @Get("csrf-token")
+  @ApiOperation({ summary: "Get CSRF token for session-protected requests" })
+  @ApiResponse({
+    status: 200,
+    description: "Returns a CSRF token and sets CSRF cookie",
+    schema: {
+      type: "object",
+      properties: {
+        csrfToken: { type: "string", example: "abcdef123456" },
+      },
+    },
+  })
+  getToken(@Req() req: RequestWithSession) {
+    const token = req.generateCsrfToken();
+    return { csrfToken: token };
   }
 }

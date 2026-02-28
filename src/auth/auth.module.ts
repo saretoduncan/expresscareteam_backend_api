@@ -10,15 +10,27 @@ import { RefreshJwtStrategy } from "src/strategy/refreshJwt.strategy";
 import { AccessJwtStrategy } from "src/strategy/accessJwt.strategy";
 import { ResetPasswordJwtStrategy } from "src/strategy/resetPasswordJwt.strategy";
 import { SessionSerializer } from "./sessionSerializer.service";
+import { AuthSessionEntity } from "./session.entity";
+import { DbRedisStore } from "./db-redis-session.store";
+import { ConfigService } from "@nestjs/config";
 
 @Global()
 @Module({
   imports: [
     PassportModule.register({ session: true }),
     JwtModule.register({}),
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, AuthSessionEntity]),
   ],
   providers: [
+    {
+      provide: "SESSION_EXPIRY",
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => {
+        return Number(configService.get<number>("SESSION_EXPIRY")) ?? 3600;
+      },
+    },
+    DbRedisStore,
+
     AuthService,
     LocalStrategy,
     RefreshJwtStrategy,

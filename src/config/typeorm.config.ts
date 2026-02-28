@@ -1,19 +1,19 @@
-import MainSeeder from "src/database/seeders/mainSeeder";
-import { DataSourceOptions } from "typeorm";
-import { SeederOptions } from "typeorm-extension";
+// import MainSeeder from "src/database/seeders/mainSeeder";
+// import { DataSourceOptions } from "typeorm";
+// import { SeederOptions } from "typeorm-extension";
 
 
-const options: DataSourceOptions & SeederOptions = {
-  type: 'postgres', // or 'mysql', 'sqlite', etc.
-  url: process.env.DATABASE_URL,
+// const options: DataSourceOptions & SeederOptions = {
+//   type: 'postgres', // or 'mysql', 'sqlite', etc.
+//   url: process.env.DATABASE_URL,
 
-  synchronize: false, // Set to true only in development/testing
-  logging: false,
-  entities: ['dist/**/*.entity.js'],
-  migrations: ['dist/migrations/*.js'],
+//   synchronize: false, // Set to true only in development/testing
+//   logging: false,
+//   entities: ['dist/**/*.entity.js'],
+//   migrations: ['dist/migrations/*.js'],
 
-  // --- TypeORM-Extension Options ---
-  seeds: [MainSeeder],
-};
+//   // --- TypeORM-Extension Options ---
+//   seeds: [MainSeeder],
+// };
 
-export default options;
+// export default options;

@@ -19,6 +19,7 @@ import {
   ApiResponse,
   ApiQuery,
   ApiBody,
+  ApiHeader,
 } from "@nestjs/swagger";
 import { JobsService } from "./jobs.service";
 import {
@@ -36,7 +37,6 @@ import { AccessJwtGuard } from "src/guards/index.guards";
 import { RolesGuard } from "src/guards/roles.guards";
 import { HasRoles } from "src/decorators/hasRoles.decorators";
 import { RoleEnum } from "src/common/enums";
-
 
 @ApiTags("Jobs")
 @ApiBearerAuth()
@@ -123,6 +123,11 @@ export class JobsController {
   @ApiQuery({ name: "homeId", type: String, required: true })
   @ApiBody({ type: UpdateJobDto })
   @ApiResponse({ status: 200, type: JobsDtoRes })
+   @ApiHeader({
+    name: "X-CSRF-Token",
+    description: "CSRF token fetched from /csrf-token endpoint",
+    required: true,
+  })
   @HasRoles(RoleEnum.HOMEREPRESENTATIVE)
   @UseGuards(AccessJwtGuard, RolesGuard)
   @Patch("/update")
@@ -178,6 +183,11 @@ export class JobsController {
   @ApiBody({ type: CreateJobApplicationDto })
   @ApiResponse({ status: 201, type: JobApplicationResponseDto })
   @HasRoles(RoleEnum.CAREGIVER)
+  @ApiHeader({
+    name: "X-CSRF-Token",
+    description: "CSRF token fetched from /csrf-token endpoint",
+    required: true,
+  })
   @UseGuards(AccessJwtGuard, RolesGuard)
   @Post("/application")
   async makeApplication(
@@ -235,6 +245,11 @@ export class JobsController {
   @ApiOperation({ summary: "Accept a job application" })
   @ApiBody({ type: JobApplicationStatusRequestDto })
   @ApiResponse({ status: 200, type: JobApplicationResponseDto })
+  @ApiHeader({
+    name: "X-CSRF-Token",
+    description: "CSRF token fetched from /csrf-token endpoint",
+    required: true,
+  })
   @HasRoles(RoleEnum.HOMEREPRESENTATIVE)
   @UseGuards(AccessJwtGuard, RolesGuard)
   @Patch("/application/accept")
@@ -252,6 +267,11 @@ export class JobsController {
 
   @ApiOperation({ summary: "Reject a job application" })
   @ApiBody({ type: JobApplicationStatusRequestDto })
+  @ApiHeader({
+    name: "X-CSRF-Token",
+    description: "CSRF token fetched from /csrf-token endpoint",
+    required: true,
+  })
   @ApiResponse({ status: 200, type: JobApplicationResponseDto })
   @HasRoles(RoleEnum.HOMEREPRESENTATIVE)
   @UseGuards(AccessJwtGuard, RolesGuard)
@@ -268,8 +288,9 @@ export class JobsController {
     );
   }
 
-  @Delete('/')
-  async deleteJob(@Query('jobId', new ParseUUIDPipe()) jobId: string, @Request() req: RequestWithJwtPayload){
-    
-  }
+  @Delete("/")
+  async deleteJob(
+    @Query("jobId", new ParseUUIDPipe()) jobId: string,
+    @Request() req: RequestWithJwtPayload,
+  ) {}
 }

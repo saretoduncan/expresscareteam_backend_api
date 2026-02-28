@@ -2,12 +2,17 @@ import { RedisService } from "src/redis/redis.service";
 import { AuthSessionEntity } from "./session.entity";
 import { Repository } from "typeorm";
 import { SessionData, Store } from "express-session";
+import { Inject, Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { SESSION_EXPIRY } from "src/common/constants";
 
+@Injectable()
 export class DbRedisStore extends Store {
   constructor(
     private readonly redisService: RedisService,
-    private sessionRepo: Repository<AuthSessionEntity>,
-    private ttl: number,
+    @InjectRepository(AuthSessionEntity)
+    private readonly sessionRepo: Repository<AuthSessionEntity>,
+    @Inject(SESSION_EXPIRY) private ttl: number,
   ) {
     super();
   }
@@ -40,6 +45,15 @@ export class DbRedisStore extends Store {
   async set(sid: string, session: SessionData, callback?: (err?: any) => void) {
     try {
       const expires_at = Date.now() + this.ttl;
+      const prevSession = await this.sessionRepo.findOne({
+        where: {
+          session_id: sid,
+        },
+      });
+      if (prevSession) {
+        await this.sessionRepo.delete({ session_id: sid });
+        await this.redisService.del(sid);
+      }
       const sessionString = JSON.stringify(session);
       await this.sessionRepo.save({
         session_id: sid,

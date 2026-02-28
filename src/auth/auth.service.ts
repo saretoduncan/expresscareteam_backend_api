@@ -22,6 +22,7 @@ import { User } from "src/users/users.entity";
 import { Repository } from "typeorm";
 import { EmailService } from "src/email/email.service";
 import { RedisService } from "src/redis/redis.service";
+import { RequestWithSession } from "./auth.controller";
 
 @Injectable()
 export class AuthService {
@@ -168,8 +169,8 @@ export class AuthService {
 
   //login
   async loginUser(
+    req: RequestWithSession,
     user: UserResponseDto,
-    res: Response,
   ): Promise<AuthUserResponseDto> {
     try {
       const accessToken = await this.signJwtToken(
@@ -180,12 +181,13 @@ export class AuthService {
         process.env.ACCESS_TOKEN_EXPIRY_TIME!!,
       );
 
-      const refreshToken = await this.signRefresherToken(
-        user.username,
-        user.id,
-        user.roles.map((role) => role.name),
-      );
-      this.setCookie(res, refreshToken);
+      req.session.userId = user.id;
+      req.session.username = user.username;
+      req.session.roles = user.roles.map((role) => role.name);
+      req.session.userAgent = req.headers["user-agent"];
+      req.session.ipAddress = req.ip;
+
+      req.session.save();
 
       return { ...user, accessToken };
     } catch (e) {

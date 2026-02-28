@@ -9,22 +9,28 @@ import { Caregiver } from "src/users/caregiver.entity";
 import { User } from "src/users/users.entity";
 import { DataSource } from "typeorm";
 
-export const AppDataSource = new DataSource({
-  type: "postgres",
-  url: process.env.DATABASE_URL,
-  entities: [
-    User,
-    Roles,
-    Caregiver,
-    AdultHome,
-    AdultHomeRepresentative,
-    JobsEntity,
-    JobApplications,
-    CaregiverRequirements,
-    AuthSessionEntity,
-  ],
+export const AppDataSource = (
+  url: string,
+
+  isSslRequre: string,
+) =>
   
-  ssl:
-    process.env.SSL_REQUIRED === "true" ? { rejectUnauthorized: false } : false,
-  synchronize: true,
-});
+  new DataSource({
+    type: "postgres",
+    url: url,
+   
+    entities: [
+      User,
+      Roles,
+      Caregiver,
+      AdultHome,
+      AdultHomeRepresentative,
+      JobsEntity,
+      JobApplications,
+      CaregiverRequirements,
+      AuthSessionEntity,
+    ],
+
+    ssl: isSslRequre === "true" ? { rejectUnauthorized: false } : false,
+    synchronize: true,
+  });

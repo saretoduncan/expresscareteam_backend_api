@@ -11,3 +11,4 @@ coverage
 postgres
 *.log
 upload
+Dockerfile.dev
