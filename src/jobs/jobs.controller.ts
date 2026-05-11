@@ -37,6 +37,7 @@ import { AccessJwtGuard } from "src/guards/index.guards";
 import { RolesGuard } from "src/guards/roles.guards";
 import { HasRoles } from "src/decorators/hasRoles.decorators";
 import { RoleEnum } from "src/common/enums";
+import { AuthenticateGuard } from "src/guards/authenticate.guards";
 
 @ApiTags("Jobs")
 @ApiBearerAuth()
@@ -46,9 +47,14 @@ export class JobsController {
 
   @ApiOperation({ summary: "Create a new job" })
   @ApiBody({ type: PostJobDtoReq })
+  @ApiHeader({
+    name: "x-csrf-token",
+    description: "CSRF token fetched from /csrf-token endpoint",
+    required: true,
+  })
   @ApiResponse({ status: 201, type: JobsDtoRes })
   @HasRoles(RoleEnum.HOMEREPRESENTATIVE)
-  @UseGuards(AccessJwtGuard, RolesGuard)
+  @UseGuards(AuthenticateGuard, AccessJwtGuard, RolesGuard)
   @Post("/")
   async postJob(@Body() createJobDto: PostJobDtoReq): Promise<JobsDtoRes> {
     return await this.jobsService.createJobs(createJobDto);
@@ -123,13 +129,13 @@ export class JobsController {
   @ApiQuery({ name: "homeId", type: String, required: true })
   @ApiBody({ type: UpdateJobDto })
   @ApiResponse({ status: 200, type: JobsDtoRes })
-   @ApiHeader({
-    name: "X-CSRF-Token",
+  @ApiHeader({
+    name: "x-csrf-token",
     description: "CSRF token fetched from /csrf-token endpoint",
     required: true,
   })
   @HasRoles(RoleEnum.HOMEREPRESENTATIVE)
-  @UseGuards(AccessJwtGuard, RolesGuard)
+  @UseGuards(AuthenticateGuard, AccessJwtGuard, RolesGuard)
   @Patch("/update")
   async updateJob(
     @Query("jobId", new ParseUUIDPipe()) jobId: string,
@@ -152,12 +158,17 @@ export class JobsController {
   }
 
   @ApiOperation({ summary: "Update job filled status" })
+  @ApiHeader({
+    name: "x-csrf-token",
+    description: "CSRF token fetched from /csrf-token endpoint",
+    required: true,
+  })
   @ApiQuery({ name: "jobId", type: String, required: true })
   @ApiQuery({ name: "homeId", type: String, required: true })
   @ApiBody({ type: IsJobFilledDtoReq })
   @ApiResponse({ status: 200, type: JobsDtoRes })
   @HasRoles(RoleEnum.HOMEREPRESENTATIVE)
-  @UseGuards(AccessJwtGuard, RolesGuard)
+  @UseGuards(AuthenticateGuard, AccessJwtGuard, RolesGuard)
   @Patch("/update/isFilled")
   async updateJobStatus(
     @Query("jobId", new ParseUUIDPipe()) jobId: string,
@@ -184,11 +195,11 @@ export class JobsController {
   @ApiResponse({ status: 201, type: JobApplicationResponseDto })
   @HasRoles(RoleEnum.CAREGIVER)
   @ApiHeader({
-    name: "X-CSRF-Token",
+    name: "x-csrf-token",
     description: "CSRF token fetched from /csrf-token endpoint",
     required: true,
   })
-  @UseGuards(AccessJwtGuard, RolesGuard)
+  @UseGuards(AuthenticateGuard, AccessJwtGuard, RolesGuard)
   @Post("/application")
   async makeApplication(
     @Body() jobApplicationReq: CreateJobApplicationDto,
@@ -246,12 +257,12 @@ export class JobsController {
   @ApiBody({ type: JobApplicationStatusRequestDto })
   @ApiResponse({ status: 200, type: JobApplicationResponseDto })
   @ApiHeader({
-    name: "X-CSRF-Token",
+    name: "x-csrf-token",
     description: "CSRF token fetched from /csrf-token endpoint",
     required: true,
   })
   @HasRoles(RoleEnum.HOMEREPRESENTATIVE)
-  @UseGuards(AccessJwtGuard, RolesGuard)
+  @UseGuards(AuthenticateGuard, AccessJwtGuard, RolesGuard)
   @Patch("/application/accept")
   async acceptJobApplication(
     @Request() req: RequestWithJwtPayload,
@@ -268,13 +279,13 @@ export class JobsController {
   @ApiOperation({ summary: "Reject a job application" })
   @ApiBody({ type: JobApplicationStatusRequestDto })
   @ApiHeader({
-    name: "X-CSRF-Token",
+    name: "x-csrf-token",
     description: "CSRF token fetched from /csrf-token endpoint",
     required: true,
   })
   @ApiResponse({ status: 200, type: JobApplicationResponseDto })
   @HasRoles(RoleEnum.HOMEREPRESENTATIVE)
-  @UseGuards(AccessJwtGuard, RolesGuard)
+  @UseGuards(AuthenticateGuard, AccessJwtGuard, RolesGuard)
   @Patch("/application/reject")
   async rejectJobApplication(
     @Request() req: RequestWithJwtPayload,

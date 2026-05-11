@@ -21,11 +21,11 @@ export class CaregiverRequirementsService {
     private readonly caregiverRequirementsRepo: Repository<CaregiverRequirements>,
     @InjectRepository(Caregiver)
     private readonly caregiverRepo: Repository<Caregiver>,
-    private readonly gscService:GcsService
+    private readonly gscService: GcsService,
   ) {}
 
   async createCaregiverRequirements(
-    caregiverRequirements: ICaregiverRequirements
+    caregiverRequirements: ICaregiverRequirements,
   ): Promise<CaregiverRequirements> {
     try {
       const caregiver = await this.caregiverRepo.findOne({
@@ -59,13 +59,16 @@ export class CaregiverRequirementsService {
         caregiverId: caregiver.id,
       });
       return await this.caregiverRequirementsRepo.save(newCaregiverRequirement);
-    } catch (e) {
-      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (e: any) {
+      if (e instanceof HttpException) {
+        throw e;
+      } else
+        throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
   async getCaregiverRequirementsById(
-    id: string
+    id: string,
   ): Promise<CaregiverRequirements> {
     try {
       const caregiverRequirements =
@@ -81,13 +84,17 @@ export class CaregiverRequirementsService {
         throw new HttpException("Requirements not found", HttpStatus.NOT_FOUND);
       }
       return caregiverRequirements;
-    } catch (e) {
-      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (e: any) {
+      if (e instanceof HttpException) {
+        throw e;
+      } else {
+        throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+      }
     }
   }
 
   async getCaregiverRequirementsByCaregiverId(
-    caregiverId: string
+    caregiverId: string,
   ): Promise<CaregiverRequirements> {
     try {
       const caregiverRequirements =
@@ -100,14 +107,17 @@ export class CaregiverRequirementsService {
       if (!caregiverRequirements)
         throw new NotFoundException("Requirements not found");
       return caregiverRequirements;
-    } catch (e) {
-      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (e: any) {
+      if (e instanceof HttpException) {
+        throw e;
+      } else
+        throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
   async updateCaregiverRequirements(
     id: string,
-    caregiverRequirements: ICaregiverUpdateRequirements
+    caregiverRequirements: ICaregiverUpdateRequirements,
   ): Promise<CaregiverRequirements> {
     try {
       const updated = await this.caregiverRequirementsRepo.preload({
@@ -116,8 +126,11 @@ export class CaregiverRequirementsService {
       });
       if (!updated) throw new NotFoundException("Requirements not found");
       return await this.caregiverRequirementsRepo.save(updated);
-    } catch (e) {
-      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (e: any) {
+      if (e instanceof HttpException) {
+        throw e;
+      } else
+        throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -128,11 +141,12 @@ export class CaregiverRequirementsService {
         throw new NotFoundException("Requirements not found");
       }
       return;
-    } catch (e) {
-      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (e: any) {
+      if (e instanceof HttpException) {
+        throw e;
+      } else
+        throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
-  async getfilesFromgs(filename:string){
-
- }
+  async getfilesFromgs(filename: string) {}
 }

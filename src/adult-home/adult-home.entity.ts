@@ -14,46 +14,44 @@ import {
 @Entity({ name: "adult_homes" })
 export class AdultHome {
   @PrimaryGeneratedColumn("uuid")
-  id: string;
+  id!: string;
 
   @Column()
-  name: string;
+  name!: string;
 
   @Column({ unique: true })
-  email: string;
+  email!: string;
 
   @Column()
-  phone: string;
+  phone!: string;
 
   @Column()
-  city: string;
+  city!: string;
 
   @Column()
-  state: string;
+  state!: string;
 
   @Column()
-  street: string;
+  street!: string;
 
   @Column()
-  zipcode: string;
+  zipcode!: string;
 
   @Column({ nullable: true })
   website?: string;
 
   @Column({ nullable: false, type: "text" })
-  homeDescription: string;
+  homeDescription!: string;
 
   @OneToOne(() => AdultHomeRepresentative, (rep) => rep.adultHome)
- 
-  representative: AdultHomeRepresentative;
+  representative!: AdultHomeRepresentative;
 
   @OneToMany(() => JobsEntity, (job) => job.adult_home)
- 
-  jobs: JobsEntity[];
+  jobs!: JobsEntity[];
 
   @CreateDateColumn({ type: "timestamp" })
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn({ type: "timestamp" })
-  updatedAt: Date;
+  updatedAt!: Date;
 }

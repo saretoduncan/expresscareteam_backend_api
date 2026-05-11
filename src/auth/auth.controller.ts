@@ -37,6 +37,7 @@ import {
 import { ResetPasswordGuard } from "src/guards/index.guards";
 
 import { Session } from "express-session";
+import { AuthenticateGuard } from "src/guards/authenticate.guards";
 
 /**
  * Interface extending the standard Request object to include the authenticated user.
@@ -53,6 +54,7 @@ export interface RequestWithSession extends Request {
     userAgent?: string;
     ipAddress?: string;
   };
+
   generateCsrfToken: () => string;
 
   user: UserResponseDto;
@@ -91,7 +93,7 @@ export class AuthController {
     type: AuthUserResponseDto,
   })
   @ApiHeader({
-    name: "X-CSRF-Token",
+    name: "x-csrf-token",
     description: "CSRF token fetched from /csrf-token endpoint",
     required: true,
   })
@@ -128,7 +130,7 @@ export class AuthController {
       "Creates a new caregiver user account with the provided details.",
   })
   @ApiHeader({
-    name: "X-CSRF-Token",
+    name: "x-csrf-token",
     description: "CSRF token fetched from /csrf-token endpoint",
     required: true,
   })
@@ -141,10 +143,11 @@ export class AuthController {
   })
   @Post("register/caregiver")
   async registerCaregiver(
-    @Body() req: RegisterCaregiverDto,
+    @Req() req: RequestWithSession,
+    @Body() reqBody: RegisterCaregiverDto,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const user = await this.authService.registerCaregiver(req, res);
+    const user = await this.authService.registerCaregiver(req, reqBody, res);
     return user;
   }
 
@@ -165,7 +168,7 @@ export class AuthController {
   })
   @ApiBody({ type: RegisterProviderDto })
   @ApiHeader({
-    name: "X-CSRF-Token",
+    name: "x-csrf-token",
     description: "CSRF token fetched from /csrf-token endpoint",
     required: true,
   })
@@ -177,10 +180,11 @@ export class AuthController {
   })
   @Post("register/provider")
   async registerProvider(
-    @Body() req: RegisterProviderDto,
+    @Req() req: RequestWithSession,
+    @Body() reqBody: RegisterProviderDto,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const user = await this.authService.registerProvider(req, res);
+    const user = await this.authService.registerProvider(req, reqBody, res);
     return user;
   }
 
@@ -205,7 +209,7 @@ export class AuthController {
     description: "Create a new access token using the refresh token",
   })
   @ApiHeader({
-    name: "X-CSRF-Token",
+    name: "x-csrf-token",
     description: "CSRF token fetched from /csrf-token endpoint",
     required: true,
   })
@@ -214,15 +218,12 @@ export class AuthController {
     description: "Access token refreshed successfully",
     type: RefreshAccessTokenResponseDto,
   })
+  @UseGuards(AuthenticateGuard)
   @Post("refreshAccessToken")
   async refreshToken(
     @Req() req: RequestWithSession,
     @Res({ passthrough: true }) res: Response,
   ) {
-    if (!req.isAuthenticated()) {
-      throw new UnauthorizedException();
-    }
-
     const token = await this.authService.refreshToken(
       req.session.username!!,
       req.session.id,
@@ -236,7 +237,7 @@ export class AuthController {
    */
   @HttpCode(HttpStatus.OK)
   @ApiHeader({
-    name: "X-CSRF-Token",
+    name: "x-csrf-token",
     description: "CSRF token fetched from /csrf-token endpoint",
     required: true,
   })
@@ -255,12 +256,7 @@ export class AuthController {
    */
   @HttpCode(HttpStatus.OK)
   @ApiHeader({
-    name: "X-CSRF-Token",
-    description: "CSRF token fetched from /csrf-token endpoint",
-    required: true,
-  })
-  @ApiHeader({
-    name: "X-CSRF-Token",
+    name: "x-csrf-token",
     description: "CSRF token fetched from /csrf-token endpoint",
     required: true,
   })
@@ -287,6 +283,11 @@ export class AuthController {
   })
   @ApiBearerAuth()
   @UseGuards(ResetPasswordGuard)
+  @ApiHeader({
+    name: "x-csrf-token",
+    description: "CSRF token fetched from /csrf-token endpoint",
+    required: true,
+  })
   @Patch("/resetPassword")
   async resetPassword(
     @Req() req: RequestWithJwtPayload,
@@ -308,7 +309,7 @@ export class AuthController {
     description: "Logs out the user and clears authentication cookies.",
   })
   @ApiHeader({
-    name: "X-CSRF-Token",
+    name: "x-csrf-token",
     description: "CSRF token fetched from /csrf-token endpoint",
     required: true,
   })
@@ -316,6 +317,7 @@ export class AuthController {
     status: 200,
     description: "User logged out successfully",
   })
+  @UseGuards(AuthenticateGuard)
   @Post("logout")
   async logout(
     @Req() req: RequestWithSession,

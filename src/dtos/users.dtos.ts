@@ -28,23 +28,22 @@ export class NoAdminRoleConstraint {
 export class CreateUserDto {
   @ApiProperty({ example: 'user@example.com', description: 'User email address' })
   @IsEmail()
-  email: string;
+  email!: string;
 
   @ApiProperty({ example: 'Password123', description: 'User password with at least one uppercase and one lowercase letter' })
   @IsString()
   @MinLength(6, { message: "Password must be at least 6 characters long" })
   @Matches(/^(?=.*[a-z])(?=.*[A-Z]).{6,}$/, {
-    message:
-      "Password must contain at least one uppercase and one lowercase letter",
+    message: "Password must contain at least one uppercase and one lowercase letter",
   })
-  password: string;
+  password!: string;
 
   @ApiProperty({ example: 'HOMEREPRESENTATIVE', description: 'User role, must be HOMEREPRESENTATIVE or CAREGIVER' })
   @IsEnum(RoleEnum, {
     message: "Role must be one of the following:HOMEREPRESENTATIVE, CAREGIVER",
   })
   @Validate(NoAdminRoleConstraint)
-  role: RoleEnum;
+  role!: RoleEnum;
 }
 
 @Expose()
@@ -52,102 +51,102 @@ export class CaregiverResponseDto {
   
   @ApiProperty({ example: '12345', description: 'Caregiver ID' })
   @Expose()
-  id: string;
+  id!: string;
 
   @ApiProperty({ example: 'caregiver@example.com', description: 'Caregiver email address' })
   @Expose()
-  email: string;
+  email!: string;
 
   @ApiProperty({ example: 'John', description: 'Caregiver first name' })
   @Expose()
-  firstName: string;
+  firstName!: string;
 
   @ApiProperty({ example: 'Doe', description: 'Caregiver last name' })
   @Expose()
-  lastName: string;
+  lastName!: string;
 
   @ApiProperty({ example: '1990-01-01', description: 'Caregiver date of birth' })
   @Expose()
-  dateOfBirth: Date;
+  dateOfBirth!: Date;
 
   @ApiProperty({ example: 'Male', description: 'Caregiver gender' })
   @Expose()
-  gender: string;
+  gender!: string;
 
   @ApiProperty({ example: '+1234567890', description: 'Caregiver phone number' })
   @Expose()
-  phoneNumber: string;
+  phoneNumber!: string;
 
   @ApiProperty({ example: 'New York', description: 'Caregiver city' })
   @Expose()
-  city: string;
+  city!: string;
 
   @ApiProperty({ example: 'NY', description: 'Caregiver state' })
   @Expose()
-  state: string;
+  state!: string;
 
   @ApiProperty({ example: '123 Main St', description: 'Caregiver street address' })
   @Expose()
-  street: string;
+  street!: string;
 
   @ApiProperty({ example: '10001', description: 'Caregiver zipcode' })
   @Expose()
-  zipcode: string;
+  zipcode!: string;
 
   @ApiProperty({ example: 'user123', description: 'Associated user ID' })
   @Expose()
-  userId: string;
+  userId!: string;
 }
 
 @Expose()
 export class AdultHomeRepresentativeResponseDto {
   @ApiProperty({ example: '67890', description: 'Adult home representative ID' })
   @Expose()
-  id: string;
+  id!: string;
 
   @ApiProperty({ example: 'representative@example.com', description: 'Adult home representative email address' })
   @Expose()
-  email: string;
+  email!: string;
 
   @ApiProperty({ example: 'Jane', description: 'Adult home representative first name' })
   @Expose()
-  firstName: string;
+  firstName!: string;
 
   @ApiProperty({ example: 'Smith', description: 'Adult home representative last name' })
   @Expose()
-  lastName: string;
+  lastName!: string;
 
   @ApiProperty({ example: '+1987654321', description: 'Adult home representative phone number' })
   @Expose()
-  phoneNumber: string;
+  phoneNumber!: string;
 
   @ApiProperty({ example: 'user456', description: 'Associated user ID' })
   @Expose()
-  userId: string;
+  userId!: string;
 
   @ApiProperty({ example: 'Manager', description: 'Job title of the adult home representative' })
   @Expose()
-  jobTitle: string;
+  jobTitle!: string;
 
   @ApiProperty({ example: 'home789', description: 'Associated adult home ID' })
   @Expose()
-  adultHomeId: string;
+  adultHomeId!: string;
 }
 
 @Expose()
 export class UserResponseDto {
   @ApiProperty({ example: 'user123', description: 'User ID' })
   @Expose()
-  id: string;
+  id!: string;
 
   @ApiProperty({ example: 'username123', description: 'Username' })
   @Expose()
-  username: string;
+  username!: string;
 
   @ApiProperty({ type: [RolesResponseDto], description: 'User roles' })
   @Expose()
   @Type(() => RolesResponseDto)
-  roles: RolesResponseDto[];
+  roles!: RolesResponseDto[];
 
   @ApiProperty({ type: CaregiverResponseDto, nullable: true, description: 'Caregiver details if applicable' })
   @Expose()
@@ -164,27 +163,27 @@ export class CreateCaregiverDto {
   @ApiProperty({ example: 'John', description: 'Caregiver first name' })
   @IsNotEmpty()
   @IsString()
-  firstName: string;
+  firstName!: string;
 
   @ApiProperty({ example: 'Doe', description: 'Caregiver last name' })
   @IsNotEmpty()
   @IsString()
-  lastName: string;
+  lastName!: string;
 
   @ApiProperty({ example: 'caregiver@example.com', description: 'Caregiver email address' })
   @IsNotEmpty()
   @IsEmail()
-  email: string;
+  email!: string;
 
   @ApiProperty({ example: '1990-01-01', description: 'Caregiver date of birth' })
   @IsNotEmpty()
   @IsDateString()
-  dateOfBirth: Date;
+  dateOfBirth!: Date;
 
   @ApiProperty({ example: 'Female', description: 'Caregiver gender' })
   @IsNotEmpty()
   @IsString()
-  gender: string;
+  gender!: string;
 
   @ApiProperty({ example: '+1234567890', description: 'Caregiver phone number' })
   @IsNotEmpty()
@@ -192,66 +191,66 @@ export class CreateCaregiverDto {
   @Length(10, 15, {
     message: "Phone number must be between 10 and 15 characters",
   })
-  phoneNumber: string;
+  phoneNumber!: string;
 
   @ApiProperty({ example: 'New York', description: 'Caregiver city' })
   @IsNotEmpty()
   @IsString()
-  city: string;
+  city!: string;
 
   @ApiProperty({ example: 'NY', description: 'Caregiver state' })
   @IsNotEmpty()
   @IsString()
-  state: string;
+  state!: string;
 
   @ApiProperty({ example: '123 Main St', description: 'Caregiver street address' })
   @IsNotEmpty()
   @IsString()
-  street: string;
+  street!: string;
 
   @ApiProperty({ example: '10001', description: 'Caregiver zipcode' })
   @IsNotEmpty()
   @IsString()
-  zipcode: string;
+  zipcode!: string;
 
   @ApiProperty({ example: 'user123', description: 'Associated user ID' })
   @IsNotEmpty()
   @IsString()
-  userId: string;
+  userId!: string;
 }
 export class CreateAdultHomeRepresentativeRequestDto {
   @ApiProperty({ example: 'Jane', description: 'Adult home representative first name' })
   @IsString()
   @IsNotEmpty()
-  firstName: string;
+  firstName!: string;
 
   @ApiProperty({ example: 'Smith', description: 'Adult home representative last name' })
   @IsString()
   @IsNotEmpty()
-  lastName: string;
+  lastName!: string;
 
   @ApiProperty({ example: 'representative@example.com', description: 'Adult home representative email address' })
   @IsEmail()
   @IsNotEmpty()
-  email: string;
+  email!: string;
 
   @ApiProperty({ example: '+1987654321', description: 'Adult home representative phone number' })
   @IsString()
   @IsNotEmpty()
-  phoneNumber: string;
+  phoneNumber!: string;
 
   @ApiProperty({ example: 'Manager', description: 'Job title of the adult home representative' })
   @IsString()
   @IsNotEmpty()
-  jobTitle: string;
+  jobTitle!: string;
 
   @ApiProperty({ example: 'user456', description: 'Associated user ID' })
   @IsString()
   @IsNotEmpty()
-  userId: string;
+  userId!: string;
 
   @ApiProperty({ example: 'home789', description: 'Associated adult home ID' })
   @IsString()
   @IsNotEmpty()
-  adultHomeId: string;
+  adultHomeId!: string;
 }

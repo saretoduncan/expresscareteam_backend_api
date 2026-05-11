@@ -19,8 +19,7 @@ export class AccessJwtStrategy extends PassportStrategy(Strategy, "accessJwt") {
       }
       return payload;
     } catch (e) {
-      throw new UnauthorizedException(e.message);
-      
+      if (e instanceof Error) throw new UnauthorizedException(e.message);
     }
   }
 }

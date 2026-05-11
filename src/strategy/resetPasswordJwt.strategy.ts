@@ -6,7 +6,7 @@ import { JwtPayloadDto } from "src/dtos/auth.dtos";
 @Injectable()
 export class ResetPasswordJwtStrategy extends PassportStrategy(
   Strategy,
-  "resetPasswordJwt"
+  "resetPasswordJwt",
 ) {
   constructor() {
     super({
@@ -16,15 +16,13 @@ export class ResetPasswordJwtStrategy extends PassportStrategy(
     });
   }
   validate(payload: JwtPayloadDto) {
-    
     try {
-     
       if (!payload.sub || !payload.username || !payload.roles) {
         throw new UnauthorizedException("invalid access token");
       }
       return payload;
     } catch (e) {
-      throw new UnauthorizedException(e.message);
+      if (e instanceof Error) throw new UnauthorizedException(e.message);
     }
   }
 }

@@ -16,13 +16,13 @@ import { AdultHomeRepresentative } from "./adult-home-representative.entity";
 @Entity({ name: "users" })
 export class User {
   @PrimaryGeneratedColumn("uuid")
-  id: string;
+  id!: string;
 
   @Column({ unique: true })
-  username: string;
+  username!: string;
 
   @Column()
-  password: string;
+  password!: string;
 
   @OneToOne(() => Caregiver, (caregiver) => caregiver.user, { cascade: true })
   caregiver?: Caregiver;
@@ -34,11 +34,11 @@ export class User {
 
   @ManyToMany(() => Roles, (role) => role.users, { cascade: true })
   @JoinTable()
-  roles: Roles[];
+  roles!: Roles[];
 
   @CreateDateColumn({ type: "timestamp" })
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn({ type: "timestamp" })
-  updatedAt: Date;
+  updatedAt!: Date;
 }

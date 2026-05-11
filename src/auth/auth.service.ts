@@ -23,6 +23,7 @@ import { Repository } from "typeorm";
 import { EmailService } from "src/email/email.service";
 import { RedisService } from "src/redis/redis.service";
 import { RequestWithSession } from "./auth.controller";
+import { error } from "console";
 
 @Injectable()
 export class AuthService {
@@ -73,6 +74,7 @@ export class AuthService {
   }
   //create caregiver
   async registerCaregiver(
+    req:RequestWithSession,
     registerCaregiverDto: RegisterCaregiverDto,
     res: Response,
   ): Promise<AuthUserResponseDto> {
@@ -102,19 +104,21 @@ export class AuthService {
         process.env.ACCESS_TOKEN_SECRET!!,
         process.env.ACCESS_TOKEN_EXPIRY_TIME!!,
       );
-      const refreshToken = await this.signRefresherToken(
-        newUser.username,
-        newUser.id,
-        newUser.roles.map((role) => role.name),
-      );
-      this.setCookie(res, refreshToken);
+    req.session.userId = newCaregiver.id;
+      req.session.username = newCaregiver.username;
+      req.session.roles = newCaregiver.roles.map((role) => role.name);
+      req.session.userAgent = req.headers["user-agent"];
+      req.session.ipAddress = req.ip;
+
+      req.session.save();
       return { ...newCaregiver, accessToken };
-    } catch (e) {
+    } catch (e: any) {
       throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
   //create provider
   async registerProvider(
+    req:RequestWithSession,
     registerProviderDto: RegisterProviderDto,
     res: Response,
   ): Promise<AuthUserResponseDto> {
@@ -154,15 +158,16 @@ export class AuthService {
         process.env.ACCESS_TOKEN_SECRET!!,
         process.env.ACCESS_TOKEN_EXPIRY_TIME!!,
       );
-      const refreshToken = await this.signRefresherToken(
-        newUser.username,
-        newUser.id,
-        newUser.roles.map((role) => role.name),
-      );
-      this.setCookie(res, refreshToken);
+      req.session.userId = newHomeRep.id;
+      req.session.username = newHomeRep.username;
+      req.session.roles = newHomeRep.roles.map((role) => role.name);
+      req.session.userAgent = req.headers["user-agent"];
+      req.session.ipAddress = req.ip;
+
+      req.session.save();
 
       return { ...newHomeRep, accessToken };
-    } catch (e) {
+    } catch (e: any) {
       throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
@@ -190,46 +195,39 @@ export class AuthService {
       req.session.save();
 
       return { ...user, accessToken };
-    } catch (e) {
+    } catch (e: any) {
       throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
   async validateUser(username: string, password: string): Promise<any> {
-    try {
-      username = username.trim();
-      if (!username)
-        throw new HttpException(
-          "USERNAME field cannot be left empty",
-          HttpStatus.BAD_REQUEST,
-        );
-      const user = await this.userRepo.findOne({
-        where: {
-          username: username,
-        },
+    username = username.trim();
+    if (!username)
+      throw new HttpException(
+        "USERNAME field cannot be left empty",
+        HttpStatus.BAD_REQUEST,
+      );
+    const user = await this.userRepo.findOne({
+      where: {
+        username: username,
+      },
 
-        relations: {
-          roles: true,
-          caregiver: true,
-          adultHomeRepresentative: true,
-        },
-      });
+      relations: {
+        roles: true,
+        caregiver: true,
+        adultHomeRepresentative: true,
+      },
+    });
 
-      if (!user) {
-        throw new HttpException(
-          "User is not registered with us",
-          HttpStatus.UNAUTHORIZED,
-        );
-      }
-      const isPasswordCorrect = await bcrypt.compare(password, user.password);
-      if (!isPasswordCorrect) {
-        return null;
-      }
-      const { password: Pass, ...restUser } = user;
-
-      return restUser;
-    } catch (e) {
-      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    if (!user) {
+      return null;
     }
+    const isPasswordCorrect = await bcrypt.compare(password, user.password);
+    if (!isPasswordCorrect) {
+      return null;
+    }
+    const { password: Pass, ...restUser } = user;
+
+    return restUser;
   }
   //refresh access token
   async refreshToken(
@@ -248,7 +246,7 @@ export class AuthService {
       return {
         accessToken: accessToken,
       };
-    } catch (e) {
+    } catch (e: any) {
       throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
@@ -269,7 +267,7 @@ export class AuthService {
           otpCode.toString(),
         )
         .catch((err) => console.error("email job failed", err));
-    } catch (e) {
+    } catch (e: any) {
       throw new HttpException(e.message, e.statusCode);
     }
   }
@@ -316,7 +314,8 @@ export class AuthService {
       await this.userService.updatePassword(user.id, password);
       return;
     } catch (e) {
-      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+      if (e instanceof Error)
+        throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
   //logout

@@ -11,52 +11,52 @@ import {
 @Entity({ name: "caregiver-requirements" })
 export class CaregiverRequirements {
   @PrimaryGeneratedColumn("uuid")
-  id: string;
+  id!: string;
   @Column({ nullable: false })
-  backgroundCheck: string;
-
-  @Column({ nullable: false })
-  firstAid_cpr: string;
+  backgroundCheck!: string;
 
   @Column({ nullable: false })
-  figurePrint: string;
+  firstAid_cpr!: string;
 
   @Column({ nullable: false })
-  safetyOrientation: string;
+  figurePrint!: string;
 
   @Column({ nullable: false })
-  tuberculosisStepDate: string;
-
-  @Column({ nullable: true })
-  longTermCare: string;
+  safetyOrientation!: string;
 
   @Column({ nullable: false })
-  foodCard: string;
+  tuberculosisStepDate!: string;
 
   @Column({ nullable: true })
-  nurseDelegation: string;
+  longTermCare!: string;
+
+  @Column({ nullable: false })
+  foodCard!: string;
 
   @Column({ nullable: true })
-  dementiaSpecialist: string;
+  nurseDelegation!: string;
 
   @Column({ nullable: true })
-  mentalHealthSpeciality: string;
+  dementiaSpecialist!: string;
 
   @Column({ nullable: true })
-  administrationTrainingSpecialist: string;
+  mentalHealthSpeciality!: string;
 
   @Column({ nullable: true })
-  continuingEducation: string;
+  administrationTrainingSpecialist!: string;
 
   @Column({ nullable: true })
-  developmentDisability: string;
+  continuingEducation!: string;
 
   @Column({ nullable: true })
-  diabetesSpecialtyTraining: string;
+  developmentDisability!: string;
+
+  @Column({ nullable: true })
+  diabetesSpecialtyTraining!: string;
 
   @Column({ unique: true, nullable: false })
-  caregiverId: string;
-  @OneToOne(() => Caregiver, (caregiver) => caregiver.requirements,{cascade:['insert','update']})
+  caregiverId!: string;
+  @OneToOne(() => Caregiver, (caregiver) => caregiver.requirements, { cascade: ['insert', 'update'] })
   @JoinColumn({ name: "caregiverId" })
-  caregiver: Caregiver;
+  caregiver!: Caregiver;
 }

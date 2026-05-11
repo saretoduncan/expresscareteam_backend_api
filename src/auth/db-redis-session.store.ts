@@ -22,7 +22,9 @@ export class DbRedisStore extends Store {
   ) {
     try {
       const cached = await this.redisService.get(sid);
-      if (cached) return callback(null, JSON.parse(cached));
+      if (cached) {
+        return callback(null, JSON.parse(cached));
+      }
 
       const session = await this.sessionRepo.findOne({
         where: {

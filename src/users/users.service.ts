@@ -51,8 +51,11 @@ export class UsersService {
 
       const savedUser = await this.userRepo.save(newUser);
       return await this.getUserById(savedUser.id);
-    } catch (e) {
-      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (e: any) {
+      if (e instanceof HttpException) {
+        throw e;
+      } else
+        throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
   //get user by id
@@ -74,8 +77,11 @@ export class UsersService {
         caregiver: user.caregiver ?? null,
         adultHomeRepresentative: user.adultHomeRepresentative ?? null,
       };
-    } catch (e) {
-      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (e: any) {
+      if (e instanceof HttpException) {
+        throw e;
+      } else
+        throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
   //get user by username
@@ -101,8 +107,11 @@ export class UsersService {
         caregiver: user.caregiver ?? null,
         roles: user.roles,
       };
-    } catch (err) {
-      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (err: any) {
+      if (err instanceof HttpException) {
+        throw err;
+      } else
+        throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
   //get all users
@@ -132,8 +141,11 @@ export class UsersService {
       user.password = hashedPassword;
       await this.userRepo.save(user);
       return;
-    } catch (e) {
-      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (e: any) {
+      if (e instanceof HttpException) {
+        throw e;
+      } else
+        throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
   //add role to user
@@ -159,8 +171,11 @@ export class UsersService {
       user.roles.push(role);
       const updateUser = await this.userRepo.save(user);
       return updateUser;
-    } catch (e) {
-      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (e: any) {
+      if (e instanceof HttpException) {
+        throw e;
+      } else
+        throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
   //revoke role from user
@@ -189,8 +204,10 @@ export class UsersService {
       user.roles = user.roles.filter((r) => r.id === role.id);
       const updateUser = await this.userRepo.save(user);
       return updateUser;
-    } catch (e) {
-      throw new HttpException(e, HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (e: any) {
+      if (e instanceof HttpException) {
+        throw e;
+      } else throw new HttpException(e, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   };
   //delete user
@@ -212,8 +229,11 @@ export class UsersService {
 
       await this.userRepo.delete(user.id);
       return;
-    } catch (e) {
-      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (e: any) {
+      if (e instanceof HttpException) {
+        throw e;
+      } else
+        throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
   //add caregiver
@@ -248,8 +268,11 @@ export class UsersService {
 
       user.caregiver = newCaregiver;
       return await this.userRepo.save(user);
-    } catch (e) {
-      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (e: any) {
+      if (e instanceof HttpException) {
+        throw e;
+      } else
+        throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
   //get caregiver by id
@@ -302,8 +325,11 @@ export class UsersService {
         const { password, ...result } = user;
         return result;
       });
-    } catch (e) {
-      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (e: any) {
+      if (e instanceof HttpException) {
+        throw e;
+      } else
+        throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
   //update caregiver
@@ -349,8 +375,11 @@ export class UsersService {
         user.caregiver = createCaregiver;
       }
       return await this.userRepo.save(user);
-    } catch (e) {
-      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (e: any) {
+      if (e instanceof HttpException) {
+        throw e;
+      } else
+        throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
   //createHomeRep
@@ -384,8 +413,11 @@ export class UsersService {
       const savedUser = await this.userRepo.save(user);
       const { password, ...result } = savedUser;
       return result;
-    } catch (e) {
-      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (e: any) {
+      if (e instanceof HttpException) {
+        throw e;
+      } else
+        throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
   //get all homeRep
@@ -403,8 +435,11 @@ export class UsersService {
         },
       });
       return homeReps;
-    } catch (e) {
-      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (e: any) {
+      if (e instanceof HttpException) {
+        throw e;
+      } else
+        throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
   async getHomeRepByUserAndHomeId(

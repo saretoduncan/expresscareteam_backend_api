@@ -32,6 +32,7 @@ export class RefreshJwtStrategy extends PassportStrategy(
       const user = await this.userService.getUserById(payload.sub);
       return user;
     } catch (e) {
+      if (e instanceof Error)
       throw new UnauthorizedException(e.message);
     }
   }

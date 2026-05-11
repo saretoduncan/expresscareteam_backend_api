@@ -3,20 +3,21 @@ import type { NestExpressApplication } from "@nestjs/platform-express";
 import { AppModule } from "./app.module";
 import * as dotenv from "dotenv";
 
-import * as cookieParser from "cookie-parser";
+import cookieParser from "cookie-parser";
 import { ValidationPipe } from "@nestjs/common";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { RedisService } from "./redis/redis.service";
-import * as session from "express-session";
+import session from "express-session";
 import { DbRedisStore } from "./auth/db-redis-session.store";
-import * as passport from "passport";
+import passport from "passport";
 import { AuthSessionEntity } from "./auth/session.entity";
 import { AppDataSource } from "./database/data-source";
 import { doubleCsrf } from "csrf-csrf";
-import { Request, Response } from "express";
+
 import { RequestWithSession } from "./auth/auth.controller";
 import { DatabaseService } from "./database/database.service";
 import { ConfigService } from "@nestjs/config";
+import { Request } from "express";
 
 if (process.env.NODE_ENV !== "production") {
   dotenv.config();
@@ -27,7 +28,10 @@ async function bootstrap() {
 
   app.enableCors({
     credentials: true,
-    origin: process.env.CLIENT_URL,
+    origin: [
+      "https://coral-happy-painfully.ngrok-free.app",
+      "http://localhost:3000",
+    ],
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
   });
   app.set("trust proxy", 1);
@@ -50,26 +54,32 @@ async function bootstrap() {
     }),
   );
 
-  const { doubleCsrfProtection, generateCsrfToken } = doubleCsrf({
-    getSecret: (req: Request) => req.session.id,
-    getSessionIdentifier: (req: Request) => req.session.id,
-    cookieName: "__Host-psifi.x-csrf-token",
-    cookieOptions: {
-      httpOnly: false,
-      // secure: process.env.NODE_ENV === "production",
-      // sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-      path: "/",
-      maxAge: Number(configService.get<number>("SESSION_EXPIRY")),
-    },
-    ignoredMethods: ["GET", "HEAD", "OPTIONS"],
-    getCsrfTokenFromRequest: (req: any) => {
-      console.log(req.headers["x-csrf-token"]);
-      return req.headers["X-CSRF-Token"];
-    },
-  });
+  app.use(passport.initialize());
+
+  app.use(passport.session());
+
+  const { doubleCsrfProtection, generateCsrfToken, validateRequest } =
+    doubleCsrf({
+      getSecret: () => process.env.SESSION_SECRET!!,
+      getSessionIdentifier: (req: Request) => req.session.id,
+      cookieName: "x-csrf-token",
+      cookieOptions: {
+        httpOnly: false,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+        maxAge: Number(configService.get<number>("SESSION_EXPIRY")),
+        path: "/",
+      },
+
+      ignoredMethods: ["GET", "HEAD", "OPTIONS"],
+      getCsrfTokenFromRequest: (req: any) => {
+        return req.headers["x-csrf-token"];
+      },
+    });
 
   app.use((req: any, res: any, next: any) => {
     req.generateCsrfToken = () => generateCsrfToken(req, res);
+    req.validate = () => validateRequest(req);
     next();
   });
   app.use(doubleCsrfProtection);

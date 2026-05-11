@@ -1,9 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import {
-
-  CreateAdultHomeDto,
-} from "src/dtos/adultHome.dtos";
+import { CreateAdultHomeDto } from "src/dtos/adultHome.dtos";
 
 import { AdultHome } from "./adult-home.entity";
 import { Repository } from "typeorm";
@@ -11,11 +8,11 @@ import { Repository } from "typeorm";
 @Injectable()
 export class AdultHomeService {
   constructor(
-    @InjectRepository(AdultHome) private adultHomeRepo: Repository<AdultHome>
+    @InjectRepository(AdultHome) private adultHomeRepo: Repository<AdultHome>,
   ) {}
   //create home
   async createAdultHome(
-    createAdultHomeDto: CreateAdultHomeDto
+    createAdultHomeDto: CreateAdultHomeDto,
   ): Promise<AdultHome> {
     try {
       const home = await this.adultHomeRepo.findOne({
@@ -29,7 +26,7 @@ export class AdultHomeService {
       if (home) {
         throw new Error("Home using provided email already exists");
       }
-      const newHome =  this.adultHomeRepo.create({
+      const newHome = this.adultHomeRepo.create({
         name: createAdultHomeDto.name,
         city: createAdultHomeDto.city,
         email: createAdultHomeDto.email,
@@ -38,12 +35,15 @@ export class AdultHomeService {
         street: createAdultHomeDto.street,
         website: createAdultHomeDto.website,
         zipcode: createAdultHomeDto.zipcode,
-        homeDescription:createAdultHomeDto.homeDescription
+        homeDescription: createAdultHomeDto.homeDescription,
       });
       await this.adultHomeRepo.save(newHome);
       return newHome;
-    } catch (e) {
-      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (e: any) {
+      if (e instanceof HttpException) {
+        throw e;
+      } else
+        throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
   //get home by id
@@ -61,8 +61,11 @@ export class AdultHomeService {
         throw new HttpException("Home not found", HttpStatus.NOT_FOUND);
       }
       return home;
-    } catch (e) {
-      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (e: any) {
+      if (e instanceof HttpException) {
+        throw e;
+      } else
+        throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
   //get all homes
@@ -73,14 +76,17 @@ export class AdultHomeService {
         throw new HttpException("No homes found", HttpStatus.NOT_FOUND);
       }
       return homes;
-    } catch (e) {
-      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (e: any) {
+      if (e instanceof HttpException) {
+        throw e;
+      } else
+        throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
   //update home
   async updateHome(
     id: string,
-    createAdultHomeDto: CreateAdultHomeDto
+    createAdultHomeDto: CreateAdultHomeDto,
   ): Promise<AdultHome> {
     //try catch
     try {
@@ -95,8 +101,11 @@ export class AdultHomeService {
       home.zipcode = createAdultHomeDto.zipcode;
 
       return this.adultHomeRepo.save(home);
-    } catch (e) {
-      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (e: any) {
+      if (e instanceof HttpException) {
+        throw e;
+      } else
+        throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
   //delete home

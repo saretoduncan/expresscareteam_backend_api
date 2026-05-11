@@ -38,8 +38,8 @@ export class EmailService {
         "Html-part": message,
         Recipients: [{ Email: to }],
       })
-      .then((res) => res)
-      .then((err) => console.log(err));
+      .then((res: any) => res)
+      .then((err: any) => console.log(err));
   }
   async sendPasswordResetCodeMail(
     to: string,
